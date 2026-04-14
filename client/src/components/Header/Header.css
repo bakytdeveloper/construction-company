@@ -46,7 +46,8 @@
 .logo-title {
     font-size: 1.5rem;
     font-weight: 800;
-    color: var(--primary-color);
+    /*color: var(--primary-color);*/
+    color: var(--bg-white);
     line-height: 1.2;
 }
 
