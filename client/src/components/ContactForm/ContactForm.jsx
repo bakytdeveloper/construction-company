@@ -161,17 +161,18 @@ const ContactForm = () => {
                         </div>
 
                         <div className="form-group">
-              <textarea
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  rows="4"
-                  required
-                  className={focusedField === 'message' || formData.message ? 'filled' : ''}
-                  onFocus={() => setFocusedField('message')}
-                  onBlur={() => setFocusedField(null)}
-              ></textarea>
-                            <label>Сообщение *</label>
+                                  <textarea
+                                      name="message"
+                                      value={formData.message}
+                                      onChange={handleChange}
+                                      rows="4"
+                                      required
+                                      style={{border: '1px solid gray', padding: '5px', borderRadius:'7px'}}
+                                      className={focusedField === 'message' || formData.message ? 'filled' : ''}
+                                      onFocus={() => setFocusedField('message')}
+                                      onBlur={() => setFocusedField(null)}
+                                  ></textarea>
+                            <label style={{marginLeft:'5px'}}>* Сообщение </label>
                             <span className="focus-border"></span>
                         </div>
 
