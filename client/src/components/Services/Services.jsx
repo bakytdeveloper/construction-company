@@ -39,6 +39,14 @@ const Services = () => {
         }
     ];
 
+    // Scroll to contact form
+    const scrollToContact = () => {
+        const contactSection = document.querySelector('.contact-form-section');
+        if (contactSection) {
+            contactSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
     return (
         <section className="services">
             <div className="services-bg-pattern"></div>
@@ -89,7 +97,7 @@ const Services = () => {
                                                 </li>
                                             ))}
                                         </ul>
-                                        <button className="service-btn">Заказать услугу</button>
+                                        <button className="service-btn" onClick={scrollToContact}>Заказать услугу</button>
                                     </div>
                                 </div>
                             </div>
