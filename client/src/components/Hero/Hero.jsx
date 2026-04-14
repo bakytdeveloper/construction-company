@@ -29,7 +29,7 @@ const Hero = () => {
                 {/*    <span>Лидер строительства в Алматы с 2012 года</span>*/}
                 {/*</div>*/}
 
-                <h1 data-aos="fade-up" data-aos-delay="100">
+                <h1 data-aos="fade-up" data-aos-delay="100" className="hero-title-h1">
                     Строим дома вашей<br />
                     <span className="gradient-text">мечты в Алматы</span>
                 </h1>
