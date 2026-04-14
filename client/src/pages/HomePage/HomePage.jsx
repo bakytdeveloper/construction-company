@@ -8,6 +8,7 @@ import ContactForm from '../../components/ContactForm/ContactForm';
 import Stats from '../../components/Stats/Stats';
 import Testimonials from '../../components/Testimonials/Testimonials';
 import './HomePage.css';
+import FAQ from "../../components/FAQ/FAQ";
 
 const HomePage = () => {
     const [isVisible, setIsVisible] = useState(false);
@@ -28,6 +29,7 @@ const HomePage = () => {
             <Services />
             <ProjectsShowcase />
             <Advantages />
+            <FAQ />
             <Stats />
             <Testimonials />
             <ContactForm />

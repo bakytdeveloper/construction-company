@@ -24,10 +24,10 @@ const Hero = () => {
             </div>
 
             <div className="hero-content container">
-                <div className="hero-badge" data-aos="fade-down">
-                    <span className="badge-icon">🏗️</span>
-                    <span>Лидер строительства в Алматы с 2012 года</span>
-                </div>
+                {/*<div className="hero-badge" data-aos="fade-down">*/}
+                {/*    <span className="badge-icon">🏗️</span>*/}
+                {/*    <span>Лидер строительства в Алматы с 2012 года</span>*/}
+                {/*</div>*/}
 
                 <h1 data-aos="fade-up" data-aos-delay="100">
                     Строим дома вашей<br />

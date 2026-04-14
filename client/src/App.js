@@ -15,6 +15,7 @@ import ContactPage from './pages/ContactPage/ContactPage';
 import AboutPage from './pages/AboutPage/AboutPage';
 import AdminPanel from './pages/AdminPanel/AdminPanel';
 import ScrollToTop from './components/ScrollToTop/ScrollToTop';
+import FAQPage from "./pages/FAQPage/FAQPage";
 
 function App() {
     const location = useLocation();
@@ -39,6 +40,7 @@ function App() {
                 <Route path="/projects" element={<ProjectsPage />} />
                 <Route path="/projects/:id" element={<ProjectDetailPage />} />
                 <Route path="/contact" element={<ContactPage />} />
+                <Route path="/faq" element={<FAQPage />} />
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/admin" element={<AdminPanel />} />
             </Routes>

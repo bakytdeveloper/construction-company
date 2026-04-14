@@ -23,6 +23,7 @@ const Header = () => {
         { path: '/', label: 'Главная' },
         { path: '/projects', label: 'Проекты' },
         { path: '/about', label: 'О компании' },
+        { path: '/faq', label: 'FAQ' },
         { path: '/contact', label: 'Контакты' }
     ];
 
