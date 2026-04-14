@@ -1,0 +1,8 @@
+.homepage {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.homepage.visible {
+    opacity: 1;
+}
