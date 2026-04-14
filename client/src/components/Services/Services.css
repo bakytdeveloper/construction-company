@@ -62,8 +62,27 @@
     transform-style: preserve-3d;
 }
 
-.service-card.hovered .service-inner {
+.service-card:hover .service-inner {
     transform: rotateY(180deg);
+}
+
+.service-inner {
+    will-change: transform;
+}
+
+.service-front,
+.service-back {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+.service-back {
+    transform: rotateY(180deg);
+    pointer-events: auto;
+}
+
+.service-front {
+    pointer-events: auto;
 }
 
 .service-front, .service-back {

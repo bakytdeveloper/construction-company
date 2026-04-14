@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './Services.css';
 
 const Services = () => {
-    const [hoveredCard, setHoveredCard] = useState(null);
+    // const [hoveredCard, setHoveredCard] = useState(null);
 
     const services = [
         {
@@ -55,9 +55,9 @@ const Services = () => {
                     {services.map((service, index) => (
                         <div
                             key={index}
-                            className={`service-card ${hoveredCard === index ? 'hovered' : ''}`}
-                            onMouseEnter={() => setHoveredCard(index)}
-                            onMouseLeave={() => setHoveredCard(null)}
+                            className="service-card"
+                            // onMouseEnter={() => setHoveredCard(index)}
+                            // onMouseLeave={() => setHoveredCard(null)}
                             data-aos="fade-up"
                             data-aos-delay={index * 100}
                         >
