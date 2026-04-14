@@ -25,17 +25,39 @@ const ContactForm = () => {
         e.preventDefault();
         setLoading(true);
 
+        // Валидация email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formData.email)) {
+            toast.error('Пожалуйста, введите корректный email адрес');
+            setLoading(false);
+            return;
+        }
+
+        // Валидация телефона (для Казахстана)
+        const phoneRegex = /^[\+\(]?[0-9\(\)\-\s]{10,}$/;
+        if (!phoneRegex.test(formData.phone)) {
+            toast.error('Пожалуйста, введите корректный номер телефона');
+            setLoading(false);
+            return;
+        }
+
         try {
             const response = await axios.post(`${process.env.REACT_APP_API_URL}/contact/submit`, formData);
-            toast.success(response.data.message || 'Сообщение успешно отправлено!');
-            setFormData({
-                name: '',
-                phone: '',
-                email: '',
-                message: '',
-                projectType: 'house'
-            });
+
+            if (response.data.success) {
+                toast.success(response.data.message || 'Сообщение успешно отправлено!');
+                setFormData({
+                    name: '',
+                    phone: '',
+                    email: '',
+                    message: '',
+                    projectType: 'house'
+                });
+            } else {
+                toast.error('Ошибка при отправке. Попробуйте позже.');
+            }
         } catch (error) {
+            console.error('Submit error:', error);
             toast.error(error.response?.data?.error || 'Ошибка при отправке. Попробуйте позже.');
         } finally {
             setLoading(false);
@@ -122,6 +144,7 @@ const ContactForm = () => {
                                     value={formData.phone}
                                     onChange={handleChange}
                                     required
+                                    // placeholder="+7 (777) 123-45-67"
                                     className={focusedField === 'phone' || formData.phone ? 'filled' : ''}
                                     onFocus={() => setFocusedField('phone')}
                                     onBlur={() => setFocusedField(null)}
@@ -137,6 +160,7 @@ const ContactForm = () => {
                                     value={formData.email}
                                     onChange={handleChange}
                                     required
+                                    // placeholder="example@mail.com"
                                     className={focusedField === 'email' || formData.email ? 'filled' : ''}
                                     onFocus={() => setFocusedField('email')}
                                     onBlur={() => setFocusedField(null)}
@@ -161,18 +185,17 @@ const ContactForm = () => {
                         </div>
 
                         <div className="form-group">
-                                  <textarea
-                                      name="message"
-                                      value={formData.message}
-                                      onChange={handleChange}
-                                      rows="4"
-                                      required
-                                      style={{border: '1px solid gray', padding: '5px', borderRadius:'7px'}}
-                                      className={focusedField === 'message' || formData.message ? 'filled' : ''}
-                                      onFocus={() => setFocusedField('message')}
-                                      onBlur={() => setFocusedField(null)}
-                                  ></textarea>
-                            <label style={{marginLeft:'5px'}}>* Сообщение </label>
+                            <textarea
+                                name="message"
+                                value={formData.message}
+                                onChange={handleChange}
+                                rows="4"
+                                required
+                                className={focusedField === 'message' || formData.message ? 'filled' : ''}
+                                onFocus={() => setFocusedField('message')}
+                                onBlur={() => setFocusedField(null)}
+                            ></textarea>
+                            <label>Сообщение *</label>
                             <span className="focus-border"></span>
                         </div>
 
