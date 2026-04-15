@@ -406,8 +406,11 @@ const AdminPanel = () => {
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(false);
     const [showModal, setShowModal] = useState(false);
-    const [modalType, setModalType] = useState('complex'); // 'complex' or 'property'
+    const [modalType, setModalType] = useState('complex');
     const [editingItem, setEditingItem] = useState(null);
+    const [imagePreviews, setImagePreviews] = useState([]);
+
+    // Form states
     const [complexForm, setComplexForm] = useState({
         title: '',
         description: '',
@@ -415,10 +418,11 @@ const AdminPanel = () => {
         mainImage: '',
         images: [],
         features: [],
-        specifications: { floors: '', apartments: '', parking: '', buildYear: '', developer: '' },
+        specifications: { floors: '', apartments: '', parking: '', buildYear: '' },
         infrastructure: [],
         status: 'completed'
     });
+
     const [propertyForm, setPropertyForm] = useState({
         title: '',
         description: '',
@@ -435,9 +439,10 @@ const AdminPanel = () => {
         mainImage: '',
         images: [],
         features: [],
-        contactPhone: '',
-        contactEmail: ''
+        contactPhone: '+7 (777) 123-45-67',
+        contactEmail: 'info@almaty-build.kz'
     });
+
     const [featureInput, setFeatureInput] = useState('');
     const [infraInput, setInfraInput] = useState('');
     const [selectedImages, setSelectedImages] = useState([]);
@@ -457,7 +462,7 @@ const AdminPanel = () => {
     const fetchAllComplexes = async () => {
         try {
             const response = await axios.get(`${process.env.REACT_APP_API_URL}/complexes`);
-            setComplexesList(response.data.data);
+            setComplexesList(response.data.data || []);
         } catch (error) {
             console.error('Error fetching complexes:', error);
         }
@@ -494,18 +499,20 @@ const AdminPanel = () => {
             const response = await axios.get(`${process.env.REACT_APP_API_URL}/complexes`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            setComplexes(response.data.data);
+            setComplexes(response.data.data || []);
         } catch (error) {
             console.error('Error fetching complexes:', error);
+            setComplexes([]);
         }
     };
 
     const fetchProperties = async () => {
         try {
             const response = await axios.get(`${process.env.REACT_APP_API_URL}/properties`);
-            setProperties(response.data.data);
+            setProperties(response.data.data || []);
         } catch (error) {
             console.error('Error fetching properties:', error);
+            setProperties([]);
         }
     };
 
@@ -515,7 +522,6 @@ const AdminPanel = () => {
             const response = await axios.get(`${process.env.REACT_APP_API_URL}/admin/contacts`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            // Ensure messages is an array
             setMessages(response.data.data || []);
         } catch (error) {
             console.error('Error fetching messages:', error);
@@ -525,50 +531,85 @@ const AdminPanel = () => {
 
     const handleCreateComplex = async (e) => {
         e.preventDefault();
+
+        // Создаем копию формы без images массива
+        const formCopy = { ...complexForm };
+
         const formData = new FormData();
-        formData.append('data', JSON.stringify(complexForm));
-        selectedImages.forEach(img => formData.append('images', img));
+        formData.append('data', JSON.stringify(formCopy));
+
+        // Добавляем ВСЕ выбранные изображения
+        if (selectedImages.length > 0) {
+            selectedImages.forEach(img => {
+                formData.append('images', img);
+            });
+            console.log(`📸 Добавлено ${selectedImages.length} изображений`);
+        }
+
+        // Если есть URL главного фото и нет загруженных файлов
+        if (complexForm.mainImage && !complexForm.mainImage.startsWith('/uploads') && selectedImages.length === 0) {
+            // Это URL, оставляем как есть
+        }
 
         try {
             const token = localStorage.getItem('adminToken');
-            await axios.post(`${process.env.REACT_APP_API_URL}/admin/complexes`, formData, {
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/admin/complexes`, formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data'
                 }
             });
-            toast.success('Жилой комплекс создан успешно!');
-            setShowModal(false);
-            resetForms();
-            fetchComplexes();
-            fetchAllComplexes();
+
+            if (response.data.success) {
+                toast.success('Жилой комплекс создан успешно!');
+                setShowModal(false);
+                resetForms();
+                fetchComplexes();
+                fetchAllComplexes();
+            }
         } catch (error) {
-            toast.error('Ошибка при создании ЖК');
+            console.error('Error:', error);
+            toast.error(error.response?.data?.error || 'Ошибка при создании ЖК');
         }
     };
 
     const handleCreateProperty = async (e) => {
         e.preventDefault();
+
+        const formCopy = { ...propertyForm };
+
         const formData = new FormData();
-        formData.append('data', JSON.stringify(propertyForm));
-        selectedImages.forEach(img => formData.append('images', img));
+        formData.append('data', JSON.stringify(formCopy));
+
+        // Добавляем ВСЕ выбранные изображения
+        if (selectedImages.length > 0) {
+            selectedImages.forEach(img => {
+                formData.append('images', img);
+            });
+            console.log(`📸 Добавлено ${selectedImages.length} изображений`);
+        }
 
         try {
             const token = localStorage.getItem('adminToken');
-            await axios.post(`${process.env.REACT_APP_API_URL}/admin/properties`, formData, {
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/admin/properties`, formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data'
                 }
             });
-            toast.success('Объект недвижимости создан успешно!');
-            setShowModal(false);
-            resetForms();
-            fetchProperties();
+
+            if (response.data.success) {
+                toast.success('Объект недвижимости создан успешно!');
+                setShowModal(false);
+                resetForms();
+                fetchProperties();
+            }
         } catch (error) {
-            toast.error('Ошибка при создании объекта');
+            console.error('Error:', error);
+            toast.error(error.response?.data?.error || 'Ошибка при создании объекта');
         }
     };
+
 
     const handleDeleteComplex = async (id) => {
         if (window.confirm('Удалить ЖК? Все связанные объекты недвижимости потеряют привязку.')) {
@@ -610,7 +651,7 @@ const AdminPanel = () => {
             mainImage: '',
             images: [],
             features: [],
-            specifications: { floors: '', apartments: '', parking: '', buildYear: '', developer: '' },
+            specifications: { floors: '', apartments: '', parking: '', buildYear: '' },
             infrastructure: [],
             status: 'completed'
         });
@@ -630,10 +671,11 @@ const AdminPanel = () => {
             mainImage: '',
             images: [],
             features: [],
-            contactPhone: '',
-            contactEmail: ''
+            contactPhone: '+7 (777) 123-45-67',
+            contactEmail: 'info@almaty-build.kz'
         });
         setSelectedImages([]);
+        setImagePreviews([]);
         setFeatureInput('');
         setInfraInput('');
         setEditingItem(null);
@@ -706,6 +748,22 @@ const AdminPanel = () => {
         setShowModal(true);
     };
 
+    const handleImageSelect = (e) => {
+        const files = Array.from(e.target.files);
+        setSelectedImages(files);
+
+        // Create previews
+        const previews = files.map(file => URL.createObjectURL(file));
+        setImagePreviews(previews);
+    };
+
+    const removeImage = (index) => {
+        const newImages = selectedImages.filter((_, i) => i !== index);
+        const newPreviews = imagePreviews.filter((_, i) => i !== index);
+        setSelectedImages(newImages);
+        setImagePreviews(newPreviews);
+    };
+
     if (!isAuthenticated) {
         return (
             <div className="admin-login">
@@ -757,7 +815,7 @@ const AdminPanel = () => {
                     🏠 Недвижимость ({properties.length})
                 </button>
                 <button className={activeTab === 'messages' ? 'active' : ''} onClick={() => setActiveTab('messages')}>
-                    ✉️ Сообщения ({Array.isArray(messages) ? messages.filter(m => !m.isRead).length : 0})
+                    ✉️ Сообщения ({messages.filter(m => !m.isRead).length})
                 </button>
             </div>
 
@@ -871,10 +929,10 @@ const AdminPanel = () => {
                 {activeTab === 'messages' && (
                     <div className="messages-management">
                         <div className="messages-list">
-                            {Array.isArray(messages) && messages.length === 0 ? (
+                            {messages.length === 0 ? (
                                 <div className="no-messages">Нет сообщений</div>
                             ) : (
-                                Array.isArray(messages) && messages.map(message => (
+                                messages.map(message => (
                                     <div key={message._id} className={`message-card ${!message.isRead ? 'unread' : ''}`}>
                                         <div className="message-header">
                                             <h3>{message.name}</h3>
@@ -907,58 +965,115 @@ const AdminPanel = () => {
 
                         {modalType === 'complex' ? (
                             <form onSubmit={handleCreateComplex}>
-                                <div className="form-row">
+                                <div className="form-group">
+                                    <label>Название Жилого комплекса *</label>
                                     <input
                                         type="text"
-                                        placeholder="Название ЖК *"
+                                        placeholder="Например: ЖК «Алматы Тауэрс»"
                                         value={complexForm.title}
                                         onChange={(e) => setComplexForm({...complexForm, title: e.target.value})}
                                         required
                                     />
+                                </div>
+
+                                <div className="form-group">
+                                    <label>Адрес / Локация *</label>
                                     <input
                                         type="text"
-                                        placeholder="Локация *"
+                                        placeholder="Например: г. Алматы, мкр. Самал, ул. Абая 150"
                                         value={complexForm.location}
                                         onChange={(e) => setComplexForm({...complexForm, location: e.target.value})}
                                         required
                                     />
                                 </div>
 
-                                <textarea
-                                    placeholder="Описание ЖК *"
-                                    value={complexForm.description}
-                                    onChange={(e) => setComplexForm({...complexForm, description: e.target.value})}
-                                    required
-                                    rows="3"
-                                />
+                                <div className="form-group">
+                                    <label>Описание ЖК *</label>
+                                    <textarea
+                                        placeholder="Подробное описание жилого комплекса..."
+                                        value={complexForm.description}
+                                        onChange={(e) => setComplexForm({...complexForm, description: e.target.value})}
+                                        required
+                                        rows="4"
+                                    />
+                                </div>
 
-                                <div className="form-row">
+                                <div className="form-group">
+                                    <label>Статус строительства</label>
                                     <select
                                         value={complexForm.status}
                                         onChange={(e) => setComplexForm({...complexForm, status: e.target.value})}
                                     >
-                                        <option value="completed">Построен</option>
-                                        <option value="under_construction">Строится</option>
-                                        <option value="planned">Планируется</option>
+                                        <option value="completed">✅ Построен</option>
+                                        <option value="under_construction">🔨 Строится</option>
+                                        <option value="planned">📋 Планируется</option>
                                     </select>
-                                    <input
-                                        type="text"
-                                        placeholder="URL главного фото"
-                                        value={complexForm.mainImage}
-                                        onChange={(e) => setComplexForm({...complexForm, mainImage: e.target.value})}
-                                    />
+                                </div>
+
+                                <div className="specifications-section">
+                                    <label>Технические характеристики</label>
+                                    <div className="specs-grid">
+                                        <div className="form-group">
+                                            <label>Количество этажей</label>
+                                            <input
+                                                type="number"
+                                                placeholder="Например: 25"
+                                                value={complexForm.specifications.floors}
+                                                onChange={(e) => setComplexForm({
+                                                    ...complexForm,
+                                                    specifications: {...complexForm.specifications, floors: e.target.value}
+                                                })}
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Количество квартир</label>
+                                            <input
+                                                type="number"
+                                                placeholder="Например: 320"
+                                                value={complexForm.specifications.apartments}
+                                                onChange={(e) => setComplexForm({
+                                                    ...complexForm,
+                                                    specifications: {...complexForm.specifications, apartments: e.target.value}
+                                                })}
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Парковочные места</label>
+                                            <input
+                                                type="number"
+                                                placeholder="Например: 400"
+                                                value={complexForm.specifications.parking}
+                                                onChange={(e) => setComplexForm({
+                                                    ...complexForm,
+                                                    specifications: {...complexForm.specifications, parking: e.target.value}
+                                                })}
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Год постройки</label>
+                                            <input
+                                                type="number"
+                                                placeholder="Например: 2022"
+                                                value={complexForm.specifications.buildYear}
+                                                onChange={(e) => setComplexForm({
+                                                    ...complexForm,
+                                                    specifications: {...complexForm.specifications, buildYear: e.target.value}
+                                                })}
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div className="features-section">
-                                    <label>Особенности ЖК:</label>
+                                    <label>Особенности ЖК</label>
                                     <div className="features-input">
                                         <input
                                             type="text"
-                                            placeholder="Добавить особенность"
+                                            placeholder="Например: Охраняемая территория, Видеонаблюдение"
                                             value={featureInput}
                                             onChange={(e) => setFeatureInput(e.target.value)}
                                         />
-                                        <button type="button" onClick={addFeature}>+</button>
+                                        <button type="button" onClick={addFeature} className="add-btn">+ Добавить</button>
                                     </div>
                                     <div className="features-list">
                                         {complexForm.features.map((feature, index) => (
@@ -971,15 +1086,15 @@ const AdminPanel = () => {
                                 </div>
 
                                 <div className="features-section">
-                                    <label>Инфраструктура:</label>
+                                    <label>Инфраструктура рядом</label>
                                     <div className="features-input">
                                         <input
                                             type="text"
-                                            placeholder="Добавить объект инфраструктуры"
+                                            placeholder="Например: Школа, Супермаркет, Аптека"
                                             value={infraInput}
                                             onChange={(e) => setInfraInput(e.target.value)}
                                         />
-                                        <button type="button" onClick={addInfrastructure}>+</button>
+                                        <button type="button" onClick={addInfrastructure} className="add-btn">+ Добавить</button>
                                     </div>
                                     <div className="features-list">
                                         {complexForm.infrastructure.map((item, index) => (
@@ -992,135 +1107,200 @@ const AdminPanel = () => {
                                 </div>
 
                                 <div className="images-section">
-                                    <label>Изображения (можно выбрать несколько файлов)</label>
+                                    <label>Главное фото (URL или загрузите файл)</label>
+                                    <input
+                                        type="text"
+                                        placeholder="Или вставьте URL фото"
+                                        value={complexForm.mainImage}
+                                        onChange={(e) => setComplexForm({...complexForm, mainImage: e.target.value})}
+                                    />
+                                    {complexForm.mainImage && (
+                                        <div className="image-preview">
+                                            <img src={complexForm.mainImage.startsWith('http') ? complexForm.mainImage : `${process.env.REACT_APP_IMG_URL}${complexForm.mainImage}`} alt="Предпросмотр" />
+                                            <button type="button" onClick={() => setComplexForm({...complexForm, mainImage: ''})}>Удалить</button>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="images-section">
+                                    <label>Дополнительные изображения</label>
                                     <input
                                         type="file"
                                         multiple
                                         accept="image/*"
-                                        onChange={(e) => setSelectedImages(Array.from(e.target.files))}
+                                        onChange={handleImageSelect}
+                                        className="file-input"
                                     />
-                                    {selectedImages.length > 0 && (
-                                        <p>Выбрано файлов: {selectedImages.length}</p>
+                                    {imagePreviews.length > 0 && (
+                                        <div className="images-preview-grid">
+                                            {imagePreviews.map((preview, idx) => (
+                                                <div key={idx} className="preview-item">
+                                                    <img src={preview} alt={`preview-${idx}`} />
+                                                    <button type="button" onClick={() => removeImage(idx)}>×</button>
+                                                </div>
+                                            ))}
+                                        </div>
                                     )}
                                 </div>
 
                                 <div className="modal-buttons">
-                                    <button type="submit" className="save-btn">Сохранить</button>
+                                    <button type="submit" className="save-btn">💾 Сохранить ЖК</button>
                                     <button type="button" className="cancel-btn" onClick={() => setShowModal(false)}>Отмена</button>
                                 </div>
                             </form>
                         ) : (
                             <form onSubmit={handleCreateProperty}>
-                                <div className="form-row">
+                                <div className="form-group">
+                                    <label>Название объекта *</label>
                                     <input
                                         type="text"
-                                        placeholder="Название объекта *"
+                                        placeholder="Например: 3-комнатная квартира в ЖК «Алматы Тауэрс»"
                                         value={propertyForm.title}
                                         onChange={(e) => setPropertyForm({...propertyForm, title: e.target.value})}
                                         required
                                     />
+                                </div>
+
+                                <div className="form-group">
+                                    <label>Локация / Адрес *</label>
                                     <input
                                         type="text"
-                                        placeholder="Локация *"
+                                        placeholder="Например: г. Алматы, мкр. Самал"
                                         value={propertyForm.location}
                                         onChange={(e) => setPropertyForm({...propertyForm, location: e.target.value})}
                                         required
                                     />
                                 </div>
 
-                                <textarea
-                                    placeholder="Описание *"
-                                    value={propertyForm.description}
-                                    onChange={(e) => setPropertyForm({...propertyForm, description: e.target.value})}
-                                    required
-                                    rows="3"
-                                />
-
-                                <div className="form-row">
-                                    <select
-                                        value={propertyForm.propertyType}
-                                        onChange={(e) => setPropertyForm({...propertyForm, propertyType: e.target.value})}
-                                    >
-                                        <option value="apartment">Квартира</option>
-                                        <option value="commercial">Коммерческая</option>
-                                        <option value="house">Частный дом</option>
-                                        <option value="parking">Парковка</option>
-                                        <option value="storage">Кладовая</option>
-                                    </select>
-                                    <select
-                                        value={propertyForm.status}
-                                        onChange={(e) => setPropertyForm({...propertyForm, status: e.target.value})}
-                                    >
-                                        <option value="ready">Готовая</option>
-                                        <option value="under_construction">Строится</option>
-                                        <option value="planned">Планируется</option>
-                                        <option value="sold">Продана</option>
-                                    </select>
-                                </div>
-
-                                <div className="form-row">
-                                    <input
-                                        type="number"
-                                        placeholder="Площадь (м²) *"
-                                        value={propertyForm.area}
-                                        onChange={(e) => setPropertyForm({...propertyForm, area: e.target.value})}
+                                <div className="form-group">
+                                    <label>Описание объекта *</label>
+                                    <textarea
+                                        placeholder="Подробное описание объекта недвижимости..."
+                                        value={propertyForm.description}
+                                        onChange={(e) => setPropertyForm({...propertyForm, description: e.target.value})}
                                         required
-                                    />
-                                    <input
-                                        type="number"
-                                        placeholder="Цена (₸) *"
-                                        value={propertyForm.price}
-                                        onChange={(e) => setPropertyForm({...propertyForm, price: e.target.value})}
-                                        required
+                                        rows="4"
                                     />
                                 </div>
 
                                 <div className="form-row">
-                                    <input
-                                        type="number"
-                                        placeholder="Количество комнат"
-                                        value={propertyForm.rooms}
-                                        onChange={(e) => setPropertyForm({...propertyForm, rooms: e.target.value})}
-                                    />
-                                    <input
-                                        type="number"
-                                        placeholder="Этаж"
-                                        value={propertyForm.floor}
-                                        onChange={(e) => setPropertyForm({...propertyForm, floor: e.target.value})}
-                                    />
+                                    <div className="form-group">
+                                        <label>Тип недвижимости</label>
+                                        <select
+                                            value={propertyForm.propertyType}
+                                            onChange={(e) => setPropertyForm({...propertyForm, propertyType: e.target.value})}
+                                        >
+                                            <option value="apartment">🏢 Квартира</option>
+                                            <option value="commercial">🏭 Коммерческая</option>
+                                            <option value="house">🏡 Частный дом</option>
+                                            <option value="parking">🅿️ Парковка</option>
+                                            <option value="storage">📦 Кладовая</option>
+                                        </select>
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label>Статус</label>
+                                        <select
+                                            value={propertyForm.status}
+                                            onChange={(e) => setPropertyForm({...propertyForm, status: e.target.value})}
+                                        >
+                                            <option value="ready">✅ Готовая</option>
+                                            <option value="under_construction">🔨 Строится</option>
+                                            <option value="planned">📋 Планируется</option>
+                                            <option value="sold">🔴 Продана</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div className="form-row">
+                                    <div className="form-group">
+                                        <label>Площадь (м²) *</label>
+                                        <input
+                                            type="number"
+                                            placeholder="Например: 125"
+                                            value={propertyForm.area}
+                                            onChange={(e) => setPropertyForm({...propertyForm, area: e.target.value})}
+                                            required
+                                        />
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label>Цена (₸) *</label>
+                                        <input
+                                            type="number"
+                                            placeholder="Например: 45000000"
+                                            value={propertyForm.price}
+                                            onChange={(e) => setPropertyForm({...propertyForm, price: e.target.value})}
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="form-row">
+                                    <div className="form-group">
+                                        <label>Количество комнат</label>
+                                        <input
+                                            type="number"
+                                            placeholder="Например: 3"
+                                            value={propertyForm.rooms}
+                                            onChange={(e) => setPropertyForm({...propertyForm, rooms: e.target.value})}
+                                        />
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label>Этаж</label>
+                                        <input
+                                            type="text"
+                                            placeholder="Например: 15/25"
+                                            value={propertyForm.floor}
+                                            onChange={(e) => setPropertyForm({...propertyForm, floor: e.target.value})}
+                                        />
+                                    </div>
                                 </div>
 
                                 {complexesList.length > 0 && (
-                                    <select
-                                        value={propertyForm.residentialComplex}
-                                        onChange={(e) => setPropertyForm({...propertyForm, residentialComplex: e.target.value})}
-                                    >
-                                        <option value="">Не привязан к ЖК</option>
-                                        {complexesList.map(complex => (
-                                            <option key={complex._id} value={complex._id}>
-                                                {complex.title}
-                                            </option>
-                                        ))}
-                                    </select>
+                                    <div className="form-group">
+                                        <label>Привязать к Жилому комплексу</label>
+                                        <select
+                                            value={propertyForm.residentialComplex}
+                                            onChange={(e) => setPropertyForm({...propertyForm, residentialComplex: e.target.value})}
+                                        >
+                                            <option value="">Не привязан к ЖК</option>
+                                            {complexesList.map(complex => (
+                                                <option key={complex._id} value={complex._id}>
+                                                    {complex.title}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
                                 )}
 
-                                <input
-                                    type="text"
-                                    placeholder="URL главного фото"
-                                    value={propertyForm.mainImage}
-                                    onChange={(e) => setPropertyForm({...propertyForm, mainImage: e.target.value})}
-                                />
+                                <div className="images-section">
+                                    <label>Главное фото (URL или загрузите файл)</label>
+                                    <input
+                                        type="text"
+                                        placeholder="Или вставьте URL фото"
+                                        value={propertyForm.mainImage}
+                                        onChange={(e) => setPropertyForm({...propertyForm, mainImage: e.target.value})}
+                                    />
+                                    {propertyForm.mainImage && (
+                                        <div className="image-preview">
+                                            <img src={propertyForm.mainImage.startsWith('http') ? propertyForm.mainImage : `${process.env.REACT_APP_IMG_URL}${propertyForm.mainImage}`} alt="Предпросмотр" />
+                                            <button type="button" onClick={() => setPropertyForm({...propertyForm, mainImage: ''})}>Удалить</button>
+                                        </div>
+                                    )}
+                                </div>
 
                                 <div className="features-section">
-                                    <label>Особенности объекта:</label>
+                                    <label>Особенности объекта</label>
                                     <div className="features-input">
                                         <input
                                             type="text"
-                                            placeholder="Добавить особенность"
+                                            placeholder="Например: Панорамные окна, Высокие потолки"
                                             value={featureInput}
                                             onChange={(e) => setFeatureInput(e.target.value)}
                                         />
-                                        <button type="button" onClick={addFeature}>+</button>
+                                        <button type="button" onClick={addFeature} className="add-btn">+ Добавить</button>
                                     </div>
                                     <div className="features-list">
                                         {propertyForm.features.map((feature, index) => (
@@ -1133,20 +1313,28 @@ const AdminPanel = () => {
                                 </div>
 
                                 <div className="images-section">
-                                    <label>Изображения (можно выбрать несколько файлов)</label>
+                                    <label>Дополнительные изображения</label>
                                     <input
                                         type="file"
                                         multiple
                                         accept="image/*"
-                                        onChange={(e) => setSelectedImages(Array.from(e.target.files))}
+                                        onChange={handleImageSelect}
+                                        className="file-input"
                                     />
-                                    {selectedImages.length > 0 && (
-                                        <p>Выбрано файлов: {selectedImages.length}</p>
+                                    {imagePreviews.length > 0 && (
+                                        <div className="images-preview-grid">
+                                            {imagePreviews.map((preview, idx) => (
+                                                <div key={idx} className="preview-item">
+                                                    <img src={preview} alt={`preview-${idx}`} />
+                                                    <button type="button" onClick={() => removeImage(idx)}>×</button>
+                                                </div>
+                                            ))}
+                                        </div>
                                     )}
                                 </div>
 
                                 <div className="modal-buttons">
-                                    <button type="submit" className="save-btn">Сохранить</button>
+                                    <button type="submit" className="save-btn">💾 Сохранить объект</button>
                                     <button type="button" className="cancel-btn" onClick={() => setShowModal(false)}>Отмена</button>
                                 </div>
                             </form>

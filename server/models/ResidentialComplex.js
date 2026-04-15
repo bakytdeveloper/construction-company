@@ -4,7 +4,8 @@ const residentialComplexSchema = new mongoose.Schema({
     title: {
         type: String,
         required: [true, 'Название ЖК обязательно'],
-        trim: true
+        trim: true,
+        unique: true // Добавляем unique вместо slug
     },
     description: {
         type: String,
@@ -13,10 +14,6 @@ const residentialComplexSchema = new mongoose.Schema({
     location: {
         type: String,
         required: [true, 'Адрес ЖК обязателен']
-    },
-    coordinates: {
-        lat: Number,
-        lng: Number
     },
     mainImage: {
         type: String,
@@ -29,11 +26,26 @@ const residentialComplexSchema = new mongoose.Schema({
         type: String
     }],
     specifications: {
-        floors: Number,
-        apartments: Number,
-        parking: Number,
-        buildYear: Number,
-        developer: String
+        floors: {
+            type: Number,
+            default: null,
+            description: 'Количество этажей'
+        },
+        apartments: {
+            type: Number,
+            default: null,
+            description: 'Количество квартир'
+        },
+        parking: {
+            type: Number,
+            default: null,
+            description: 'Количество парковочных мест'
+        },
+        buildYear: {
+            type: Number,
+            default: null,
+            description: 'Год постройки'
+        }
     },
     infrastructure: [{
         type: String
