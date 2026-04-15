@@ -603,3 +603,7 @@ margin-bottom: 28px!important;
 .file-input:hover {
     border-color: var(--secondary-color);
 }
+
+.admin-login-input-group {
+    border: 1px solid gray!important;
+}

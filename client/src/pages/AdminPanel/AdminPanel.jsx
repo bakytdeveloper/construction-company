@@ -775,6 +775,7 @@ const AdminPanel = () => {
                     <form onSubmit={handleLogin}>
                         <div className="input-group">
                             <input
+                                className="admin-login-input-group"
                                 type="email"
                                 placeholder="Email"
                                 value={loginData.email}
@@ -784,6 +785,7 @@ const AdminPanel = () => {
                         </div>
                         <div className="input-group">
                             <input
+                                className="admin-login-input-group"
                                 type="password"
                                 placeholder="Пароль"
                                 value={loginData.password}
