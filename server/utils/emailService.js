@@ -20,7 +20,7 @@ const formatDate = (date) => {
     });
 };
 
-// Базовые стили для всех писем
+// Базовые стили для всех писем (единые, как у админа)
 const baseStyles = `
     <style>
         body {
@@ -34,7 +34,6 @@ const baseStyles = `
             max-width: 600px;
             margin: 0 auto;
             background: linear-gradient(135deg, #1a8a42 0%, #03c3ae 100%);
-            /*color: #ffdd06;*/
             padding: 3px;
             border-radius: 16px;
         }
@@ -53,8 +52,7 @@ const baseStyles = `
             font-size: 28px;
             font-weight: bold;
             background: linear-gradient(135deg, #1a8a42 0%, #03c3ae 100%);
-            color: #ffdd06;
-             -webkit-background-clip: text;
+            -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 10px;
             border-radius: 10px 10px 0 0;
@@ -157,95 +155,15 @@ const baseStyles = `
     </style>
 `;
 
-// Письмо для клиента (подтверждение получения заявки)
-const createClientEmailTemplate = (data) => {
+// Единый шаблон письма (использует админские стили)
+const createEmailTemplate = (data, type) => {
     const projectType = PROJECT_TYPE_MAPPING[data.projectType] || data.projectType || 'Не указано';
     const now = new Date();
+    const isAdmin = type === 'admin';
 
-    return `
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    ${baseStyles}
-</head>
-<body>
-    <div class="email-wrapper">
-        <div class="email-content">
-            <div class="header">
-                <div class="logo">🏗️ Almaty Build Construction</div>
-                <div class="badge badge-success">✅ Заявка получена</div>
-            </div>
-            
-            <p>Здравствуйте, <strong>${data.name}</strong>!</p>
-            
-            <p>Спасибо за обращение в нашу строительную компанию! Мы получили вашу заявку и готовы помочь вам с реализацией вашего проекта в Алматы.</p>
-            
-            <div class="info-card">
-                <h3 style="margin-top: 0; color: #1a472a;">📋 Детали вашей заявки</h3>
-                
-                <div class="info-row">
-                    <span class="info-label"><span class="emoji">👤</span> Имя:</span>
-                    <span class="info-value"><strong>${data.name}</strong></span>
-                </div>
-                
-                <div class="info-row">
-                    <span class="info-label"><span class="emoji">📱</span> Телефон:</span>
-                    <span class="info-value"><strong>${data.phone}</strong></span>
-                </div>
-                
-                ${data.email ? `
-                <div class="info-row">
-                    <span class="info-label"><span class="emoji">✉️</span> Email:</span>
-                    <span class="info-value">${data.email}</span>
-                </div>
-                ` : ''}
-                
-                <div class="info-row">
-                    <span class="info-label"><span class="emoji">🏠</span> Тип проекта:</span>
-                    <span class="info-value"><strong>${projectType}</strong></span>
-                </div>
-                
-                ${data.message ? `
-                <div class="info-row">
-                    <span class="info-label"><span class="emoji">💬</span> Сообщение:</span>
-                    <span class="info-value">${data.message}</span>
-                </div>
-                ` : ''}
-                
-                <div class="info-row">
-                    <span class="info-label"><span class="emoji">📅</span> Дата получения:</span>
-                    <span class="info-value">${formatDate(now)}</span>
-                </div>
-            </div>
-            
-            <p>Наш специалист свяжется с вами в ближайшее время для уточнения деталей. Обычно это занимает не более <span class="highlight">30 минут</span>.</p>
-            
-            <div class="contact-info">
-                <div class="contact-item"><span class="emoji">📞</span> <strong>+7 (777) 123-45-67</strong> - отдел продаж</div>
-                <div class="contact-item"><span class="emoji">⏰</span> Режим работы: Пн-Пт 09:00-19:00 / Сб 10:00-16:00</div>
-                <div class="contact-item"><span class="emoji">📍</span> г. Алматы, ул. Абая 123, БЦ "Алмалы"</div>
-            </div>
-            
-            <div class="footer">
-                <p>С уважением, команда Almaty Build Construction</p>
-                <p>© ${new Date().getFullYear()} Все права защищены</p>
-                <p style="font-size: 11px; color: #9ca3af;">Это письмо отправлено автоматически, пожалуйста, не отвечайте на него.</p>
-            </div>
-        </div>
-    </div>
-</body>
-</html>
-    `;
-};
-
-// Письмо для администратора (уведомление о новой заявке)
-const createAdminEmailTemplate = (data) => {
-    const projectType = PROJECT_TYPE_MAPPING[data.projectType] || data.projectType || 'Не указано';
-    const now = new Date();
-
-    return `
+    // Контент для админа
+    if (isAdmin) {
+        return `
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -339,6 +257,85 @@ const createAdminEmailTemplate = (data) => {
     </div>
 </body>
 </html>
+        `;
+    }
+
+    // Контент для клиента (с теми же стилями, что у админа)
+    return `
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    ${baseStyles}
+</head>
+<body>
+    <div class="email-wrapper">
+        <div class="email-content">
+            <div class="header">
+                <div class="logo">🏗️ Almaty Build Construction</div>
+                <div class="badge badge-success">✅ Заявка получена</div>
+            </div>
+            
+            <p>Здравствуйте, <strong>${data.name}</strong>!</p>
+            
+            <p>Спасибо за обращение в нашу строительную компанию! Мы получили вашу заявку и готовы помочь вам с реализацией вашего проекта в Алматы.</p>
+            
+            <div class="info-card">
+                <h3 style="margin-top: 0; color: #1a472a;">📋 Детали вашей заявки</h3>
+                
+                <div class="info-row">
+                    <span class="info-label"><span class="emoji">👤</span> Имя:</span>
+                    <span class="info-value"><strong>${data.name}</strong></span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label"><span class="emoji">📱</span> Телефон:</span>
+                    <span class="info-value"><strong>${data.phone}</strong></span>
+                </div>
+                
+                ${data.email ? `
+                <div class="info-row">
+                    <span class="info-label"><span class="emoji">✉️</span> Email:</span>
+                    <span class="info-value">${data.email}</span>
+                </div>
+                ` : ''}
+                
+                <div class="info-row">
+                    <span class="info-label"><span class="emoji">🏠</span> Тип проекта:</span>
+                    <span class="info-value"><strong>${projectType}</strong></span>
+                </div>
+                
+                ${data.message ? `
+                <div class="message-box">
+                    <strong style="display: block; margin-bottom: 10px; color: #e65100;">💬 Ваше сообщение:</strong>
+                    <p style="margin: 0; white-space: pre-line;">${data.message}</p>
+                </div>
+                ` : ''}
+                
+                <div class="info-row">
+                    <span class="info-label"><span class="emoji">📅</span> Дата получения:</span>
+                    <span class="info-value">${formatDate(now)}</span>
+                </div>
+            </div>
+            
+            <p>Наш специалист свяжется с вами в ближайшее время для уточнения деталей. Обычно это занимает не более <span class="highlight">30 минут</span>.</p>
+            
+            <div class="contact-info">
+                <div class="contact-item"><span class="emoji">📞</span> <strong>+7 (777) 123-45-67</strong> - отдел продаж</div>
+                <div class="contact-item"><span class="emoji">⏰</span> Режим работы: Пн-Пт 09:00-19:00 / Сб 10:00-16:00</div>
+                <div class="contact-item"><span class="emoji">📍</span> г. Алматы, ул. Абая 123, БЦ "Алмалы"</div>
+            </div>
+            
+            <div class="footer">
+                <p>С уважением, команда Almaty Build Construction</p>
+                <p>© ${new Date().getFullYear()} Все права защищены</p>
+                <p style="font-size: 11px; color: #9ca3af;">Это письмо отправлено автоматически, пожалуйста, не отвечайте на него.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
     `;
 };
 
@@ -355,13 +352,13 @@ export const sendContactNotification = async (contactData) => {
         await sendEmail({
             to: process.env.ADMIN_NOTIFY_EMAIL,
             subject: `🏗️ Новая заявка от ${name} - Almaty Build`,
-            html: createAdminEmailTemplate({
+            html: createEmailTemplate({
                 name,
                 email,
                 phone,
                 message,
                 projectType
-            })
+            }, 'admin') // Указываем тип "admin"
         });
         console.log(`✅ Уведомление отправлено админу на ${process.env.ADMIN_NOTIFY_EMAIL}`);
         emailSent = true;
@@ -375,13 +372,13 @@ export const sendContactNotification = async (contactData) => {
             await sendEmail({
                 to: email,
                 subject: '✅ Ваша заявка принята | Almaty Build Construction',
-                html: createClientEmailTemplate({
+                html: createEmailTemplate({
                     name,
                     email,
                     phone,
                     message,
                     projectType
-                })
+                }, 'client') // Указываем тип "client"
             });
             console.log(`✅ Подтверждение отправлено клиенту на ${email}`);
         } catch (error) {
