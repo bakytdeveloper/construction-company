@@ -194,3 +194,19 @@
         justify-content: center;
     }
 }
+
+
+
+.admin-hint {
+    position: fixed;
+    bottom: 100px;
+    right: 20px;
+    background: var(--secondary-color);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-size: 0.85rem;
+    animation: fadeInUp 0.3s ease;
+    z-index: 1000;
+    box-shadow: var(--shadow-lg);
+}

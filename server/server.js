@@ -8,6 +8,7 @@ import mongoose from 'mongoose';
 // Routes
 import contactRoutes from './routes/contactRoutes.js';
 import projectRoutes from './routes/projectRoutes.js';
+import complexRoutes from './routes/complexRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 
 dotenv.config();
@@ -36,7 +37,8 @@ mongoose.connect(process.env.MONGO_URI)
 
 // Routes
 app.use('/api/contact', contactRoutes);
-app.use('/api/projects', projectRoutes);
+app.use('/api/properties', projectRoutes);
+app.use('/api/complexes', complexRoutes);
 app.use('/api/admin', adminRoutes);
 
 // Health check

@@ -347,3 +347,113 @@
         gap: 10px;
     }
 }
+/*12345678*/
+
+
+
+
+/* Добавьте к существующим стилям */
+.items-table {
+    overflow-x: auto;
+    margin-top: 20px;
+}
+
+.items-table table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.items-table th,
+.items-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--bg-light);
+}
+
+.items-table th {
+    background: var(--primary-color);
+    color: white;
+    font-weight: 600;
+}
+
+.modal-content.large {
+    max-width: 800px;
+    width: 90%;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.status-completed,
+.status-ready {
+    background: #4caf50;
+    color: white;
+}
+
+.status-under_construction {
+    background: #ff9800;
+    color: white;
+}
+
+.status-planned {
+    background: #2196f3;
+    color: white;
+}
+
+.status-sold {
+    background: #f44336;
+    color: white;
+}
+
+.no-messages {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-light);
+}
+
+.complexes-management,
+.properties-management {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.create-btn {
+    margin-bottom: 20px;
+    padding: 10px 24px;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.create-btn:hover {
+    background: var(--primary-light);
+    transform: translateY(-2px);
+}
+
+.delete-btn {
+    padding: 5px 10px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.delete-btn:hover {
+    background: #c82333;
+    transform: scale(1.05);
+}

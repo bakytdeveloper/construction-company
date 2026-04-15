@@ -10,12 +10,12 @@ import Footer from './components/Footer/Footer';
 // Pages
 import HomePage from './pages/HomePage/HomePage';
 import ProjectsPage from './pages/ProjectsPage/ProjectsPage';
-import ProjectDetailPage from './pages/ProjectDetailPage/ProjectDetailPage';
+import PropertyDetailPage from './pages/ProjectDetailPage/PropertyDetailPage';
 import ContactPage from './pages/ContactPage/ContactPage';
 import AboutPage from './pages/AboutPage/AboutPage';
+import FAQPage from './pages/FAQPage/FAQPage';
 import AdminPanel from './pages/AdminPanel/AdminPanel';
 import ScrollToTop from './components/ScrollToTop/ScrollToTop';
-import FAQPage from "./pages/FAQPage/FAQPage";
 
 function App() {
     const location = useLocation();
@@ -28,7 +28,6 @@ function App() {
         });
     }, []);
 
-    // Проверка, является ли текущий маршрут админ-панелью
     const isAdminRoute = location.pathname === '/admin';
 
     return (
@@ -38,10 +37,10 @@ function App() {
             <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/projects" element={<ProjectsPage />} />
-                <Route path="/projects/:id" element={<ProjectDetailPage />} />
+                <Route path="/property/:id" element={<PropertyDetailPage />} />
                 <Route path="/contact" element={<ContactPage />} />
-                <Route path="/faq" element={<FAQPage />} />
                 <Route path="/about" element={<AboutPage />} />
+                <Route path="/faq" element={<FAQPage />} />
                 <Route path="/admin" element={<AdminPanel />} />
             </Routes>
             {!isAdminRoute && <Footer />}

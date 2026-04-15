@@ -1,17 +1,41 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
-import Project from '../models/Project.js';
-import ContactMessage from '../models/ContactMessage.js';
-import { authenticateAdmin } from '../middleware/auth.js';
 import multer from 'multer';
 import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+import {
+    createComplex,
+    updateComplex,
+    deleteComplex
+} from '../controllers/residentialComplexController.js';
+import {
+    createProperty,
+    updateProperty,
+    deleteProperty
+} from '../controllers/propertyController.js';
+import ContactMessage from '../models/ContactMessage.js';
+import { authenticateAdmin } from '../middleware/auth.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const router = express.Router();
 
-// Configure multer for file uploads
+// Настройка multer для загрузки файлов
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'uploads/');
+        let uploadPath = 'uploads/';
+        if (req.url.includes('complex')) {
+            uploadPath += 'complexes/';
+        } else if (req.url.includes('property')) {
+            uploadPath += 'properties/';
+        }
+
+        if (!fs.existsSync(uploadPath)) {
+            fs.mkdirSync(uploadPath, { recursive: true });
+        }
+        cb(null, uploadPath);
     },
     filename: (req, file, cb) => {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -21,7 +45,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({
     storage,
-    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+    limits: { fileSize: 10 * 1024 * 1024 },
     fileFilter: (req, file, cb) => {
         const allowedTypes = /jpeg|jpg|png|gif|webp/;
         const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
@@ -54,83 +78,24 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// Create project
-router.post('/projects', authenticateAdmin, upload.array('images', 10), async (req, res) => {
-    try {
-        const projectData = JSON.parse(req.body.data);
-        const imagePaths = req.files.map(file => `/uploads/${file.filename}`);
+// CRUD для Жилых Комплексов
+router.post('/complexes', authenticateAdmin, upload.array('images', 10), createComplex);
+router.put('/complexes/:id', authenticateAdmin, upload.array('images', 10), updateComplex);
+router.delete('/complexes/:id', authenticateAdmin, deleteComplex);
 
-        projectData.images = imagePaths;
-        projectData.mainImage = imagePaths[0] || '';
+// CRUD для Недвижимости
+router.post('/properties', authenticateAdmin, upload.array('images', 10), createProperty);
+router.put('/properties/:id', authenticateAdmin, upload.array('images', 10), updateProperty);
+router.delete('/properties/:id', authenticateAdmin, deleteProperty);
 
-        const project = new Project(projectData);
-        await project.save();
-
-        res.status(201).json({ success: true, project });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-// Update project
-router.put('/projects/:id', authenticateAdmin, upload.array('images', 10), async (req, res) => {
-    try {
-        const project = await Project.findById(req.params.id);
-        if (!project) {
-            return res.status(404).json({ error: 'Проект не найден' });
-        }
-
-        const updateData = JSON.parse(req.body.data);
-
-        if (req.files && req.files.length > 0) {
-            const newImages = req.files.map(file => `/uploads/${file.filename}`);
-            updateData.images = [...project.images, ...newImages];
-            if (!updateData.mainImage) {
-                updateData.mainImage = updateData.images[0];
-            }
-        }
-
-        Object.assign(project, updateData);
-        await project.save();
-
-        res.json({ success: true, project });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-// Delete project
-router.delete('/projects/:id', authenticateAdmin, async (req, res) => {
-    try {
-        const project = await Project.findByIdAndDelete(req.params.id);
-        if (!project) {
-            return res.status(404).json({ error: 'Проект не найден' });
-        }
-        res.json({ success: true, message: 'Проект удален' });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-// Get all contact messages
+// Получение сообщений
 router.get('/contacts', authenticateAdmin, async (req, res) => {
     try {
         const messages = await ContactMessage.find().sort({ createdAt: -1 });
-        res.json(messages);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-// Mark message as read
-router.put('/contacts/:id/read', authenticateAdmin, async (req, res) => {
-    try {
-        const message = await ContactMessage.findByIdAndUpdate(
-            req.params.id,
-            { isRead: true, status: 'read' },
-            { new: true }
-        );
-        res.json(message);
+        res.json({
+            success: true,
+            data: messages
+        });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
