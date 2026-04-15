@@ -51,7 +51,8 @@ const baseStyles = `
         .logo {
             font-size: 28px;
             font-weight: bold;
-            background: linear-gradient(135deg, #1a8a42 0%, #03c3ae 100%);
+            background: linear-gradient(135deg, #03a53d 0%, #01d4bd 100%);
+            color: #ffff00;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 10px;

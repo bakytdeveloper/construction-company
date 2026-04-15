@@ -187,6 +187,7 @@ const ContactForm = () => {
                         <div className="form-group">
                             <textarea
                                 name="message"
+                                style={{border: '1px solid gray', borderRadius: "7px", padding: '5px'}}
                                 value={formData.message}
                                 onChange={handleChange}
                                 rows="4"
@@ -195,7 +196,7 @@ const ContactForm = () => {
                                 onFocus={() => setFocusedField('message')}
                                 onBlur={() => setFocusedField(null)}
                             ></textarea>
-                            <label>Сообщение *</label>
+                            <label style={{marginLeft: "5px"}}>Сообщение *</label>
                             <span className="focus-border"></span>
                         </div>
 
