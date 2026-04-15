@@ -34,39 +34,66 @@ const ComplexesManager = () => {
         const token = localStorage.getItem('adminToken');
         const formDataToSend = new FormData();
 
-        // Prepare data for submission
-        const submitData = { ...formData };
+        // Безопасное преобразование изображений
+        let fileImages = [];
+        let urlImages = [];
 
-        // Separate files from URLs
-        const fileImages = formData.images.filter(img => img.file);
-        const urlImages = formData.images.filter(img => !img.file);
+        if (formData.images && Array.isArray(formData.images)) {
+            fileImages = formData.images.filter(img => img && img.file);
+            urlImages = formData.images.filter(img => img && !img.file && img.url);
+        }
 
-        submitData.images = urlImages.map(img => img.url);
+        // Подготавливаем данные для отправки (без mainImage, он установится на сервере)
+        const submitData = {
+            title: formData.title || '',
+            description: formData.description || '',
+            location: formData.location || '',
+            status: formData.status || 'completed',
+            features: formData.features || [],
+            infrastructure: formData.infrastructure || [],
+            specifications: formData.specifications || {},
+            // Добавляем URL изображений
+            images: urlImages.map(img => img.url)
+        };
+
+        // Если есть URL изображения и нет файлов, устанавливаем первое URL как mainImage
+        if (urlImages.length > 0 && fileImages.length === 0) {
+            submitData.mainImage = urlImages[0].url;
+        }
+        // Если есть файлы, mainImage установится на сервере после загрузки
 
         formDataToSend.append('data', JSON.stringify(submitData));
 
-        fileImages.forEach(img => {
-            formDataToSend.append('images', img.file);
+        // Добавляем файлы
+        fileImages.forEach((img) => {
+            if (img.file) {
+                formDataToSend.append('images', img.file);
+            }
         });
 
         try {
+            let response;
             if (editingComplex) {
-                await axios.put(`${process.env.REACT_APP_API_URL}/admin/complexes/${editingComplex._id}`, formDataToSend, {
+                response = await axios.put(`${process.env.REACT_APP_API_URL}/admin/complexes/${editingComplex._id}`, formDataToSend, {
                     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' }
                 });
                 toast.success('Жилой комплекс обновлен');
             } else {
-                await axios.post(`${process.env.REACT_APP_API_URL}/admin/complexes`, formDataToSend, {
+                response = await axios.post(`${process.env.REACT_APP_API_URL}/admin/complexes`, formDataToSend, {
                     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' }
                 });
                 toast.success('Жилой комплекс создан');
             }
-            setShowModal(false);
-            setEditingComplex(null);
-            fetchComplexes();
+
+            if (response.data.success) {
+                setShowModal(false);
+                setEditingComplex(null);
+                fetchComplexes();
+            }
         } catch (error) {
             console.error('Error:', error);
-            toast.error(error.response?.data?.error || 'Ошибка при сохранении');
+            const errorMsg = error.response?.data?.error || error.response?.data?.message || 'Ошибка при сохранении';
+            toast.error(errorMsg);
         }
     };
 
@@ -83,6 +110,16 @@ const ComplexesManager = () => {
                 toast.error('Ошибка при удалении');
             }
         }
+    };
+
+    // Функция для получения корректного URL изображения
+    const getImageUrl = (imagePath) => {
+        if (!imagePath) return '/placeholder-image.jpg';
+        if (imagePath.startsWith('http')) return imagePath;
+        if (imagePath.startsWith('/uploads')) {
+            return `${process.env.REACT_APP_API_URL?.replace('/api', '') || 'http://localhost:5000'}${imagePath}`;
+        }
+        return imagePath;
     };
 
     const filteredComplexes = complexes.filter(complex =>
@@ -129,9 +166,12 @@ const ComplexesManager = () => {
                         <div key={complex._id} className="ap-item-card">
                             <div className="ap-card-image">
                                 <img
-                                    src={complex.mainImage?.startsWith('http') ? complex.mainImage : `${process.env.REACT_APP_IMG_URL}${complex.mainImage}`}
+                                    src={getImageUrl(complex.mainImage)}
                                     alt={complex.title}
-                                    onError={(e) => { e.target.src = '/placeholder-image.jpg'; }}
+                                    onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = '/placeholder-image.jpg';
+                                    }}
                                 />
                                 <span className={`ap-status-badge ${status.class}`}>
                                     {status.text}
@@ -147,7 +187,30 @@ const ComplexesManager = () => {
                                     <button
                                         className="ap-edit-btn"
                                         onClick={() => {
-                                            setEditingComplex(complex);
+                                            // Преобразуем существующие изображения в формат для формы
+                                            const existingImages = (complex.images || []).map((img, idx) => ({
+                                                id: `existing-${idx}-${img}`,
+                                                url: getImageUrl(img),
+                                                type: 'url',
+                                                isNew: false
+                                            }));
+
+                                            // Если есть mainImage и его нет в списке, добавляем
+                                            if (complex.mainImage && !existingImages.some(img => img.url === getImageUrl(complex.mainImage))) {
+                                                existingImages.unshift({
+                                                    id: `main-${complex.mainImage}`,
+                                                    url: getImageUrl(complex.mainImage),
+                                                    type: 'url',
+                                                    isNew: false
+                                                });
+                                            }
+
+                                            setEditingComplex({
+                                                ...complex,
+                                                images: existingImages,
+                                                features: complex.features || [],
+                                                infrastructure: complex.infrastructure || []
+                                            });
                                             setShowModal(true);
                                         }}
                                     >

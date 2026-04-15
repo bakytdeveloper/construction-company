@@ -14,7 +14,43 @@ const DynamicForm = ({
     const [featureInput, setFeatureInput] = useState('');
     const [infrastructure, setInfrastructure] = useState(initialData.infrastructure || []);
     const [infraInput, setInfraInput] = useState('');
-    const [images, setImages] = useState(initialData.images?.map(img => ({ id: img, url: img, type: 'url' })) || []);
+    // const [images, setImages] = useState(initialData.images?.map(img => ({ id: img, url: img, type: 'url' })) || []);
+// В DynamicForm.jsx, исправьте инициализацию images:
+
+    const [images, setImages] = useState(() => {
+        // Если есть initialData.images и это массив
+        if (initialData.images && Array.isArray(initialData.images) && initialData.images.length > 0) {
+            return initialData.images.map((img, idx) => {
+                // Если img уже объект с url
+                if (typeof img === 'object' && img.url) {
+                    return img;
+                }
+                // Если img строка (URL или путь)
+                if (typeof img === 'string') {
+                    return {
+                        id: `existing-${idx}-${Date.now()}`,
+                        url: img,
+                        type: 'url',
+                        isNew: false
+                    };
+                }
+                return null;
+            }).filter(Boolean);
+        }
+
+        // Если есть mainImage, но нет images
+        if (initialData.mainImage) {
+            return [{
+                id: `main-${Date.now()}`,
+                url: initialData.mainImage,
+                type: 'url',
+                isNew: false
+            }];
+        }
+
+        return [];
+    });
+
 
     const handleSubmit = (e) => {
         e.preventDefault();

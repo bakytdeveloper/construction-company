@@ -14,6 +14,7 @@
     --ap-success: #10b981;
     --ap-danger: #ef4444;
     --ap-warning: #f59e0b;
+    --ap-yellow-light: #fced67;
     --ap-info: #3b82f6;
     --ap-text-dark: #1f2937;
     --ap-text-light: #6b7280;
@@ -579,7 +580,7 @@
     align-items: center;
     gap: 6px;
     padding: 4px 10px;
-    background: var(--ap-bg-light);
+    background: var(--ap-yellow-light);
     border-radius: 20px;
     font-size: 0.85rem;
 }

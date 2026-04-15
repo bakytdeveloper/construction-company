@@ -39,15 +39,43 @@ const PropertiesManager = () => {
         const token = localStorage.getItem('adminToken');
         const formDataToSend = new FormData();
 
-        const fileImages = formData.images.filter(img => img.file);
-        const urlImages = formData.images.filter(img => !img.file);
+        // Безопасное преобразование изображений
+        let fileImages = [];
+        let urlImages = [];
 
-        formData.images = urlImages.map(img => img.url);
+        if (formData.images && Array.isArray(formData.images)) {
+            fileImages = formData.images.filter(img => img && img.file);
+            urlImages = formData.images.filter(img => img && !img.file && img.url);
+        }
 
-        formDataToSend.append('data', JSON.stringify(formData));
+        // Подготавливаем данные для отправки
+        const submitData = {
+            title: formData.title || '',
+            description: formData.description || '',
+            location: formData.location || '',
+            propertyType: formData.propertyType || 'apartment',
+            status: formData.status || 'ready',
+            area: formData.area ? Number(formData.area) : null,
+            price: formData.price ? Number(formData.price) : null,
+            rooms: formData.rooms ? Number(formData.rooms) : null,
+            floor: formData.floor || null,
+            residentialComplex: formData.residentialComplex || null,
+            features: formData.features || [],
+            images: urlImages.map(img => img.url)
+        };
 
-        fileImages.forEach(img => {
-            formDataToSend.append('images', img.file);
+        // Если есть URL изображения и нет файлов, устанавливаем первое URL как mainImage
+        if (urlImages.length > 0 && fileImages.length === 0) {
+            submitData.mainImage = urlImages[0].url;
+        }
+
+        formDataToSend.append('data', JSON.stringify(submitData));
+
+        // Добавляем файлы
+        fileImages.forEach((img) => {
+            if (img.file) {
+                formDataToSend.append('images', img.file);
+            }
         });
 
         try {
@@ -67,9 +95,11 @@ const PropertiesManager = () => {
             fetchData();
         } catch (error) {
             console.error('Error:', error);
-            toast.error(error.response?.data?.error || 'Ошибка при сохранении');
+            const errorMsg = error.response?.data?.error || error.response?.data?.message || 'Ошибка при сохранении';
+            toast.error(errorMsg);
         }
     };
+
 
     const handleDelete = async (id) => {
         if (window.confirm('Удалить объект недвижимости?')) {

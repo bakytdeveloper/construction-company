@@ -255,10 +255,12 @@ export const getComplexById = async (req, res) => {
 };
 
 // Создать ЖК (только для админа)
+// Создать ЖК (только для админа)
 export const createComplex = async (req, res) => {
     try {
         console.log('📦 Начало создания ЖК');
         console.log('Files received:', req.files?.length || 0);
+        console.log('Body data:', req.body.data);
 
         let complexData;
         try {
@@ -272,13 +274,31 @@ export const createComplex = async (req, res) => {
         }
 
         // Обработка изображений
+        let imagePaths = [];
+
+        // Добавляем загруженные файлы
         if (req.files && req.files.length > 0) {
             console.log(`📸 Получено ${req.files.length} файлов`);
-            const imagePaths = req.files.map(file => `/uploads/complexes/${file.filename}`);
-            complexData.images = imagePaths;
-            if (!complexData.mainImage && imagePaths.length > 0) {
-                complexData.mainImage = imagePaths[0];
-            }
+            imagePaths = req.files.map(file => `/uploads/complexes/${file.filename}`);
+            complexData.images = [...(complexData.images || []), ...imagePaths];
+        }
+
+        // Если нет images массива, создаем
+        if (!complexData.images) {
+            complexData.images = [];
+        }
+
+        // Устанавливаем mainImage: сначала из загруженных файлов, потом из URL, потом первое изображение
+        if (imagePaths.length > 0) {
+            complexData.mainImage = imagePaths[0];
+        } else if (complexData.images && complexData.images.length > 0) {
+            complexData.mainImage = complexData.images[0];
+        } else {
+            // Если нет ни одного изображения, возвращаем ошибку
+            return res.status(400).json({
+                success: false,
+                error: 'Необходимо добавить хотя бы одно изображение'
+            });
         }
 
         // Конвертация числовых полей
@@ -289,9 +309,11 @@ export const createComplex = async (req, res) => {
             if (complexData.specifications.buildYear) complexData.specifications.buildYear = Number(complexData.specifications.buildYear);
         }
 
+        // Убеждаемся, что features и infrastructure - это массивы
         if (!complexData.features) complexData.features = [];
         if (!complexData.infrastructure) complexData.infrastructure = [];
-        if (!complexData.images) complexData.images = [];
+
+        // Устанавливаем isActive по умолчанию
         if (complexData.isActive === undefined) complexData.isActive = true;
 
         // Проверяем уникальность названия
@@ -307,6 +329,8 @@ export const createComplex = async (req, res) => {
         await complex.save();
 
         console.log('✅ ЖК успешно создан с ID:', complex._id);
+        console.log('   Изображений сохранено:', complex.images.length);
+        console.log('   Главное изображение:', complex.mainImage);
 
         res.status(201).json({
             success: true,
@@ -314,12 +338,23 @@ export const createComplex = async (req, res) => {
         });
     } catch (error) {
         console.error('❌ Ошибка в createComplex:', error);
+
+        // Возвращаем детальную ошибку валидации
+        if (error.name === 'ValidationError') {
+            const errors = Object.values(error.errors).map(err => err.message);
+            return res.status(400).json({
+                success: false,
+                error: errors.join(', ')
+            });
+        }
+
         res.status(500).json({
             success: false,
             error: error.message
         });
     }
 };
+
 
 // Обновить ЖК
 export const updateComplex = async (req, res) => {

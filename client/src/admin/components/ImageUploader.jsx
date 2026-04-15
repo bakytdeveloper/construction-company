@@ -2,7 +2,7 @@
 import React, { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 
-const ImageUploader = ({ images = [], onImagesChange, onReorder, multiple = true }) => {
+const ImageUploader = ({ images = [], onImagesChange, multiple = true }) => {
     const [uploadType, setUploadType] = useState('file');
     const [urlInput, setUrlInput] = useState('');
     const [draggedIndex, setDraggedIndex] = useState(null);
@@ -10,7 +10,7 @@ const ImageUploader = ({ images = [], onImagesChange, onReorder, multiple = true
     const onDrop = useCallback((acceptedFiles) => {
         const newImages = acceptedFiles.map(file => ({
             id: `temp-${Date.now()}-${Math.random()}`,
-            file,
+            file: file,
             url: URL.createObjectURL(file),
             type: 'file',
             isNew: true
@@ -28,7 +28,7 @@ const ImageUploader = ({ images = [], onImagesChange, onReorder, multiple = true
         if (urlInput.trim()) {
             const newImage = {
                 id: `url-${Date.now()}-${Math.random()}`,
-                url: urlInput,
+                url: urlInput.trim(),
                 type: 'url',
                 isNew: true
             };
@@ -68,6 +68,14 @@ const ImageUploader = ({ images = [], onImagesChange, onReorder, multiple = true
 
     const handleDragEnd = () => {
         setDraggedIndex(null);
+    };
+
+    // Функция для получения URL изображения
+    const getImageUrl = (image) => {
+        if (!image) return '';
+        if (image.url) return image.url;
+        if (typeof image === 'string') return image;
+        return '';
     };
 
     return (
@@ -113,7 +121,7 @@ const ImageUploader = ({ images = [], onImagesChange, onReorder, multiple = true
                 </div>
             )}
 
-            {images.length > 0 && (
+            {images && images.length > 0 && (
                 <div className="ap-images-gallery">
                     <div className="ap-gallery-header">
                         <span>Галерея изображений ({images.length})</span>
@@ -129,7 +137,14 @@ const ImageUploader = ({ images = [], onImagesChange, onReorder, multiple = true
                                 onDragOver={(e) => handleDragOver(e, index)}
                                 onDragEnd={handleDragEnd}
                             >
-                                <img src={image.url} alt={`Изображение ${index + 1}`} />
+                                <img
+                                    src={getImageUrl(image)}
+                                    alt={`Изображение ${index + 1}`}
+                                    onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = '/placeholder-image.jpg';
+                                    }}
+                                />
                                 {index === 0 && <span className="ap-main-badge">Главное</span>}
                                 <div className="ap-image-actions">
                                     {index !== 0 && (
