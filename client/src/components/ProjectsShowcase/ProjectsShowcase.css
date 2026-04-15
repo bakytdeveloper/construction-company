@@ -161,7 +161,7 @@
     }
 }
 
-.modal-content {
+.projects-showcase-modal-content {
     position: relative;
     padding: 30px;
 }
@@ -288,7 +288,7 @@
         margin: 20px;
     }
 
-    .modal-content {
+    .projects-showcase-modal-content {
         padding: 20px;
     }
 

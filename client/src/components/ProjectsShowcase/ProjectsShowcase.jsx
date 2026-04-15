@@ -302,7 +302,7 @@ const ProjectsShowcase = () => {
                 overlayClassName="project-modal-overlay"
             >
                 {selectedComplex && (
-                    <div className="modal-content">
+                    <div className="projects-showcase-modal-content">
                         <button className="modal-close" onClick={closeModal}>×</button>
 
                         <div className="modal-gallery">

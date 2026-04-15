@@ -20,6 +20,15 @@
     --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
     --border-radius: 12px;
     --transition: all 0.3s ease;
+
+    /*--primary-color: #2c3e50;*/
+    /*--secondary-color: #e67e22;*/
+    /*--accent-color: #3498db;*/
+    /*--text-dark: #2c3e50;*/
+    /*--text-light: #7f8c8d;*/
+    --background-light: #f8f9fa;
+    --success: #27ae60;
+    --error: #e74c3c;
 }
 
 body {
