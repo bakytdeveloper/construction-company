@@ -14,7 +14,7 @@ import PropertyDetailPage from './pages/ProjectDetailPage/PropertyDetailPage';
 import ContactPage from './pages/ContactPage/ContactPage';
 import AboutPage from './pages/AboutPage/AboutPage';
 import FAQPage from './pages/FAQPage/FAQPage';
-import AdminPanel from './pages/AdminPanel/AdminPanel';
+import AdminPanel from './admin/AdminPanel';
 import ScrollToTop from './components/ScrollToTop/ScrollToTop';
 
 function App() {
@@ -41,7 +41,7 @@ function App() {
                 <Route path="/contact" element={<ContactPage />} />
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/faq" element={<FAQPage />} />
-                <Route path="/admin" element={<AdminPanel />} />
+                <Route path="/admin/*" element={<AdminPanel />} /> {/* Добавлен /* для всех подмаршрутов */}
             </Routes>
             {!isAdminRoute && <Footer />}
         </>
