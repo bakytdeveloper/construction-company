@@ -97,7 +97,7 @@
 .pp-search-box-input {
     width: 100%;
     padding: 10px 40px 10px 16px;
-    border: 1px solid gray;
+    border: 1px solid #e5e7eb;
     border-radius: 40px;
     outline: none;
     font-size: 0.9rem;
@@ -105,7 +105,7 @@
     background: var(--bg-light);
 }
 
-.pp-search-box input:focus {
+.pp-search-box-input:focus {
     border-color: var(--secondary-color);
     background: white;
 }
@@ -241,6 +241,8 @@
 .pp-results {
     padding: 40px 0 80px;
     background: var(--bg-light);
+    z-index: 333;
+
 }
 
 .pp-results-header {
@@ -279,6 +281,7 @@
     background: white;
     cursor: pointer;
     font-size: 0.85rem;
+
 }
 
 /* Properties Grid - как в ProjectsShowcase */
@@ -286,6 +289,8 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
     gap: 30px;
+
+
 }
 
 .pp-property-card {
@@ -294,6 +299,9 @@
     overflow: hidden;
     box-shadow: var(--shadow-md);
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .pp-property-card:hover {
@@ -305,6 +313,7 @@
     position: relative;
     overflow: hidden;
     aspect-ratio: 16/10;
+    flex-shrink: 0;
 }
 
 .pp-card-image img {
@@ -358,6 +367,9 @@
 
 .pp-card-content {
     padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
 }
 
 .pp-card-content h3 {
@@ -411,11 +423,12 @@
     font-size: 0.8rem;
     color: var(--text-light);
     line-height: 1.5;
-    margin-bottom: 16px;
+    margin-bottom: auto;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    flex: 1;
 }
 
 /* Buttons */
@@ -423,7 +436,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 8px 20px;
+    padding: 10px 20px;
     border-radius: 40px;
     font-weight: 600;
     text-decoration: none;
@@ -433,6 +446,8 @@
     font-size: 0.85rem;
     gap: 8px;
     width: 100%;
+    margin-top: 16px;
+    flex-shrink: 0;
 }
 
 .pp-btn-primary {
@@ -540,6 +555,10 @@
         grid-template-columns: 1fr;
         gap: 20px;
     }
+
+    .pp-btn {
+        padding: 10px 16px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -549,5 +568,14 @@
 
     .pp-spec-item {
         font-size: 0.7rem;
+    }
+
+    .pp-card-content {
+        padding: 16px;
+    }
+
+    .pp-btn {
+        padding: 8px 16px;
+        font-size: 0.8rem;
     }
 }
