@@ -200,6 +200,7 @@ const ComplexesManager = () => {
 
                                             setEditingComplex({
                                                 ...complex,
+                                                _id: complex._id, // Явно передаем _id
                                                 images: existingImages,
                                                 features: complex.features || [],
                                                 infrastructure: complex.infrastructure || []

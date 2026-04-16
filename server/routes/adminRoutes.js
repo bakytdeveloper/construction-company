@@ -530,4 +530,115 @@ router.delete('/contacts/:id', authenticateAdmin, async (req, res) => {
     }
 });
 
+// routes/adminRoutes.js - добавьте эти маршруты после всех CRUD операций
+
+// ============ Удаление изображений для Недвижимости ============
+router.delete('/properties/:id/images', authenticateAdmin, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { imageUrl } = req.body;
+
+        if (!imageUrl) {
+            return res.status(400).json({ error: 'Не указан URL изображения' });
+        }
+
+        // Находим объект недвижимости
+        const property = await Property.findById(id);
+        if (!property) {
+            return res.status(404).json({ error: 'Объект не найден' });
+        }
+
+        // Удаляем изображение из массива images
+        const imageIndex = property.images.findIndex(img => img === imageUrl);
+        if (imageIndex !== -1) {
+            property.images.splice(imageIndex, 1);
+        }
+
+        // Если удаляемое изображение является главным, устанавливаем новое главное
+        if (property.mainImage === imageUrl) {
+            property.mainImage = property.images.length > 0 ? property.images[0] : '';
+        }
+
+        await property.save();
+
+        // Удаляем файл с сервера
+        if (imageUrl.startsWith('/uploads/')) {
+            // Определяем правильный путь к файлу
+            let filePath;
+            if (imageUrl.includes('/properties/')) {
+                filePath = path.join(__dirname, '..', imageUrl);
+            } else {
+                filePath = path.join(__dirname, '..', imageUrl);
+            }
+
+            if (fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath);
+                console.log(`🗑️ Файл удален: ${filePath}`);
+            } else {
+                console.log(`⚠️ Файл не найден: ${filePath}`);
+            }
+        }
+
+        res.json({
+            success: true,
+            message: 'Изображение удалено',
+            data: property
+        });
+    } catch (error) {
+        console.error('Error deleting property image:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// ============ Удаление изображений для Жилых Комплексов ============
+router.delete('/complexes/:id/images', authenticateAdmin, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { imageUrl } = req.body;
+
+        if (!imageUrl) {
+            return res.status(400).json({ error: 'Не указан URL изображения' });
+        }
+
+        // Находим ЖК
+        const complex = await ResidentialComplex.findById(id);
+        if (!complex) {
+            return res.status(404).json({ error: 'Жилой комплекс не найден' });
+        }
+
+        // Удаляем изображение из массива images
+        const imageIndex = complex.images.findIndex(img => img === imageUrl);
+        if (imageIndex !== -1) {
+            complex.images.splice(imageIndex, 1);
+        }
+
+        // Если удаляемое изображение является главным, устанавливаем новое главное
+        if (complex.mainImage === imageUrl) {
+            complex.mainImage = complex.images.length > 0 ? complex.images[0] : '';
+        }
+
+        await complex.save();
+
+        // Удаляем файл с сервера
+        if (imageUrl.startsWith('/uploads/')) {
+            const filePath = path.join(__dirname, '..', imageUrl);
+            if (fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath);
+                console.log(`🗑️ Файл удален: ${filePath}`);
+            } else {
+                console.log(`⚠️ Файл не найден: ${filePath}`);
+            }
+        }
+
+        res.json({
+            success: true,
+            message: 'Изображение удалено',
+            data: complex
+        });
+    } catch (error) {
+        console.error('Error deleting complex image:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
 export default router;

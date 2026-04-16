@@ -1,6 +1,13 @@
 // controllers/propertyController.js
 import Property from '../models/Property.js';
 import ResidentialComplex from '../models/ResidentialComplex.js';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Получить все объекты недвижимости
 export const getAllProperties = async (req, res) => {
@@ -194,16 +201,32 @@ export const updateProperty = async (req, res) => {
 // Удалить объект
 export const deleteProperty = async (req, res) => {
     try {
-        const property = await Property.findByIdAndDelete(req.params.id);
+        const property = await Property.findById(req.params.id);
         if (!property) {
             return res.status(404).json({ error: 'Объект не найден' });
         }
+
+        // Удаляем все изображения с сервера
+        if (property.images && property.images.length > 0) {
+            property.images.forEach(imagePath => {
+                if (imagePath && imagePath.startsWith('/uploads/')) {
+                    const filePath = path.join(__dirname, '..', imagePath);
+                    if (fs.existsSync(filePath)) {
+                        fs.unlinkSync(filePath);
+                        console.log(`🗑️ Файл удален: ${filePath}`);
+                    }
+                }
+            });
+        }
+
+        await Property.findByIdAndDelete(req.params.id);
 
         res.json({
             success: true,
             message: 'Объект удален'
         });
     } catch (error) {
+        console.error('Error in deleteProperty:', error);
         res.status(500).json({ error: error.message });
     }
 };

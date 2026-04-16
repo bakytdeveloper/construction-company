@@ -810,6 +810,15 @@ const DynamicForm = ({
                     images={images}
                     onImagesChange={setImages}
                     multiple={true}
+                    entityId={formData._id}
+                    entityType={type}
+                    onImageDeleted={() => {
+                        // Обновляем форму после удаления изображения
+                        if (type === 'property' && formData._id) {
+                            // Можно обновить данные или просто показать уведомление
+                            toast.success('Галерея обновлена');
+                        }
+                    }}
                 />
             </div>
 

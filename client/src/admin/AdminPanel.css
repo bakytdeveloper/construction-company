@@ -1025,3 +1025,10 @@
     background: var(--ap-border);
     border-radius: 3px;
 }
+
+
+.ap-remove-image:disabled,
+.ap-set-main:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

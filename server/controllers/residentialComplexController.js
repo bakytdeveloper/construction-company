@@ -200,6 +200,12 @@
 // controllers/residentialComplexController.js
 import ResidentialComplex from '../models/ResidentialComplex.js';
 import Property from '../models/Property.js';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Получить все ЖК (публичные)
 export const getAllComplexes = async (req, res) => {
@@ -405,6 +411,19 @@ export const deleteComplex = async (req, res) => {
         const complex = await ResidentialComplex.findById(req.params.id);
         if (!complex) {
             return res.status(404).json({ error: 'Жилой комплекс не найден' });
+        }
+
+        // Удаляем все изображения с сервера
+        if (complex.images && complex.images.length > 0) {
+            complex.images.forEach(imagePath => {
+                if (imagePath && imagePath.startsWith('/uploads/')) {
+                    const filePath = path.join(__dirname, '..', imagePath);
+                    if (fs.existsSync(filePath)) {
+                        fs.unlinkSync(filePath);
+                        console.log(`🗑️ Файл удален: ${filePath}`);
+                    }
+                }
+            });
         }
 
         await Property.updateMany(

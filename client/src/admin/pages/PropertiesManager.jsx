@@ -425,6 +425,7 @@ const PropertiesManager = () => {
 
                                         setEditingProperty({
                                             ...property,
+                                            _id: property._id, // Явно передаем _id
                                             images: existingImages,
                                             features: property.features || []
                                         });
