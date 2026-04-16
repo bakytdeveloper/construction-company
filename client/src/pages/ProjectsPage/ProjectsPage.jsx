@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import SEO from '../../components/SEO/SEO';
 import './ProjectsPage.css';
 
 const ProjectsPage = () => {
+    const location = useLocation();
     const [allProperties, setAllProperties] = useState([]);
     const [properties, setProperties] = useState([]);
     const [complexes, setComplexes] = useState([]);
@@ -16,7 +17,6 @@ const ProjectsPage = () => {
         search: ''
     });
 
-    // Доступные опции для фильтрации (на основе данных)
     const [availableTypes, setAvailableTypes] = useState([]);
     const [availableStatuses, setAvailableStatuses] = useState([]);
     const [availableComplexes, setAvailableComplexes] = useState([]);
@@ -38,6 +38,22 @@ const ProjectsPage = () => {
         { id: 'sold', name: 'Продана', class: 'pp-status-sold' }
     ];
 
+    // Чтение параметров из URL при монтировании
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const typeParam = params.get('type');
+        const complexParam = params.get('complex');
+        const statusParam = params.get('status');
+        const searchParam = params.get('search');
+
+        setFilters({
+            type: typeParam || 'all',
+            complex: complexParam || 'all',
+            status: statusParam || 'all',
+            search: searchParam || ''
+        });
+    }, [location.search]);
+
     useEffect(() => {
         fetchAllData();
     }, []);
@@ -49,17 +65,14 @@ const ProjectsPage = () => {
     const fetchAllData = async () => {
         setLoading(true);
         try {
-            // Загружаем все объекты недвижимости без фильтров
             const propertiesResponse = await axios.get(`${process.env.REACT_APP_API_URL}/properties`);
             const allProps = propertiesResponse.data.data || [];
             setAllProperties(allProps);
 
-            // Загружаем ЖК
             const complexesResponse = await axios.get(`${process.env.REACT_APP_API_URL}/complexes`);
             const allComplexes = complexesResponse.data.data || [];
             setComplexes(allComplexes);
 
-            // Анализируем доступные типы недвижимости
             const typesSet = new Set();
             const statusesSet = new Set();
             const complexesSet = new Set();
@@ -70,7 +83,6 @@ const ProjectsPage = () => {
                 if (prop.residentialComplex) complexesSet.add(prop.residentialComplex);
             });
 
-            // Формируем доступные опции для фильтров
             const availableTypesList = propertyTypes.filter(type =>
                 type.id === 'all' || typesSet.has(type.id)
             );
@@ -98,22 +110,18 @@ const ProjectsPage = () => {
     const applyFilters = () => {
         let filtered = [...allProperties];
 
-        // Фильтр по типу
         if (filters.type !== 'all') {
             filtered = filtered.filter(prop => prop.propertyType === filters.type);
         }
 
-        // Фильтр по ЖК
         if (filters.complex !== 'all') {
             filtered = filtered.filter(prop => prop.residentialComplex === filters.complex);
         }
 
-        // Фильтр по статусу
         if (filters.status !== 'all') {
             filtered = filtered.filter(prop => prop.status === filters.status);
         }
 
-        // Фильтр по поиску
         if (filters.search) {
             const searchLower = filters.search.toLowerCase();
             filtered = filtered.filter(prop =>
@@ -196,7 +204,6 @@ const ProjectsPage = () => {
             />
 
             <div className="pp-projects-page">
-                {/* Hero Section */}
                 <section className="pp-hero">
                     <div className="pp-hero-bg"></div>
                     <div className="pp-container">
@@ -214,7 +221,6 @@ const ProjectsPage = () => {
                     </div>
                 </section>
 
-                {/* Filters Section */}
                 <section className="pp-filters">
                     <div className="pp-container">
                         <div className="pp-filters-wrapper" data-aos="fade-up">
@@ -231,7 +237,6 @@ const ProjectsPage = () => {
                                 </svg>
                             </div>
 
-                            {/* Тип недвижимости - только доступные */}
                             {availableTypes.length > 1 && (
                                 <div className="pp-filter-group">
                                     <div className="pp-filter-buttons">
@@ -249,7 +254,6 @@ const ProjectsPage = () => {
                                 </div>
                             )}
 
-                            {/* Жилые комплексы - только те, где есть объекты */}
                             {availableComplexes.length > 1 && (
                                 <div className="pp-filter-row">
                                     <div className="pp-filter-item">
@@ -268,7 +272,6 @@ const ProjectsPage = () => {
                                 </div>
                             )}
 
-                            {/* Статус - только доступные */}
                             {availableStatuses.length > 1 && (
                                 <div className="pp-filter-item">
                                     <div className="pp-status-buttons">
@@ -288,7 +291,6 @@ const ProjectsPage = () => {
                     </div>
                 </section>
 
-                {/* Results Section */}
                 <section className="pp-results">
                     <div className="pp-container">
                         {properties.length === 0 ? (

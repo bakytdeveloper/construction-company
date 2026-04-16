@@ -38,7 +38,7 @@ const AboutPage = () => {
                                 </p>
                                 <div className="mission-stats">
                                     <div className="mission-stat">
-                                        <div className="stat-number">2012</div>
+                                        <div className="stat-number">2014</div>
                                         <div className="stat-label">Год основания</div>
                                     </div>
                                     <div className="mission-stat">
