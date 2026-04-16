@@ -69,6 +69,18 @@ const PropertyDetailPage = () => {
         return names[type] || type;
     };
 
+    const getPropertyTypeIcon = (type) => {
+        const icons = {
+            apartment: '🏢',
+            commercial: '🏭',
+            house: '🏡',
+            land: '🌾',
+            parking: '🅿️',
+            storage: '📦'
+        };
+        return icons[type] || '🏠';
+    };
+
     const getStatusText = (status) => {
         const statusMap = {
             'ready': 'Готовая к продаже',
@@ -81,169 +93,233 @@ const PropertyDetailPage = () => {
 
     const getStatusClass = (status) => {
         const classMap = {
-            'ready': 'status-ready',
-            'under_construction': 'status-construction',
-            'planned': 'status-planned',
-            'sold': 'status-sold'
+            'ready': 'pd-status-ready',
+            'under_construction': 'pd-status-construction',
+            'planned': 'pd-status-planned',
+            'sold': 'pd-status-sold'
         };
         return classMap[status] || '';
     };
 
+    const getImageUrl = (imagePath) => {
+        if (!imagePath) return '/placeholder-image.jpg';
+        if (imagePath.startsWith('http')) return imagePath;
+        if (imagePath.startsWith('/uploads')) {
+            return `${process.env.REACT_APP_API_URL?.replace('/api', '') || 'http://localhost:5000'}${imagePath}`;
+        }
+        return imagePath;
+    };
+
     if (loading) {
         return (
-            <div className="property-detail-loading">
-                <div className="loader"></div>
+            <div className="pd-loading">
+                <div className="pd-loader"></div>
             </div>
         );
     }
 
     if (!property) {
         return (
-            <div className="property-not-found">
-                <h2>Объект не найден</h2>
-                <Link to="/projects" className="btn btn-primary">Вернуться к списку</Link>
+            <div className="pd-not-found">
+                <div className="pd-not-found-content">
+                    <span>🔍</span>
+                    <h2>Объект не найден</h2>
+                    <p>К сожалению, запрашиваемый объект недвижимости не существует или был удален</p>
+                    <Link to="/projects" className="pd-btn pd-btn-primary">Вернуться к списку</Link>
+                </div>
             </div>
         );
     }
+
+    const allImages = [property.mainImage, ...(property.images || [])].filter((v, i, a) => a.indexOf(v) === i);
 
     return (
         <>
             <SEO
                 title={`${property.title} - ${getPropertyTypeName(property.propertyType)} в Алматы`}
-                description={property.description.substring(0, 160)}
+                description={property.description?.substring(0, 160)}
                 url={`/property/${id}`}
             />
 
-            <div className="property-detail-page">
-                <section className="detail-hero">
-                    <div className="detail-hero-bg">
-                        <img src={property.mainImage.startsWith('http') ? property.mainImage : `${process.env.REACT_APP_IMG_URL}${property.mainImage}`} alt={property.title} />
-                        <div className="detail-hero-overlay"></div>
+            <div className="pd-property-detail">
+                {/* Hero Section с фиксированным фоном */}
+                <section className="pd-hero">
+                    <div className="pd-hero-bg">
+                        <img src={getImageUrl(property.mainImage)} alt={property.title} />
+                        <div className="pd-hero-overlay"></div>
                     </div>
-                    <div className="container">
-                        <div className="detail-hero-content">
-                            <div className="breadcrumbs">
+                    <div className="pd-container">
+                        <div className="pd-hero-content">
+                            <div className="pd-breadcrumbs">
                                 <Link to="/">Главная</Link>
                                 <span>/</span>
                                 <Link to="/projects">Недвижимость</Link>
                                 <span>/</span>
                                 <span>{property.title}</span>
                             </div>
-                            <div className={`hero-status-badge ${getStatusClass(property.status)}`}>
+                            <div className={`pd-status-badge ${getStatusClass(property.status)}`}>
                                 {getStatusText(property.status)}
                             </div>
-                            <h1 data-aos="fade-up">{property.title}</h1>
-                            <div className="detail-badges" data-aos="fade-up" data-aos-delay="100">
-                                <span className="badge">📍 {property.location}</span>
-                                <span className="badge">📐 {property.area} м²</span>
-                                <span className="badge price-badge">💰 {property.price.toLocaleString()} ₸</span>
+                            <h1>{property.title}</h1>
+                            <div className="pd-hero-meta">
+                                <div className="pd-meta-item">
+                                    <span className="pd-meta-icon">📍</span>
+                                    <span>{property.location}</span>
+                                </div>
+                                <div className="pd-meta-item">
+                                    <span className="pd-meta-icon">📐</span>
+                                    <span>{property.area} м²</span>
+                                </div>
+                                <div className="pd-meta-item pd-price">
+                                    <span className="pd-meta-icon">💰</span>
+                                    <span>{property.price.toLocaleString()} ₸</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </section>
 
-                <section className="detail-gallery">
-                    <div className="container">
-                        <div className="gallery-main" data-aos="fade-up">
-                            <img
-                                src={(property.images?.[selectedImage] || property.mainImage).startsWith('http')
-                                    ? (property.images?.[selectedImage] || property.mainImage)
-                                    : `${process.env.REACT_APP_IMG_URL}${property.images?.[selectedImage] || property.mainImage}`}
-                                alt={property.title}
-                            />
-                        </div>
-                        {property.images && property.images.length > 0 && (
-                            <div className="gallery-thumbs" data-aos="fade-up" data-aos-delay="100">
-                                {property.images.map((image, index) => (
-                                    <div
-                                        key={index}
-                                        className={`thumb ${selectedImage === index ? 'active' : ''}`}
-                                        onClick={() => setSelectedImage(index)}
-                                    >
-                                        <img src={image.startsWith('http') ? image : `${process.env.REACT_APP_IMG_URL}${image}`} alt={`${property.title} ${index + 1}`} />
-                                    </div>
-                                ))}
+                {/* Gallery Section */}
+                <section className="pd-gallery">
+                    <div className="pd-container">
+                        <div className="pd-gallery-wrapper">
+                            <div className="pd-gallery-main">
+                                <img
+                                    src={getImageUrl(allImages[selectedImage])}
+                                    alt={property.title}
+                                />
+                                {allImages.length > 1 && (
+                                    <>
+                                        <button
+                                            className="pd-gallery-nav pd-gallery-prev"
+                                            onClick={() => setSelectedImage(prev => (prev - 1 + allImages.length) % allImages.length)}
+                                        >
+                                            ‹
+                                        </button>
+                                        <button
+                                            className="pd-gallery-nav pd-gallery-next"
+                                            onClick={() => setSelectedImage(prev => (prev + 1) % allImages.length)}
+                                        >
+                                            ›
+                                        </button>
+                                    </>
+                                )}
                             </div>
-                        )}
-                    </div>
-                </section>
-
-                <section className="detail-info">
-                    <div className="container">
-                        <div className="info-grid">
-                            <div className="info-description" data-aos="fade-right">
-                                <h2>Описание объекта</h2>
-                                <p>{property.description}</p>
-
-                                <div className="property-specs-detail">
-                                    <h3>Характеристики</h3>
-                                    <div className="specs-grid">
-                                        <div className="spec-item">
-                                            <span className="spec-label">Тип недвижимости:</span>
-                                            <span className="spec-value">{getPropertyTypeName(property.propertyType)}</span>
+                            {allImages.length > 1 && (
+                                <div className="pd-gallery-thumbs">
+                                    {allImages.map((image, index) => (
+                                        <div
+                                            key={index}
+                                            className={`pd-thumb ${selectedImage === index ? 'pd-active' : ''}`}
+                                            onClick={() => setSelectedImage(index)}
+                                        >
+                                            <img src={getImageUrl(image)} alt={`${property.title} ${index + 1}`} />
                                         </div>
-                                        <div className="spec-item">
-                                            <span className="spec-label">Общая площадь:</span>
-                                            <span className="spec-value">{property.area} м²</span>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </section>
+
+                {/* Main Content */}
+                <div className="pd-main">
+                    <div className="pd-container">
+                        <div className="pd-grid">
+                            {/* Left Column - Description & Features */}
+                            <div className="pd-content">
+                                {/* Description */}
+                                <div className="pd-card">
+                                    <h2>Описание объекта</h2>
+                                    <p className="pd-description">{property.description}</p>
+                                </div>
+
+                                {/* Specifications */}
+                                <div className="pd-card">
+                                    <h3>Характеристики</h3>
+                                    <div className="pd-specs-grid">
+                                        <div className="pd-spec-item">
+                                            <span className="pd-spec-label">Тип недвижимости</span>
+                                            <span className="pd-spec-value">
+                                                {getPropertyTypeIcon(property.propertyType)} {getPropertyTypeName(property.propertyType)}
+                                            </span>
+                                        </div>
+                                        <div className="pd-spec-item">
+                                            <span className="pd-spec-label">Общая площадь</span>
+                                            <span className="pd-spec-value">{property.area} м²</span>
                                         </div>
                                         {property.rooms && (
-                                            <div className="spec-item">
-                                                <span className="spec-label">Количество комнат:</span>
-                                                <span className="spec-value">{property.rooms}</span>
+                                            <div className="pd-spec-item">
+                                                <span className="pd-spec-label">Количество комнат</span>
+                                                <span className="pd-spec-value">{property.rooms}</span>
                                             </div>
                                         )}
                                         {property.floor && (
-                                            <div className="spec-item">
-                                                <span className="spec-label">Этаж:</span>
-                                                <span className="spec-value">{property.floor} / {property.totalFloors || '?'}</span>
+                                            <div className="pd-spec-item">
+                                                <span className="pd-spec-label">Этаж</span>
+                                                <span className="pd-spec-value">{property.floor} / {property.totalFloors || '?'}</span>
                                             </div>
                                         )}
-                                        <div className="spec-item">
-                                            <span className="spec-label">Статус:</span>
-                                            <span className={`spec-value ${getStatusClass(property.status)}`}>{getStatusText(property.status)}</span>
+                                        <div className="pd-spec-item">
+                                            <span className="pd-spec-label">Статус</span>
+                                            <span className={`pd-spec-value ${getStatusClass(property.status)}`}>
+                                                {getStatusText(property.status)}
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
 
+                                {/* Features */}
                                 {property.features && property.features.length > 0 && (
-                                    <>
-                                        <h3>Особенности</h3>
-                                        <ul className="features-list">
+                                    <div className="pd-card">
+                                        <h3>Особенности объекта</h3>
+                                        <div className="pd-features-grid">
                                             {property.features.map((feature, index) => (
-                                                <li key={index}>
+                                                <div key={index} className="pd-feature-item">
                                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                                                         <path d="M20 6L9 17L4 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                                                     </svg>
-                                                    {feature}
-                                                </li>
+                                                    <span>{feature}</span>
+                                                </div>
                                             ))}
-                                        </ul>
-                                    </>
+                                        </div>
+                                    </div>
                                 )}
                             </div>
 
-                            <div className="info-sidebar" data-aos="fade-left">
+                            {/* Right Column - Sidebar */}
+                            <div className="pd-sidebar">
+                                {/* Price Card */}
+                                <div className="pd-price-card">
+                                    <div className="pd-price-label">Стоимость</div>
+                                    <div className="pd-price-value">{property.price.toLocaleString()} ₸</div>
+                                    {property.area && (
+                                        <div className="pd-price-per-meter">
+                                            ≈ {(property.price / property.area).toLocaleString()} ₸/м²
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Contact Form */}
                                 {!showContactForm ? (
-                                    <div className="consultation-card">
+                                    <div className="pd-contact-card">
                                         <h3>Интересует этот объект?</h3>
                                         <p>Получите детальную консультацию</p>
-                                        <div className="price-highlight">
-                                            <span className="price-label">Стоимость</span>
-                                            <span className="price-value">{property.price.toLocaleString()} ₸</span>
-                                        </div>
                                         <button
-                                            className="btn btn-primary consultation-btn"
+                                            className="pd-btn pd-btn-primary pd-btn-block"
                                             onClick={() => setShowContactForm(true)}
                                         >
                                             Получить консультацию
                                         </button>
-                                        <div className="contact-alternative">
+                                        <div className="pd-contact-alternative">
                                             <p>Или позвоните нам:</p>
-                                            <a href="tel:+77771234567">📞 +7 (777) 123-45-67</a>
+                                            <a href="tel:+77771234567" className="pd-phone-link">
+                                                📞 +7 (777) 123-45-67
+                                            </a>
                                         </div>
                                     </div>
                                 ) : (
-                                    <div className="quick-contact-form">
+                                    <div className="pd-contact-form-card">
                                         <h3>Быстрая заявка</h3>
                                         <form onSubmit={handleContactSubmit}>
                                             <input
@@ -272,12 +348,12 @@ const PropertyDetailPage = () => {
                                                 value={contactData.message}
                                                 onChange={(e) => setContactData({...contactData, message: e.target.value})}
                                             ></textarea>
-                                            <button type="submit" className="btn btn-primary" disabled={sending}>
+                                            <button type="submit" className="pd-btn pd-btn-primary pd-btn-block" disabled={sending}>
                                                 {sending ? 'Отправка...' : 'Отправить заявку'}
                                             </button>
                                             <button
                                                 type="button"
-                                                className="btn-cancel"
+                                                className="pd-btn pd-btn-secondary pd-btn-block"
                                                 onClick={() => setShowContactForm(false)}
                                             >
                                                 Отмена
@@ -288,16 +364,21 @@ const PropertyDetailPage = () => {
                             </div>
                         </div>
                     </div>
-                </section>
+                </div>
 
+                {/* Complex Info Section */}
                 {property.residentialComplex && (
-                    <section className="complex-info">
-                        <div className="container">
-                            <div className="complex-card">
-                                <h3>📍 Находится в ЖК "{property.residentialComplex.title}"</h3>
+                    <section className="pd-complex">
+                        <div className="pd-container">
+                            <div className="pd-complex-card">
+                                <div className="pd-complex-icon">🏢</div>
+                                <h3>Жилой комплекс "{property.residentialComplex.title}"</h3>
                                 <p>{property.residentialComplex.location}</p>
-                                <Link to={`/complex/${property.residentialComplex._id}`} className="btn btn-outline">
+                                <Link to={`/projects`} className="pd-btn pd-btn-outline">
                                     Посмотреть все объекты в ЖК
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                        <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2"/>
+                                    </svg>
                                 </Link>
                             </div>
                         </div>
