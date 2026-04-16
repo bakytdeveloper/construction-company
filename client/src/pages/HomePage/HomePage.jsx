@@ -9,9 +9,23 @@ import Stats from '../../components/Stats/Stats';
 import Testimonials from '../../components/Testimonials/Testimonials';
 import './HomePage.css';
 import FAQ from "../../components/FAQ/FAQ";
+import {useLocation} from "react-router-dom";
 
 const HomePage = () => {
     const [isVisible, setIsVisible] = useState(false);
+    const location = useLocation();
+
+    const scrollToTop = () => {
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'smooth'
+        });
+    };
+
+    useEffect(() => {
+        scrollToTop();
+    }, [location.search]);
 
     useEffect(() => {
         setIsVisible(true);

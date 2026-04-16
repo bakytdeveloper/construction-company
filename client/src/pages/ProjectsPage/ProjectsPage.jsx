@@ -21,6 +21,18 @@ const ProjectsPage = () => {
     const [availableStatuses, setAvailableStatuses] = useState([]);
     const [availableComplexes, setAvailableComplexes] = useState([]);
 
+    const scrollToTop = () => {
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'smooth'
+        });
+    };
+
+    useEffect(() => {
+        scrollToTop();
+    }, [location.search]);
+
     const propertyTypes = [
         { id: 'all', name: 'Вся недвижимость', icon: '🏠' },
         { id: 'apartment', name: 'Квартиры', icon: '🏢' },

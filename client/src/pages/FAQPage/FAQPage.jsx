@@ -1,10 +1,24 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import SEO from '../../components/SEO/SEO';
 import './FAQPage.css';
+import {useLocation} from "react-router-dom";
 
 const FAQPage = () => {
+    const location = useLocation();
     const [searchTerm, setSearchTerm] = useState('');
     const [openIndex, setOpenIndex] = useState(null);
+
+    const scrollToTop = () => {
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'smooth'
+        });
+    };
+
+    useEffect(() => {
+        scrollToTop();
+    }, [location.search]);
 
     const faqs = [
         {

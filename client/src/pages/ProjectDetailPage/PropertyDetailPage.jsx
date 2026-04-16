@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import {useParams, Link, useLocation} from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import SEO from '../../components/SEO/SEO';
 import './ProjectDetailPage.css';
 
 const PropertyDetailPage = () => {
+    const location = useLocation();
     const { id } = useParams();
     const [property, setProperty] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -18,6 +19,18 @@ const PropertyDetailPage = () => {
         message: ''
     });
     const [sending, setSending] = useState(false);
+
+    const scrollToTop = () => {
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'smooth'
+        });
+    };
+
+    useEffect(() => {
+        scrollToTop();
+    }, [location.search]);
 
     useEffect(() => {
         fetchProperty();

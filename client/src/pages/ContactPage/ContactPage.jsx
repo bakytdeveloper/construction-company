@@ -1,9 +1,25 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import SEO from '../../components/SEO/SEO';
 import ContactForm from '../../components/ContactForm/ContactForm';
 import './ContactPage.css';
+import {useLocation} from "react-router-dom";
 
 const ContactPage = () => {
+    const location = useLocation();
+
+    const scrollToTop = () => {
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'smooth'
+        });
+    };
+
+    useEffect(() => {
+        scrollToTop();
+    }, [location.search]);
+
+
     return (
         <>
             <SEO

@@ -1,8 +1,24 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import SEO from '../../components/SEO/SEO';
 import './AboutPage.css';
+import {useLocation} from "react-router-dom";
 
 const AboutPage = () => {
+    const location = useLocation();
+
+    const scrollToTop = () => {
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'smooth'
+        });
+    };
+
+    useEffect(() => {
+        scrollToTop();
+    }, [location.search]);
+
+
     return (
         <>
             <SEO
