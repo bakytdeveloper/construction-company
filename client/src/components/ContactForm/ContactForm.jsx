@@ -25,7 +25,6 @@ const ContactForm = () => {
         e.preventDefault();
         setLoading(true);
 
-        // Валидация email
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(formData.email)) {
             toast.error('Пожалуйста, введите корректный email адрес');
@@ -33,7 +32,6 @@ const ContactForm = () => {
             return;
         }
 
-        // Валидация телефона (для Казахстана)
         const phoneRegex = /^[\+\(]?[0-9\(\)\-\s]{10,}$/;
         if (!phoneRegex.test(formData.phone)) {
             toast.error('Пожалуйста, введите корректный номер телефона');
@@ -144,7 +142,6 @@ const ContactForm = () => {
                                     value={formData.phone}
                                     onChange={handleChange}
                                     required
-                                    // placeholder="+7 (777) 123-45-67"
                                     className={focusedField === 'phone' || formData.phone ? 'filled' : ''}
                                     onFocus={() => setFocusedField('phone')}
                                     onBlur={() => setFocusedField(null)}
@@ -160,7 +157,6 @@ const ContactForm = () => {
                                     value={formData.email}
                                     onChange={handleChange}
                                     required
-                                    // placeholder="example@mail.com"
                                     className={focusedField === 'email' || formData.email ? 'filled' : ''}
                                     onFocus={() => setFocusedField('email')}
                                     onBlur={() => setFocusedField(null)}
@@ -170,24 +166,24 @@ const ContactForm = () => {
                             </div>
                         </div>
 
-                        <div className="form-group">
+                        <div className="form-group select-group">
                             <select
                                 name="projectType"
                                 value={formData.projectType}
                                 onChange={handleChange}
+                                className="custom-select"
                             >
                                 <option value="house">🏠 Строительство дома</option>
                                 <option value="apartment">🏢 Покупка квартиры</option>
                                 <option value="commercial">🏭 Коммерческая недвижимость</option>
                                 <option value="other">📝 Другое</option>
                             </select>
-                            <span className="select-arrow"></span>
+                            <span className="select-arrow-icon">▼</span>
                         </div>
 
                         <div className="form-group">
                             <textarea
                                 name="message"
-                                style={{border: '1px solid gray', borderRadius: "7px", padding: '5px'}}
                                 value={formData.message}
                                 onChange={handleChange}
                                 rows="4"
@@ -196,7 +192,7 @@ const ContactForm = () => {
                                 onFocus={() => setFocusedField('message')}
                                 onBlur={() => setFocusedField(null)}
                             ></textarea>
-                            <label style={{marginLeft: "5px"}}>Сообщение *</label>
+                            <label>Сообщение *</label>
                             <span className="focus-border"></span>
                         </div>
 

@@ -152,8 +152,7 @@
 }
 
 .form-group input,
-.form-group textarea,
-.form-group select {
+.form-group textarea {
     width: 100%;
     padding: 12px 0;
     font-size: 1rem;
@@ -168,24 +167,6 @@
 .form-group textarea {
     resize: vertical;
     min-height: 80px;
-}
-
-.form-group select {
-    cursor: pointer;
-    appearance: none;
-}
-
-.select-arrow {
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 0;
-    height: 0;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-top: 5px solid var(--text-light);
-    pointer-events: none;
 }
 
 .form-group label {
@@ -220,6 +201,46 @@
 .form-group input:focus ~ .focus-border,
 .form-group textarea:focus ~ .focus-border {
     width: 100%;
+}
+
+/* Select styles - без встроенной стрелки */
+.select-group {
+    position: relative;
+}
+
+.custom-select {
+    width: 100%;
+    padding: 12px 30px 12px 0;
+    font-size: 1rem;
+    border: none;
+    border-bottom: 2px solid #e0e0e0;
+    outline: none;
+    background: transparent;
+    cursor: pointer;
+    font-family: inherit;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+.custom-select:focus {
+    border-bottom-color: var(--secondary-color);
+}
+
+.select-arrow-icon {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 10px;
+    color: var(--text-light);
+    pointer-events: none;
+    transition: all 0.3s;
+}
+
+.custom-select:focus ~ .select-arrow-icon {
+    color: var(--secondary-color);
+    transform: translateY(-50%) rotate(180deg);
 }
 
 .form-row {

@@ -194,7 +194,7 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import './WhatsAppButton.css';
-import { FaWhatsapp, FaTimes, FaArrowUp, FaPhoneAlt, FaBuilding } from 'react-icons/fa';
+import {FaWhatsapp, FaTimes, FaArrowUp, FaPhoneAlt, FaBuilding, FaFeather, FaPen, FaEdit} from 'react-icons/fa';
 
 const WhatsAppButton = () => {
     const [isVisible, setIsVisible] = useState(true);
@@ -342,7 +342,7 @@ const WhatsAppButton = () => {
                     onClick={handleExpand}
                     aria-label={isExpanded ? "Свернуть меню" : "Открыть меню"}
                 >
-                    {isExpanded ? <FaTimes aria-hidden="true" /> : <FaPhoneAlt aria-hidden="true" />}
+                    {isExpanded ? <FaTimes aria-hidden="true" /> : <FaFeather aria-hidden="true" />}
                 </button>
 
                 {/* Расширенное меню с шаблонами сообщений */}
