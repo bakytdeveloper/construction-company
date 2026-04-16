@@ -105,7 +105,7 @@ const PropertyDetailPage = () => {
         if (!imagePath) return '/placeholder-image.jpg';
         if (imagePath.startsWith('http')) return imagePath;
         if (imagePath.startsWith('/uploads')) {
-            return `${process.env.REACT_APP_API_URL?.replace('/api', '') || 'http://localhost:5000'}${imagePath}`;
+            return `${process.env.REACT_APP_API_URL?.replace('/api', '') || process.env.REACT_APP_IMG_URL}${imagePath}`;
         }
         return imagePath;
     };

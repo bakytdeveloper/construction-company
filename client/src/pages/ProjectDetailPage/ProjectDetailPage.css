@@ -57,6 +57,7 @@
     max-width: 1280px;
     margin: 0 auto;
     padding: 0 20px;
+    width: 100%;
 }
 
 /* Buttons */
@@ -114,10 +115,10 @@
 /* Hero Section */
 .pd-hero {
     position: relative;
-    min-height: 550px;
+    min-height: 500px;
     display: flex;
-    align-items: flex-end;
-    padding: 60px 0 50px;
+    align-items: center;
+    justify-content: center;
     overflow: hidden;
 }
 
@@ -144,9 +145,9 @@
     height: 100%;
     background: linear-gradient(
             to bottom,
-            rgba(0, 0, 0, 0.3) 0%,
+            rgba(0, 0, 0, 0.65) 0%,
             rgba(0, 0, 0, 0.5) 30%,
-            rgba(0, 0, 0, 0.85) 100%
+            rgba(0, 0, 0, 0.35) 100%
     );
 }
 
@@ -155,14 +156,18 @@
     z-index: 2;
     color: white;
     max-width: 900px;
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
 }
 
 /* Breadcrumbs */
 .pd-breadcrumbs {
-    margin-bottom: 30px;
+    margin-bottom: 25px;
     font-size: 0.85rem;
     display: flex;
     align-items: center;
+    justify-content: center;
     flex-wrap: wrap;
 }
 
@@ -189,7 +194,8 @@
 .pd-status-badge {
     display: inline-flex;
     align-items: center;
-    padding: 6px 16px;
+    justify-content: center;
+    padding: 6px 20px;
     border-radius: 30px;
     font-size: 0.8rem;
     font-weight: 600;
@@ -231,6 +237,7 @@
     flex-wrap: wrap;
     gap: 15px;
     margin-top: 10px;
+    justify-content: center;
 }
 
 .pd-meta-item {
@@ -239,7 +246,7 @@
     gap: 8px;
     background: rgba(255, 255, 255, 0.12);
     backdrop-filter: blur(10px);
-    padding: 8px 18px;
+    padding: 8px 20px;
     border-radius: 40px;
     font-size: 0.9rem;
     font-weight: 500;
@@ -331,6 +338,7 @@
     gap: 12px;
     overflow-x: auto;
     padding-bottom: 8px;
+    justify-content: center;
 }
 
 .pd-thumb {
@@ -480,7 +488,7 @@
 /* Sidebar */
 .pd-sidebar {
     position: sticky;
-    top: 30px;
+    top: 100px;
     align-self: start;
 }
 
@@ -615,7 +623,6 @@
 @media (max-width: 768px) {
     .pd-hero {
         min-height: 450px;
-        padding: 40px 0 30px;
     }
 
     .pd-hero-bg {
@@ -636,6 +643,7 @@
     .pd-status-badge {
         margin-bottom: 15px;
         font-size: 0.7rem;
+        padding: 4px 16px;
     }
 
     .pd-hero-meta {
@@ -645,7 +653,7 @@
 
     .pd-meta-item {
         font-size: 0.75rem;
-        padding: 5px 12px;
+        padding: 5px 14px;
     }
 
     .pd-gallery {
@@ -693,7 +701,7 @@
 
     .pd-hero-meta {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: center;
     }
 
     .pd-meta-item {
@@ -706,5 +714,9 @@
 
     .pd-complex-card {
         padding: 25px;
+    }
+
+    .pd-gallery-thumbs {
+        justify-content: flex-start;
     }
 }
