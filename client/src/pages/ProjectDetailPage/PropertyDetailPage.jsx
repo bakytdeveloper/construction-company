@@ -157,10 +157,11 @@ const PropertyDetailPage = () => {
                                 <span>/</span>
                                 <span>{property.title}</span>
                             </div>
+
+                            <h1>{property.title}</h1>
                             <div className={`pd-status-badge ${getStatusClass(property.status)}`}>
                                 {getStatusText(property.status)}
                             </div>
-                            <h1>{property.title}</h1>
                             <div className="pd-hero-meta">
                                 <div className="pd-meta-item">
                                     <span className="pd-meta-icon">📍</span>
