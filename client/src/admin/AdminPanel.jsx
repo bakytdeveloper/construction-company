@@ -1,6 +1,6 @@
 // src/admin/AdminPanel.jsx
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom'; // Убираем BrowserRouter
+import {Routes, Route, Navigate, useLocation} from 'react-router-dom'; // Убираем BrowserRouter
 import { Toaster } from 'react-hot-toast';
 import AdminLayout from './components/AdminLayout';
 import Login from './pages/Login';
@@ -13,6 +13,20 @@ import './AdminPanel.css';
 const AdminPanel = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(true);
+
+    const location = useLocation();
+
+    const scrollToTop = () => {
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'smooth'
+        });
+    };
+
+    useEffect(() => {
+        scrollToTop();
+    }, [location.search]);
 
     useEffect(() => {
         const token = localStorage.getItem('adminToken');

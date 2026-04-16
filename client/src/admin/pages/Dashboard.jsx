@@ -1,6 +1,7 @@
 // src/admin/pages/Dashboard.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import {useLocation} from "react-router-dom";
 
 const Dashboard = () => {
     const [stats, setStats] = useState({
@@ -10,6 +11,19 @@ const Dashboard = () => {
         unreadMessages: 0
     });
     const [loading, setLoading] = useState(true);
+    const location = useLocation();
+
+    const scrollToTop = () => {
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'smooth'
+        });
+    };
+
+    useEffect(() => {
+        scrollToTop();
+    }, [location.search]);
 
     useEffect(() => {
         fetchStats();

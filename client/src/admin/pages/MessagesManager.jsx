@@ -2,11 +2,26 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import {useLocation} from "react-router-dom";
 
 const MessagesManager = () => {
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('all');
+
+    const location = useLocation();
+
+    const scrollToTop = () => {
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'smooth'
+        });
+    };
+
+    useEffect(() => {
+        scrollToTop();
+    }, [location.search]);
 
     useEffect(() => {
         fetchMessages();

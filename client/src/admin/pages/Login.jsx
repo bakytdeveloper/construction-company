@@ -2,10 +2,25 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import {useLocation} from "react-router-dom";
 
 const Login = ({ onLogin }) => {
     const [loginData, setLoginData] = useState({ email: '', password: '' });
     const [loading, setLoading] = useState(false);
+
+    const location = useLocation();
+
+    const scrollToTop = () => {
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'smooth'
+        });
+    };
+
+    useEffect(() => {
+        scrollToTop();
+    }, [location.search]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();

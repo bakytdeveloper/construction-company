@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import DynamicForm from '../components/DynamicForm';
+import {useLocation} from "react-router-dom";
 
 const PropertiesManager = () => {
     const [properties, setProperties] = useState([]);
@@ -11,6 +12,19 @@ const PropertiesManager = () => {
     const [showModal, setShowModal] = useState(false);
     const [editingProperty, setEditingProperty] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const location = useLocation();
+
+    const scrollToTop = () => {
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'smooth'
+        });
+    };
+
+    useEffect(() => {
+        scrollToTop();
+    }, [location.search]);
 
     useEffect(() => {
         fetchData();
