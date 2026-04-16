@@ -14,18 +14,13 @@ const DynamicForm = ({
     const [featureInput, setFeatureInput] = useState('');
     const [infrastructure, setInfrastructure] = useState(initialData.infrastructure || []);
     const [infraInput, setInfraInput] = useState('');
-    // const [images, setImages] = useState(initialData.images?.map(img => ({ id: img, url: img, type: 'url' })) || []);
-// В DynamicForm.jsx, исправьте инициализацию images:
-
     const [images, setImages] = useState(() => {
-        // Если есть initialData.images и это массив
+        // Инициализация изображений
         if (initialData.images && Array.isArray(initialData.images) && initialData.images.length > 0) {
             return initialData.images.map((img, idx) => {
-                // Если img уже объект с url
                 if (typeof img === 'object' && img.url) {
                     return img;
                 }
-                // Если img строка (URL или путь)
                 if (typeof img === 'string') {
                     return {
                         id: `existing-${idx}-${Date.now()}`,
@@ -38,7 +33,6 @@ const DynamicForm = ({
             }).filter(Boolean);
         }
 
-        // Если есть mainImage, но нет images
         if (initialData.mainImage) {
             return [{
                 id: `main-${Date.now()}`,
@@ -51,19 +45,22 @@ const DynamicForm = ({
         return [];
     });
 
-
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        // Разделяем файлы и URL для отправки
+        const fileImages = images.filter(img => img.file);
+        const urlImages = images.filter(img => !img.file);
 
         const submitData = {
             ...formData,
             features,
-            images: images.map(img => img.url),
-            mainImage: images[0]?.url || '',
+            images: urlImages.map(img => img.url), // Только URL изображения
             ...(type === 'complex' && { infrastructure })
         };
 
-        onSubmit(submitData);
+        // Добавляем файлы в отдельное поле для отправки через FormData
+        onSubmit(submitData, fileImages);
     };
 
     const handleChange = (field, value) => {

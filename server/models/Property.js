@@ -42,7 +42,7 @@ const propertySchema = new mongoose.Schema({
         default: null
     },
     floor: {
-        type: Number,
+        type: String,
         default: null
     },
     totalFloors: {

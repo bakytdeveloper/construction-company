@@ -35,18 +35,11 @@ const PropertiesManager = () => {
         }
     };
 
-    const handleSubmit = async (formData) => {
+// В PropertiesManager.jsx, замените handleSubmit на эту версию:
+
+    const handleSubmit = async (formData, fileImages) => {
         const token = localStorage.getItem('adminToken');
         const formDataToSend = new FormData();
-
-        // Безопасное преобразование изображений
-        let fileImages = [];
-        let urlImages = [];
-
-        if (formData.images && Array.isArray(formData.images)) {
-            fileImages = formData.images.filter(img => img && img.file);
-            urlImages = formData.images.filter(img => img && !img.file && img.url);
-        }
 
         // Подготавливаем данные для отправки
         const submitData = {
@@ -61,12 +54,12 @@ const PropertiesManager = () => {
             floor: formData.floor || null,
             residentialComplex: formData.residentialComplex || null,
             features: formData.features || [],
-            images: urlImages.map(img => img.url)
+            images: formData.images || [] // URL изображения
         };
 
         // Если есть URL изображения и нет файлов, устанавливаем первое URL как mainImage
-        if (urlImages.length > 0 && fileImages.length === 0) {
-            submitData.mainImage = urlImages[0].url;
+        if (submitData.images.length > 0 && fileImages.length === 0) {
+            submitData.mainImage = submitData.images[0];
         }
 
         formDataToSend.append('data', JSON.stringify(submitData));
@@ -99,6 +92,7 @@ const PropertiesManager = () => {
             toast.error(errorMsg);
         }
     };
+
 
 
     const handleDelete = async (id) => {

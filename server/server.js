@@ -10,6 +10,7 @@ import contactRoutes from './routes/contactRoutes.js';
 import projectRoutes from './routes/projectRoutes.js';
 import complexRoutes from './routes/complexRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+import fs from 'fs';
 
 dotenv.config();
 
@@ -18,6 +19,15 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// Создание папок для загрузок
+const uploadsDir = path.join(__dirname, 'uploads');
+const complexesDir = path.join(uploadsDir, 'complexes');
+const propertiesDir = path.join(uploadsDir, 'properties');
+
+if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
+if (!fs.existsSync(complexesDir)) fs.mkdirSync(complexesDir, { recursive: true });
+if (!fs.existsSync(propertiesDir)) fs.mkdirSync(propertiesDir, { recursive: true });
 
 // Middleware
 app.use(cors({

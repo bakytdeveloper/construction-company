@@ -30,20 +30,13 @@ const ComplexesManager = () => {
         }
     };
 
-    const handleSubmit = async (formData) => {
+// В ComplexesManager.jsx, замените handleSubmit на эту версию:
+
+    const handleSubmit = async (formData, fileImages) => {
         const token = localStorage.getItem('adminToken');
         const formDataToSend = new FormData();
 
-        // Безопасное преобразование изображений
-        let fileImages = [];
-        let urlImages = [];
-
-        if (formData.images && Array.isArray(formData.images)) {
-            fileImages = formData.images.filter(img => img && img.file);
-            urlImages = formData.images.filter(img => img && !img.file && img.url);
-        }
-
-        // Подготавливаем данные для отправки (без mainImage, он установится на сервере)
+        // Подготавливаем данные для отправки
         const submitData = {
             title: formData.title || '',
             description: formData.description || '',
@@ -52,15 +45,13 @@ const ComplexesManager = () => {
             features: formData.features || [],
             infrastructure: formData.infrastructure || [],
             specifications: formData.specifications || {},
-            // Добавляем URL изображений
-            images: urlImages.map(img => img.url)
+            images: formData.images || [] // URL изображения
         };
 
         // Если есть URL изображения и нет файлов, устанавливаем первое URL как mainImage
-        if (urlImages.length > 0 && fileImages.length === 0) {
-            submitData.mainImage = urlImages[0].url;
+        if (submitData.images.length > 0 && fileImages.length === 0) {
+            submitData.mainImage = submitData.images[0];
         }
-        // Если есть файлы, mainImage установится на сервере после загрузки
 
         formDataToSend.append('data', JSON.stringify(submitData));
 
@@ -96,6 +87,8 @@ const ComplexesManager = () => {
             toast.error(errorMsg);
         }
     };
+
+
 
     const handleDelete = async (id) => {
         if (window.confirm('Удалить жилой комплекс? Все связанные объекты потеряют привязку.')) {
