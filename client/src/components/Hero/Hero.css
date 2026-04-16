@@ -16,7 +16,6 @@
     background-image: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
     background-size: cover;
     background-position: center;
-    /*filter: brightness(0.4) saturate(1.2);*/
     z-index: 0;
     transition: transform 0.1s ease-out;
 }
@@ -82,7 +81,6 @@
     background: linear-gradient(135deg, #c9a03d 0%, #e8c468 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    /*background-clip: text;*/
 }
 
 .hero p {
@@ -145,6 +143,7 @@
     background: rgba(255, 255, 255, 0.2);
 }
 
+/* Scroll Indicator - исправленный */
 .hero-scroll-indicator {
     position: absolute;
     bottom: 30px;
@@ -155,47 +154,72 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
+    transition: opacity 0.3s;
 }
 
+.hero-scroll-indicator:hover {
+    opacity: 0.7;
+}
+
+/* Mouse icon */
 .mouse {
-    width: 30px;
-    height: 50px;
-    border: 2px solid white;
+    width: 28px;
+    height: 46px;
+    border: 2px solid rgba(255, 255, 255, 0.8);
     border-radius: 20px;
     position: relative;
+    background: transparent;
 }
 
 .mouse::before {
     content: '';
     position: absolute;
-    top: 10px;
+    top: 8px;
     left: 50%;
     transform: translateX(-50%);
-    width: 4px;
+    width: 3px;
     height: 8px;
     background: white;
     border-radius: 2px;
-    animation: scroll 2s infinite;
+    animation: scrollWheel 1.5s ease-in-out infinite;
 }
 
-@keyframes scroll {
-    0% { opacity: 1; transform: translateX(-50%) translateY(0); }
-    100% { opacity: 0; transform: translateX(-50%) translateY(20px); }
+@keyframes scrollWheel {
+    0% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+    80% {
+        opacity: 0.5;
+        transform: translateX(-50%) translateY(12px);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(16px);
+    }
 }
 
+/* Arrow down - исправленный */
 .arrow-down {
-    width: 10px;
-    height: 10px;
-    border-left: 2px solid white;
-    border-bottom: 2px solid white;
-    transform: rotate(-45deg);
-    animation: bounce 2s infinite;
+    width: 12px;
+    height: 12px;
+    border-right: 2px solid rgba(255, 255, 255, 0.8);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.8);
+    transform: rotate(45deg);
+    animation: arrowBounce 1.5s ease-in-out infinite;
 }
 
-@keyframes bounce {
-    0%, 100% { transform: rotate(-45deg) translateY(0); }
-    50% { transform: rotate(-45deg) translateY(10px); }
+@keyframes arrowBounce {
+    0%, 100% {
+        transform: rotate(45deg) translateY(0);
+        opacity: 0.6;
+    }
+    50% {
+        transform: rotate(45deg) translateY(8px);
+        margin-left: 13px;
+        opacity: 1;
+    }
 }
 
 @media (max-width: 768px) {
@@ -220,5 +244,19 @@
         width: 100%;
         max-width: 250px;
         margin: 0 auto 40px;
+    }
+
+    .hero-scroll-indicator {
+        bottom: 20px;
+    }
+
+    .mouse {
+        width: 24px;
+        height: 40px;
+    }
+
+    .arrow-down {
+        width: 10px;
+        height: 10px;
     }
 }
