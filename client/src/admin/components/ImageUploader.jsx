@@ -1,11 +1,14 @@
 // // src/admin/components/ImageUploader.jsx
 // import React, { useState, useCallback } from 'react';
 // import { useDropzone } from 'react-dropzone';
+// import axios from 'axios';
+// import toast from 'react-hot-toast';
 //
-// const ImageUploader = ({ images = [], onImagesChange, multiple = true }) => {
+// const ImageUploader = ({ images = [], onImagesChange, multiple = true, entityId, entityType, onRefresh }) => {
 //     const [uploadType, setUploadType] = useState('file');
 //     const [urlInput, setUrlInput] = useState('');
 //     const [draggedIndex, setDraggedIndex] = useState(null);
+//     const [deleting, setDeleting] = useState(false);
 //
 //     const onDrop = useCallback((acceptedFiles) => {
 //         const newImages = acceptedFiles.map(file => ({
@@ -37,9 +40,46 @@
 //         }
 //     };
 //
-//     const handleRemoveImage = (index) => {
-//         const newImages = images.filter((_, i) => i !== index);
-//         onImagesChange(newImages);
+//     const handleRemoveImage = async (index) => {
+//         const imageToRemove = images[index];
+//
+//         // Если это существующее изображение (не новое) и есть entityId, удаляем с сервера
+//         if (!imageToRemove.isNew && entityId && imageToRemove.originalUrl) {
+//             setDeleting(true);
+//             try {
+//                 const token = localStorage.getItem('adminToken');
+//                 const endpoint = entityType === 'complex'
+//                     ? `${process.env.REACT_APP_API_URL}/admin/complexes/${entityId}/images`
+//                     : `${process.env.REACT_APP_API_URL}/admin/properties/${entityId}/images`;
+//
+//                 const response = await axios.delete(endpoint, {
+//                     headers: { Authorization: `Bearer ${token}` },
+//                     data: { imageUrl: imageToRemove.originalUrl }
+//                 });
+//
+//                 if (response.data.success) {
+//                     toast.success('Изображение удалено');
+//
+//                     // Обновляем данные после удаления
+//                     if (onRefresh) {
+//                         onRefresh();
+//                     }
+//
+//                     // Удаляем из локального состояния
+//                     const newImages = images.filter((_, i) => i !== index);
+//                     onImagesChange(newImages);
+//                 }
+//             } catch (error) {
+//                 console.error('Error deleting image:', error);
+//                 toast.error(error.response?.data?.error || 'Ошибка при удалении изображения');
+//             } finally {
+//                 setDeleting(false);
+//             }
+//         } else {
+//             // Удаляем новое изображение из локального состояния
+//             const newImages = images.filter((_, i) => i !== index);
+//             onImagesChange(newImages);
+//         }
 //     };
 //
 //     const handleSetMainImage = (index) => {
@@ -70,7 +110,6 @@
 //         setDraggedIndex(null);
 //     };
 //
-//     // Функция для получения URL изображения
 //     const getImageUrl = (image) => {
 //         if (!image) return '';
 //         if (image.url) return image.url;
@@ -132,9 +171,9 @@
 //                             <div
 //                                 key={image.id || index}
 //                                 className={`ap-image-item ${index === 0 ? 'ap-main' : ''}`}
-//                                 draggable
-//                                 onDragStart={(e) => handleDragStart(e, index)}
-//                                 onDragOver={(e) => handleDragOver(e, index)}
+//                                 draggable={!deleting}
+//                                 onDragStart={(e) => !deleting && handleDragStart(e, index)}
+//                                 onDragOver={(e) => !deleting && handleDragOver(e, index)}
 //                                 onDragEnd={handleDragEnd}
 //                             >
 //                                 <img
@@ -153,6 +192,7 @@
 //                                             className="ap-set-main"
 //                                             onClick={() => handleSetMainImage(index)}
 //                                             title="Сделать главным"
+//                                             disabled={deleting}
 //                                         >
 //                                             ⭐
 //                                         </button>
@@ -162,6 +202,7 @@
 //                                         className="ap-remove-image"
 //                                         onClick={() => handleRemoveImage(index)}
 //                                         title="Удалить"
+//                                         disabled={deleting}
 //                                     >
 //                                         ✕
 //                                     </button>
@@ -177,13 +218,17 @@
 //
 // export default ImageUploader;
 
+
+
+
+
 // src/admin/components/ImageUploader.jsx
 import React, { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
-const ImageUploader = ({ images = [], onImagesChange, multiple = true, entityId, entityType, onImageDeleted }) => {
+const ImageUploader = ({ images = [], onImagesChange, multiple = true, entityId, entityType, onRefresh }) => {
     const [uploadType, setUploadType] = useState('file');
     const [urlInput, setUrlInput] = useState('');
     const [draggedIndex, setDraggedIndex] = useState(null);
@@ -222,8 +267,30 @@ const ImageUploader = ({ images = [], onImagesChange, multiple = true, entityId,
     const handleRemoveImage = async (index) => {
         const imageToRemove = images[index];
 
+        console.log('🗑️ Попытка удаления:', {
+            isNew: imageToRemove.isNew,
+            entityId,
+            entityType,
+            hasOriginalUrl: !!imageToRemove.originalUrl,
+            imageUrl: imageToRemove.url
+        });
+
         // Если это существующее изображение (не новое) и есть entityId, удаляем с сервера
-        if (!imageToRemove.isNew && entityId && imageToRemove.originalUrl) {
+        if (!imageToRemove.isNew && entityId) {
+            // Получаем URL для удаления (используем originalUrl или извлекаем из url)
+            let imageUrlToDelete = imageToRemove.originalUrl;
+
+            // Если originalUrl нет, пробуем извлечь из полного URL
+            if (!imageUrlToDelete && imageToRemove.url) {
+                // Извлекаем путь из полного URL (например, http://localhost:5000/uploads/properties/xxx.png)
+                const urlParts = imageToRemove.url.split('/uploads/');
+                if (urlParts.length > 1) {
+                    imageUrlToDelete = '/uploads/' + urlParts[1];
+                }
+            }
+
+            console.log('📤 Отправка на удаление:', { entityId, imageUrlToDelete });
+
             setDeleting(true);
             try {
                 const token = localStorage.getItem('adminToken');
@@ -231,29 +298,35 @@ const ImageUploader = ({ images = [], onImagesChange, multiple = true, entityId,
                     ? `${process.env.REACT_APP_API_URL}/admin/complexes/${entityId}/images`
                     : `${process.env.REACT_APP_API_URL}/admin/properties/${entityId}/images`;
 
-                await axios.delete(endpoint, {
+                const response = await axios.delete(endpoint, {
                     headers: { Authorization: `Bearer ${token}` },
-                    data: { imageUrl: imageToRemove.originalUrl }
+                    data: { imageUrl: imageUrlToDelete }
                 });
 
-                toast.success('Изображение удалено');
+                if (response.data.success) {
+                    toast.success('Изображение удалено');
 
-                // Вызываем callback для обновления данных
-                if (onImageDeleted) {
-                    onImageDeleted();
+                    // Обновляем данные после удаления
+                    if (onRefresh) {
+                        onRefresh();
+                    }
+
+                    // Удаляем из локального состояния
+                    const newImages = images.filter((_, i) => i !== index);
+                    onImagesChange(newImages);
                 }
             } catch (error) {
                 console.error('Error deleting image:', error);
-                toast.error('Ошибка при удалении изображения');
+                toast.error(error.response?.data?.error || 'Ошибка при удалении изображения');
+            } finally {
                 setDeleting(false);
-                return;
             }
-            setDeleting(false);
+        } else {
+            // Удаляем новое изображение из локального состояния
+            console.log('📝 Удаление нового изображения из локального состояния');
+            const newImages = images.filter((_, i) => i !== index);
+            onImagesChange(newImages);
         }
-
-        // Удаляем из локального состояния
-        const newImages = images.filter((_, i) => i !== index);
-        onImagesChange(newImages);
     };
 
     const handleSetMainImage = (index) => {
@@ -284,7 +357,6 @@ const ImageUploader = ({ images = [], onImagesChange, multiple = true, entityId,
         setDraggedIndex(null);
     };
 
-    // Функция для получения URL изображения
     const getImageUrl = (image) => {
         if (!image) return '';
         if (image.url) return image.url;
