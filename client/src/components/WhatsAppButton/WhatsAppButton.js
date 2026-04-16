@@ -7,7 +7,7 @@
 //     const [isExpanded, setIsExpanded] = useState(false);
 //     const [showBubble, setShowBubble] = useState(false);
 //     const [hasInteracted, setHasInteracted] = useState(false);
-//     const [showScrollTop, setShowScrollTop] = useState(false); // Новое состояние
+//     const [showScrollTop, setShowScrollTop] = useState(false);
 //
 //     const phoneNumber = '+77024986018';
 //
@@ -73,10 +73,9 @@
 //         }
 //     }, [isExpanded]);
 //
-//     // Новая логика для кнопки "вверх"
 //     useEffect(() => {
 //         const handleScroll = () => {
-//             if (window.scrollY > 300) { // показываем кнопку после прокрутки 300px
+//             if (window.scrollY > 300) {
 //                 setShowScrollTop(true);
 //             } else {
 //                 setShowScrollTop(false);
@@ -103,12 +102,16 @@
 //                     aria-label="Написать в WhatsApp"
 //                     aria-expanded={isExpanded}
 //                 >
-//                     <FaWhatsapp className="whatsapp-icon" />
-//                     <div className="pulse-ring"></div>
+//                     <FaWhatsapp className="whatsapp-icon" aria-hidden="true" />
+//                     <div className="pulse-ring" aria-hidden="true"></div>
 //                 </button>
 //
 //                 {showBubble && !isExpanded && (
-//                     <div className="whatsapp-bubble">
+//                     <div
+//                         className="whatsapp-bubble"
+//                         role="tooltip"
+//                         aria-label="Быстрая связь через WhatsApp"
+//                     >
 //                         <div className="bubble-content">
 //                             <p>Написать в WhatsApp</p>
 //                             <button
@@ -119,21 +122,25 @@
 //                                 ×
 //                             </button>
 //                         </div>
-//                         <div className="bubble-arrow"></div>
+//                         <div className="bubble-arrow" aria-hidden="true"></div>
 //                     </div>
 //                 )}
 //
 //                 <button
 //                     className="whatsapp-expand-button"
 //                     onClick={handleExpand}
-//                     aria-label={isExpanded ? "Свернуть меню" : "Быстрые сообщения"}
+//                     aria-label={isExpanded ? "Свернуть меню быстрых сообщений" : "Открыть меню быстрых сообщений"}
 //                     aria-expanded={isExpanded}
 //                 >
-//                     {isExpanded ? <FaTimes /> : '+'}
+//                     {isExpanded ? <FaTimes aria-hidden="true" /> : '+'}
 //                 </button>
 //
 //                 {isExpanded && (
-//                     <div className="whatsapp-expanded-menu">
+//                     <div
+//                         className="whatsapp-expanded-menu"
+//                         role="menu"
+//                         aria-label="Быстрые сообщения"
+//                     >
 //                         <h4>Быстрые сообщения</h4>
 //                         <div className="quick-messages">
 //                             {quickMessages.map((item, index) => (
@@ -141,6 +148,7 @@
 //                                     key={index}
 //                                     className="quick-message-btn"
 //                                     onClick={() => handleQuickMessage(item.message)}
+//                                     role="menuitem"
 //                                 >
 //                                     {item.text}
 //                                 </button>
@@ -150,6 +158,7 @@
 //                             <button
 //                                 className="custom-message-btn"
 //                                 onClick={() => handleQuickMessage('')}
+//                                 role="menuitem"
 //                             >
 //                                 Написать своё сообщение
 //                             </button>
@@ -157,14 +166,13 @@
 //                     </div>
 //                 )}
 //
-//                 {/* Новая кнопка "вверх" */}
 //                 {showScrollTop && (
 //                     <button
 //                         className="scroll-top-button"
 //                         onClick={scrollToTop}
-//                         aria-label="Наверх"
+//                         aria-label="Вернуться наверх страницы"
 //                     >
-//                         <FaArrowUp />
+//                         <FaArrowUp aria-hidden="true" />
 //                     </button>
 //                 )}
 //             </div>
@@ -184,12 +192,9 @@
 // export default React.memo(WhatsAppButton);
 
 
-
-
-
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import './WhatsAppButton.css';
-import { FaWhatsapp, FaTimes, FaArrowUp } from 'react-icons/fa';
+import { FaWhatsapp, FaTimes, FaArrowUp, FaPhoneAlt, FaBuilding } from 'react-icons/fa';
 
 const WhatsAppButton = () => {
     const [isVisible, setIsVisible] = useState(true);
@@ -200,18 +205,35 @@ const WhatsAppButton = () => {
 
     const phoneNumber = '+77024986018';
 
+    // Профессиональные шаблоны сообщений для строительной компании
     const quickMessages = useMemo(() => [
-        { text: 'Хочу узнать побольше', message: 'Здравствуйте! Хочу узнать подробнее ...' },
-        { text: 'Уточнить наличие', message: 'Здравствуйте! Подскажите, пожалуйста, есть ли в наличии сайт...' },
-        { text: 'Можно ли купить сайт', message: 'Здравствуйте! Хотел бы узнать, можно ли заказать сайт и купить его...' },
-        { text: 'Создать сайт для аренды', message: 'Здравствуйте! Я хотел бы узнать, сможете ли вы создать отдельный файл и затем его сдать в аренду...' }
+        {
+            text: '🏗️ Консультация по строительству',
+            message: 'Здравствуйте! Хочу получить консультацию по строительству дома. Интересуют сроки, стоимость и этапы работ. Спасибо!'
+        },
+        {
+            text: '🏠 Покупка квартиры в ЖК',
+            message: 'Здравствуйте! Интересует покупка квартиры в ваших жилых комплексах. Расскажите, пожалуйста, о наличии и ценах.'
+        },
+        {
+            text: '📋 Запись на просмотр объекта',
+            message: 'Здравствуйте! Хотел бы записаться на просмотр объекта недвижимости. Удобно ли будет подъехать в ближайшие дни?'
+        },
+        {
+            text: '💰 Условия рассрочки/ипотеки',
+            message: 'Здравствуйте! Расскажите, пожалуйста, подробнее об условиях рассрочки и ипотеки. Какие банки являются партнерами?'
+        },
+        {
+            text: '📄 Документы и гарантии',
+            message: 'Здравствуйте! Интересует пакет документов при покупке и гарантийные обязательства. Можете прислать информацию?'
+        }
     ], []);
 
     const handleClick = useCallback(() => {
         if (isExpanded) {
             setIsExpanded(false);
         } else {
-            const encodedMessage = encodeURIComponent('Здравствуйте! Я хочу сделать заказ. Подскажите, пожалуйста.');
+            const encodedMessage = encodeURIComponent('Здравствуйте! Меня интересуют услуги вашей строительной компании. Подскажите, пожалуйста, актуальную информацию.');
             window.open(`https://wa.me/${phoneNumber.replace(/\D/g, '')}?text=${encodedMessage}`, '_blank');
         }
     }, [isExpanded, phoneNumber]);
@@ -234,7 +256,7 @@ const WhatsAppButton = () => {
                 });
             };
 
-            const timeoutId = setTimeout(showBubbleDelayed, 3000);
+            const timeoutId = setTimeout(showBubbleDelayed, 4000);
 
             return () => {
                 clearTimeout(timeoutId);
@@ -282,60 +304,59 @@ const WhatsAppButton = () => {
 
     return (
         <>
-            <div className={`whatsapp-button-container ${isExpanded ? 'expanded' : ''}`}>
+            <div className={`wb-whatsapp-container ${isExpanded ? 'wb-expanded' : ''}`}>
+                {/* Основная кнопка WhatsApp */}
                 <button
-                    className="whatsapp-main-button"
+                    className="wb-whatsapp-main"
                     onClick={handleClick}
                     onMouseEnter={handleMouseEnter}
                     onMouseLeave={handleMouseLeave}
                     aria-label="Написать в WhatsApp"
                     aria-expanded={isExpanded}
                 >
-                    <FaWhatsapp className="whatsapp-icon" aria-hidden="true" />
-                    <div className="pulse-ring" aria-hidden="true"></div>
+                    <FaWhatsapp className="wb-whatsapp-icon" aria-hidden="true" />
+                    <div className="wb-pulse-ring" aria-hidden="true"></div>
                 </button>
 
+                {/* Подсказка */}
                 {showBubble && !isExpanded && (
-                    <div
-                        className="whatsapp-bubble"
-                        role="tooltip"
-                        aria-label="Быстрая связь через WhatsApp"
-                    >
-                        <div className="bubble-content">
-                            <p>Написать в WhatsApp</p>
+                    <div className="wb-bubble" role="tooltip">
+                        <div className="wb-bubble-content">
+                            <FaBuilding className="wb-bubble-icon" />
+                            <p>Свяжитесь с нами в WhatsApp</p>
                             <button
-                                className="bubble-close"
+                                className="wb-bubble-close"
                                 onClick={() => setShowBubble(false)}
                                 aria-label="Закрыть подсказку"
                             >
                                 ×
                             </button>
                         </div>
-                        <div className="bubble-arrow" aria-hidden="true"></div>
+                        <div className="wb-bubble-arrow"></div>
                     </div>
                 )}
 
+                {/* Кнопка расширения меню */}
                 <button
-                    className="whatsapp-expand-button"
+                    className="wb-expand-button"
                     onClick={handleExpand}
-                    aria-label={isExpanded ? "Свернуть меню быстрых сообщений" : "Открыть меню быстрых сообщений"}
-                    aria-expanded={isExpanded}
+                    aria-label={isExpanded ? "Свернуть меню" : "Открыть меню"}
                 >
-                    {isExpanded ? <FaTimes aria-hidden="true" /> : '+'}
+                    {isExpanded ? <FaTimes aria-hidden="true" /> : <FaPhoneAlt aria-hidden="true" />}
                 </button>
 
+                {/* Расширенное меню с шаблонами сообщений */}
                 {isExpanded && (
-                    <div
-                        className="whatsapp-expanded-menu"
-                        role="menu"
-                        aria-label="Быстрые сообщения"
-                    >
-                        <h4>Быстрые сообщения</h4>
-                        <div className="quick-messages">
+                    <div className="wb-expanded-menu" role="menu">
+                        <div className="wb-menu-header">
+                            <h4>Быстрые вопросы</h4>
+                            <p>Выберите тему для быстрого ответа</p>
+                        </div>
+                        <div className="wb-quick-messages">
                             {quickMessages.map((item, index) => (
                                 <button
                                     key={index}
-                                    className="quick-message-btn"
+                                    className="wb-quick-message-btn"
                                     onClick={() => handleQuickMessage(item.message)}
                                     role="menuitem"
                                 >
@@ -343,34 +364,38 @@ const WhatsAppButton = () => {
                                 </button>
                             ))}
                         </div>
-                        <div className="custom-message">
+                        <div className="wb-custom-message">
                             <button
-                                className="custom-message-btn"
+                                className="wb-custom-message-btn"
                                 onClick={() => handleQuickMessage('')}
                                 role="menuitem"
                             >
-                                Написать своё сообщение
+                                ✍️ Написать своё сообщение
                             </button>
+                        </div>
+                        <div className="wb-menu-footer">
+                            <span>⏱️ Ответ в течение 15 минут</span>
                         </div>
                     </div>
                 )}
 
+                {/* Кнопка "Наверх" */}
                 {showScrollTop && (
                     <button
-                        className="scroll-top-button"
+                        className="wb-scroll-top"
                         onClick={scrollToTop}
-                        aria-label="Вернуться наверх страницы"
+                        aria-label="Вернуться наверх"
                     >
                         <FaArrowUp aria-hidden="true" />
                     </button>
                 )}
             </div>
 
+            {/* Кнопка скрытия виджета */}
             <button
-                className="whatsapp-hide-button"
+                className="wb-hide-button"
                 onClick={() => setIsVisible(false)}
-                onMouseEnter={() => !hasInteracted && setShowBubble(true)}
-                aria-label="Скрыть кнопку WhatsApp"
+                aria-label="Скрыть виджет WhatsApp"
             >
                 ×
             </button>
