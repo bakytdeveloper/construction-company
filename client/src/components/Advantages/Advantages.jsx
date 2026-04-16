@@ -3,12 +3,12 @@ import './Advantages.css';
 
 const Advantages = () => {
     const advantages = [
-        {
-            icon: '🏆',
-            title: '10 лет гарантии',
-            description: 'Предоставляем расширенную гарантию на все виды работ',
-            color: '#c9a03d'
-        },
+        // {
+        //     icon: '🏆',
+        //     title: '10 лет гарантии',
+        //     description: 'Предоставляем расширенную гарантию на все виды работ',
+        //     color: '#c9a03d'
+        // },
         {
             icon: '⚡',
             title: 'Соблюдение сроков',
@@ -33,12 +33,12 @@ const Advantages = () => {
             description: 'Полное сопровождение сделок',
             color: '#c9a03d'
         },
-        {
-            icon: '🔧',
-            title: 'Постгарантийное обслуживание',
-            description: 'Бесплатное обслуживание 2 года',
-            color: '#1a472a'
-        }
+        // {
+        //     icon: '🔧',
+        //     title: 'Постгарантийное обслуживание',
+        //     description: 'Бесплатное обслуживание 2 года',
+        //     color: '#1a472a'
+        // }
     ];
 
     return (
