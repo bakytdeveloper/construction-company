@@ -610,17 +610,44 @@ const HeroEditor = () => {
 
                         {currentSlide.bgType === 'file' && (
                             <div className="he-file-editor">
-                                {currentSlide.bgValue && !currentSlide.bgValue.includes('linear-gradient') && (
-                                    <div className="he-image-preview">
-                                        <img src={currentSlide.bgValue} alt="Preview" />
-                                        <button
-                                            className="he-delete-image"
-                                            onClick={() => handleDeleteImage(activeSlideIndex)}
-                                        >
-                                            ✕ Удалить
-                                        </button>
-                                    </div>
-                                )}
+                                <div className="he-form-group">
+                                    <label>Загруженное изображение</label>
+                                    {currentSlide.bgValue && !currentSlide.bgValue.includes('linear-gradient') ? (
+                                        <div className="he-image-preview">
+                                            <img
+                                                src={(() => {
+                                                    let url = currentSlide.bgValue;
+                                                    if (url && !url.startsWith('http') && url.startsWith('/uploads')) {
+                                                        url = `${process.env.REACT_APP_API_URL?.replace('/api', '') || 'http://localhost:5000'}${url}`;
+                                                    }
+                                                    return url;
+                                                })()}
+                                                alt={currentSlide.altText || 'Превью'}
+                                                style={{ width: '100%', maxHeight: '250px', objectFit: 'cover', borderRadius: '8px' }}
+                                                onError={(e) => {
+                                                    console.error('Image failed to load:', e.target.src);
+                                                    e.target.src = 'https://via.placeholder.com/400x250?text=Image+not+found';
+                                                }}
+                                            />
+                                            <button
+                                                className="he-delete-image"
+                                                onClick={() => handleDeleteImage(activeSlideIndex)}
+                                            >
+                                                ✕ Удалить
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <div className="he-no-image" style={{
+                                            padding: '40px',
+                                            textAlign: 'center',
+                                            background: '#f3f4f6',
+                                            borderRadius: '8px',
+                                            color: '#6b7280'
+                                        }}>
+                                            📷 Нет загруженного изображения
+                                        </div>
+                                    )}
+                                </div>
                                 <div className="he-file-upload">
                                     <input
                                         type="file"
@@ -635,6 +662,15 @@ const HeroEditor = () => {
                                     <label htmlFor="slide-image-upload" className="he-upload-label">
                                         📁 {currentSlide.bgValue && !currentSlide.bgValue.includes('linear-gradient') ? 'Заменить изображение' : 'Выбрать изображение'}
                                     </label>
+                                </div>
+                                <div className="he-form-group">
+                                    <label>Alt текст</label>
+                                    <input
+                                        type="text"
+                                        value={currentSlide.altText || ''}
+                                        onChange={(e) => handleSlideChange(activeSlideIndex, 'altText', e.target.value)}
+                                        placeholder="Описание изображения"
+                                    />
                                 </div>
                             </div>
                         )}
