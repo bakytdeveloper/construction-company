@@ -690,3 +690,50 @@
         right: 0;
     }
 }
+
+
+/* Стили для аккордеона */
+.he-accordion-section {
+    margin-bottom: 16px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+    background: white;
+}
+
+.he-accordion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background: #f9fafb;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.he-accordion-header:hover {
+    background: #f3f4f6;
+}
+
+.he-accordion-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.he-accordion-icon {
+    font-size: 12px;
+    transition: transform 0.3s;
+    color: #6b7280;
+}
+
+.he-accordion-icon.open {
+    transform: rotate(180deg);
+}
+
+.he-accordion-content {
+    padding: 20px;
+    border-top: 1px solid #e5e7eb;
+    background: white;
+}
