@@ -60,14 +60,28 @@ const Hero = () => {
     };
 
     const getBackgroundStyle = (slide) => {
+        // Для градиента используем gradientConfig или bgValue
         if (slide.bgType === 'gradient') {
+            // Если есть gradientConfig с цветами, используем его
+            if (slide.gradientConfig && slide.gradientConfig.color1 && slide.gradientConfig.color2) {
+                return {
+                    background: `linear-gradient(${slide.gradientConfig.angle || 135}deg, ${slide.gradientConfig.color1} 0%, ${slide.gradientConfig.color2} 100%)`
+                };
+            }
+            // Иначе используем сохраненное значение
             return { background: slide.bgValue };
         }
-        return {
-            backgroundImage: `url(${getImageUrl(slide.bgValue)})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center'
-        };
+        // Для URL или файла
+        if (slide.bgType === 'url' || slide.bgType === 'file') {
+            const imageUrl = getImageUrl(slide.bgValue);
+            return {
+                backgroundImage: `url(${imageUrl})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat'
+            };
+        }
+        return {};
     };
 
     if (loading) {

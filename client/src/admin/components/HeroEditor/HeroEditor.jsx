@@ -14,13 +14,10 @@ const HeroEditor = () => {
         fetchHeroData();
     }, []);
 
-    // src/admin/components/HeroEditor.jsx - исправлен URL
     const fetchHeroData = async () => {
         setLoading(true);
         try {
             const token = localStorage.getItem('adminToken');
-            // Изменен URL с /hero/admin/content на /hero/content (GET запрос)
-            // Для админского доступа используем тот же маршрут, но с токеном
             const response = await axios.get(`${process.env.REACT_APP_API_URL}/hero/content`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
@@ -157,20 +154,36 @@ const HeroEditor = () => {
     };
 
     const handleGradientChange = (index, color1, color2, angle) => {
+        // Обновляем gradientConfig
+        handleSlideChange(index, 'gradientConfig', { angle, color1, color2 });
+        // Обновляем bgValue для корректного отображения на клиенте
         const gradient = `linear-gradient(${angle}deg, ${color1} 0%, ${color2} 100%)`;
         handleSlideChange(index, 'bgValue', gradient);
-        handleSlideChange(index, 'gradientConfig', { angle, color1, color2 });
+    };
+
+    const handleOverlayChange = (index, color, opacity) => {
+        const rgba = `rgba(${parseInt(color.slice(1,3), 16)}, ${parseInt(color.slice(3,5), 16)}, ${parseInt(color.slice(5,7), 16)}, ${opacity})`;
+        handleSlideChange(index, 'overlayColor', rgba);
+        handleSlideChange(index, 'overlayOpacity', opacity);
     };
 
     const getBackgroundStyle = (slide) => {
         if (slide.bgType === 'gradient') {
+            if (slide.gradientConfig && slide.gradientConfig.color1 && slide.gradientConfig.color2) {
+                return {
+                    background: `linear-gradient(${slide.gradientConfig.angle || 135}deg, ${slide.gradientConfig.color1} 0%, ${slide.gradientConfig.color2} 100%)`
+                };
+            }
             return { background: slide.bgValue };
         }
-        return {
-            backgroundImage: `url(${slide.bgValue})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center'
-        };
+        if (slide.bgType === 'url' || slide.bgType === 'file') {
+            return {
+                backgroundImage: `url(${slide.bgValue})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
+            };
+        }
+        return {};
     };
 
     if (loading) {
@@ -182,6 +195,16 @@ const HeroEditor = () => {
     }
 
     const currentSlide = heroData.slides[activeSlideIndex];
+
+    // Получаем текущий цвет для overlay
+    const getOverlayHex = (rgba) => {
+        if (!rgba) return '#000000';
+        const match = rgba.match(/rgba\((\d+),\s*(\d+),\s*(\d+),\s*[\d.]+\)/);
+        if (match) {
+            return `#${parseInt(match[1]).toString(16).padStart(2, '0')}${parseInt(match[2]).toString(16).padStart(2, '0')}${parseInt(match[3]).toString(16).padStart(2, '0')}`;
+        }
+        return '#000000';
+    };
 
     return (
         <div className="hero-editor">
@@ -324,8 +347,15 @@ const HeroEditor = () => {
                         <label>Цвет описания</label>
                         <input
                             type="color"
-                            value={currentSlide.descriptionColor || '#ffffff'}
-                            onChange={(e) => handleSlideChange(activeSlideIndex, 'descriptionColor', e.target.value)}
+                            value={currentSlide.descriptionColor?.replace(/[^#\dA-F]/gi, '') || '#ffffff'}
+                            onChange={(e) => {
+                                const opacity = parseFloat(currentSlide.descriptionColor?.match(/[\d.]+\)/)?.[0]?.slice(0, -1) || '0.9');
+                                const hex = e.target.value;
+                                const r = parseInt(hex.slice(1, 3), 16);
+                                const g = parseInt(hex.slice(3, 5), 16);
+                                const b = parseInt(hex.slice(5, 7), 16);
+                                handleSlideChange(activeSlideIndex, 'descriptionColor', `rgba(${r}, ${g}, ${b}, ${opacity})`);
+                            }}
                         />
                     </div>
                 </div>
@@ -399,33 +429,28 @@ const HeroEditor = () => {
                             <label>Цвет затемнения</label>
                             <input
                                 type="color"
-                                value={currentSlide.overlayColor?.replace(/[^#\dA-F]/gi, '') || '#000000'}
+                                value={getOverlayHex(currentSlide.overlayColor)}
                                 onChange={(e) => {
-                                    const opacity = currentSlide.overlayOpacity || 0.4;
-                                    const hex = e.target.value;
-                                    const r = parseInt(hex.slice(1, 3), 16);
-                                    const g = parseInt(hex.slice(3, 5), 16);
-                                    const b = parseInt(hex.slice(5, 7), 16);
-                                    handleSlideChange(activeSlideIndex, 'overlayColor', `rgba(${r}, ${g}, ${b}, ${opacity})`);
+                                    handleOverlayChange(
+                                        activeSlideIndex,
+                                        e.target.value,
+                                        currentSlide.overlayOpacity || 0.4
+                                    );
                                 }}
                             />
                         </div>
                         <div className="he-form-group">
-                            <label>Прозрачность</label>
+                            <label>Прозрачность (0 = нет затемнения, 1 = полное)</label>
                             <input
                                 type="range"
                                 min="0"
                                 max="1"
-                                step="0.05"
+                                step="0.01"
                                 value={currentSlide.overlayOpacity || 0.4}
                                 onChange={(e) => {
                                     const opacity = parseFloat(e.target.value);
-                                    const currentColor = currentSlide.overlayColor || 'rgba(0,0,0,0.4)';
-                                    const match = currentColor.match(/rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)/);
-                                    if (match) {
-                                        handleSlideChange(activeSlideIndex, 'overlayColor', `rgba(${match[1]}, ${match[2]}, ${match[3]}, ${opacity})`);
-                                    }
-                                    handleSlideChange(activeSlideIndex, 'overlayOpacity', opacity);
+                                    const hex = getOverlayHex(currentSlide.overlayColor);
+                                    handleOverlayChange(activeSlideIndex, hex, opacity);
                                 }}
                             />
                             <span>{Math.round((currentSlide.overlayOpacity || 0.4) * 100)}%</span>
@@ -466,6 +491,7 @@ const HeroEditor = () => {
                                     type="range"
                                     min="0"
                                     max="360"
+                                    step="1"
                                     value={currentSlide.gradientConfig?.angle || 135}
                                     onChange={(e) => handleGradientChange(
                                         activeSlideIndex,
