@@ -51,7 +51,6 @@ const HeroEditor = () => {
         const newSlides = [...heroData.slides];
         newSlides[index] = { ...newSlides[index], [field]: value };
         setHeroData({ ...heroData, slides: newSlides });
-        // Принудительно обновляем предпросмотр
         setRefreshKey(prev => prev + 1);
     };
 
@@ -162,7 +161,6 @@ const HeroEditor = () => {
     };
 
     const handleGradientChange = (index, color1, color2, angle) => {
-        // Обновляем gradientConfig
         const newSlides = [...heroData.slides];
         newSlides[index] = {
             ...newSlides[index],
@@ -171,11 +169,48 @@ const HeroEditor = () => {
             bgType: 'gradient'
         };
         setHeroData({ ...heroData, slides: newSlides });
-        // Принудительно обновляем предпросмотр
         setRefreshKey(prev => prev + 1);
     };
 
-    // Вспомогательные функции для работы с цветами
+    // ============ Функции для работы с затемнением ============
+    const getOverlayHex = (overlayColor) => {
+        if (!overlayColor) return '#000000';
+        const rgbaMatch = overlayColor.match(/rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)/);
+        if (rgbaMatch) {
+            return `#${parseInt(rgbaMatch[1]).toString(16).padStart(2, '0')}${parseInt(rgbaMatch[2]).toString(16).padStart(2, '0')}${parseInt(rgbaMatch[3]).toString(16).padStart(2, '0')}`;
+        }
+        const rgbMatch = overlayColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+        if (rgbMatch) {
+            return `#${parseInt(rgbMatch[1]).toString(16).padStart(2, '0')}${parseInt(rgbMatch[2]).toString(16).padStart(2, '0')}${parseInt(rgbMatch[3]).toString(16).padStart(2, '0')}`;
+        }
+        return '#000000';
+    };
+
+    const getOverlayOpacity = (overlayColor) => {
+        if (!overlayColor) return 0.4;
+        const rgbaMatch = overlayColor.match(/rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)/);
+        if (rgbaMatch) {
+            return parseFloat(rgbaMatch[4]);
+        }
+        return 0.4;
+    };
+
+    const updateOverlay = (index, colorHex, opacity) => {
+        const r = parseInt(colorHex.slice(1, 3), 16);
+        const g = parseInt(colorHex.slice(3, 5), 16);
+        const b = parseInt(colorHex.slice(5, 7), 16);
+        const newOverlayColor = `rgba(${r}, ${g}, ${b}, ${opacity})`;
+        const newSlides = [...heroData.slides];
+        newSlides[index] = {
+            ...newSlides[index],
+            overlayColor: newOverlayColor,
+            overlayOpacity: opacity
+        };
+        setHeroData({ ...heroData, slides: newSlides });
+        setRefreshKey(prev => prev + 1);
+    };
+
+    // ============ Вспомогательные функции для цветов ============
     const rgbaToHex = (rgba) => {
         if (!rgba) return '#ffffff';
         const match = rgba.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
@@ -185,17 +220,7 @@ const HeroEditor = () => {
         return '#ffffff';
     };
 
-    const getOverlayHex = (rgba) => {
-        if (!rgba) return '#000000';
-        const match = rgba.match(/rgba\((\d+),\s*(\d+),\s*(\d+)/);
-        if (match) {
-            return `#${parseInt(match[1]).toString(16).padStart(2, '0')}${parseInt(match[2]).toString(16).padStart(2, '0')}${parseInt(match[3]).toString(16).padStart(2, '0')}`;
-        }
-        return '#000000';
-    };
-
     const getBackgroundStyle = (slide) => {
-        // Для градиента используем gradientConfig
         if (slide.bgType === 'gradient') {
             if (slide.gradientConfig && slide.gradientConfig.color1 && slide.gradientConfig.color2) {
                 return {
@@ -223,6 +248,8 @@ const HeroEditor = () => {
     }
 
     const currentSlide = heroData.slides[activeSlideIndex];
+    const currentOverlayHex = getOverlayHex(currentSlide.overlayColor);
+    const currentOverlayOpacity = currentSlide.overlayOpacity !== undefined ? currentSlide.overlayOpacity : getOverlayOpacity(currentSlide.overlayColor);
 
     return (
         <div className="hero-editor" key={refreshKey}>
@@ -241,7 +268,7 @@ const HeroEditor = () => {
                 <h3>Предпросмотр</h3>
                 <div className="he-preview-slide" style={getBackgroundStyle(currentSlide)}>
                     <div className="he-preview-overlay" style={{
-                        background: currentSlide.overlayColor || `rgba(0, 0, 0, ${currentSlide.overlayOpacity || 0.4})`
+                        background: currentSlide.overlayColor || `rgba(0, 0, 0, ${currentOverlayOpacity})`
                     }}></div>
                     <div className="he-preview-content" style={{ textAlign: currentSlide.contentPosition }}>
                         <h1 style={{ color: currentSlide.titleColor }}>
@@ -447,14 +474,9 @@ const HeroEditor = () => {
                             <label>Цвет затемнения</label>
                             <input
                                 type="color"
-                                value={getOverlayHex(currentSlide.overlayColor)}
+                                value={currentOverlayHex}
                                 onChange={(e) => {
-                                    const hex = e.target.value;
-                                    const opacity = currentSlide.overlayOpacity || 0.4;
-                                    const r = parseInt(hex.slice(1, 3), 16);
-                                    const g = parseInt(hex.slice(3, 5), 16);
-                                    const b = parseInt(hex.slice(5, 7), 16);
-                                    handleSlideChange(activeSlideIndex, 'overlayColor', `rgba(${r}, ${g}, ${b}, ${opacity})`);
+                                    updateOverlay(activeSlideIndex, e.target.value, currentOverlayOpacity);
                                 }}
                             />
                         </div>
@@ -465,18 +487,13 @@ const HeroEditor = () => {
                                 min="0"
                                 max="1"
                                 step="0.01"
-                                value={currentSlide.overlayOpacity || 0.4}
+                                value={currentOverlayOpacity}
                                 onChange={(e) => {
                                     const opacity = parseFloat(e.target.value);
-                                    const hex = getOverlayHex(currentSlide.overlayColor);
-                                    const r = parseInt(hex.slice(1, 3), 16);
-                                    const g = parseInt(hex.slice(3, 5), 16);
-                                    const b = parseInt(hex.slice(5, 7), 16);
-                                    handleSlideChange(activeSlideIndex, 'overlayColor', `rgba(${r}, ${g}, ${b}, ${opacity})`);
-                                    handleSlideChange(activeSlideIndex, 'overlayOpacity', opacity);
+                                    updateOverlay(activeSlideIndex, currentOverlayHex, opacity);
                                 }}
                             />
-                            <span>{Math.round((currentSlide.overlayOpacity || 0.4) * 100)}%</span>
+                            <span>{Math.round(currentOverlayOpacity * 100)}%</span>
                         </div>
                     </div>
                 </div>
