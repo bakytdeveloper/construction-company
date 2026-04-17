@@ -228,7 +228,10 @@ const HeroEditor = () => {
         return '#ffffff';
     };
 
+    // В HeroEditor.jsx, исправьте функцию getBackgroundStyle для предпросмотра
     const getBackgroundStyle = (slide) => {
+        console.log('Preview slide:', slide.title, 'bgType:', slide.bgType, 'bgValue:', slide.bgValue);
+
         if (slide.bgType === 'gradient') {
             if (slide.gradientConfig && slide.gradientConfig.color1 && slide.gradientConfig.color2) {
                 return {
@@ -238,8 +241,14 @@ const HeroEditor = () => {
             return { background: slide.bgValue };
         }
         if (slide.bgType === 'url' || slide.bgType === 'file') {
+            // Для URL изображений
+            let imageUrl = slide.bgValue;
+            if (imageUrl && !imageUrl.startsWith('http') && imageUrl.startsWith('/uploads')) {
+                imageUrl = `${process.env.REACT_APP_API_URL?.replace('/api', '') || 'http://localhost:5000'}${imageUrl}`;
+            }
+            console.log('Preview image URL:', imageUrl);
             return {
-                backgroundImage: `url(${slide.bgValue})`,
+                backgroundImage: `url(${imageUrl})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center'
             };

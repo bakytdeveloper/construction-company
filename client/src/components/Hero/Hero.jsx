@@ -18,6 +18,7 @@ const Hero = () => {
     const fetchHeroData = async () => {
         try {
             const response = await axios.get(`${process.env.REACT_APP_API_URL}/hero/content`);
+            console.log('Hero data received:', response.data);
             setHeroData(response.data.data);
             setLoading(false);
         } catch (error) {
@@ -29,8 +30,10 @@ const Hero = () => {
     useEffect(() => {
         if (!heroData || !heroData.autoPlay) return;
 
+        const activeSlides = heroData.slides.filter(s => s.active);
+        if (activeSlides.length <= 1) return;
+
         autoPlayRef.current = setInterval(() => {
-            const activeSlides = heroData.slides.filter(s => s.active);
             setCurrentSlide((prev) => (prev + 1) % activeSlides.length);
         }, heroData.autoPlayInterval || 5000);
 
@@ -54,24 +57,21 @@ const Hero = () => {
         if (!imagePath) return '';
         if (imagePath.startsWith('http')) return imagePath;
         if (imagePath.startsWith('/uploads')) {
-            return `${process.env.REACT_APP_API_URL?.replace('/api', '') || 'http://localhost:5000'}${imagePath}`;
+            const baseUrl = process.env.REACT_APP_API_URL?.replace('/api', '') || 'http://localhost:5000';
+            return `${baseUrl}${imagePath}`;
         }
         return imagePath;
     };
 
     const getBackgroundStyle = (slide) => {
-        // Для градиента используем gradientConfig или bgValue
         if (slide.bgType === 'gradient') {
-            // Если есть gradientConfig с цветами, используем его
             if (slide.gradientConfig && slide.gradientConfig.color1 && slide.gradientConfig.color2) {
                 return {
                     background: `linear-gradient(${slide.gradientConfig.angle || 135}deg, ${slide.gradientConfig.color1} 0%, ${slide.gradientConfig.color2} 100%)`
                 };
             }
-            // Иначе используем сохраненное значение
             return { background: slide.bgValue };
         }
-        // Для URL или файла
         if (slide.bgType === 'url' || slide.bgType === 'file') {
             const imageUrl = getImageUrl(slide.bgValue);
             return {
@@ -91,7 +91,11 @@ const Hero = () => {
     const activeSlides = heroData?.slides?.filter(s => s.active) || [];
     if (activeSlides.length === 0) return null;
 
-    const slide = activeSlides[currentSlide];
+    // Убеждаемся, что currentSlide в пределах массива
+    const safeCurrentSlide = currentSlide >= activeSlides.length ? 0 : currentSlide;
+    const slide = activeSlides[safeCurrentSlide];
+
+    console.log('Current slide:', slide.title, 'bgType:', slide.bgType, 'bgValue:', slide.bgValue);
 
     return (
         <section className="hero">
@@ -155,7 +159,7 @@ const Hero = () => {
                         {activeSlides.map((_, idx) => (
                             <button
                                 key={idx}
-                                className={`slider-dot ${currentSlide === idx ? 'active' : ''}`}
+                                className={`slider-dot ${safeCurrentSlide === idx ? 'active' : ''}`}
                                 onClick={() => setCurrentSlide(idx)}
                             />
                         ))}
