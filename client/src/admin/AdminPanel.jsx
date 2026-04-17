@@ -9,6 +9,7 @@ import ComplexesManager from './pages/ComplexesManager';
 import PropertiesManager from './pages/PropertiesManager';
 import MessagesManager from './pages/MessagesManager';
 import './AdminPanel.css';
+import HeroEditor from "./components/HeroEditor/HeroEditor";
 
 const AdminPanel = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -55,6 +56,7 @@ const AdminPanel = () => {
                     <Route path="complexes" element={<ComplexesManager />} />
                     <Route path="properties" element={<PropertiesManager />} />
                     <Route path="messages" element={<MessagesManager />} />
+                    <Route path="hero" element={<HeroEditor />} />
                 </Routes>
             </AdminLayout>
         </>

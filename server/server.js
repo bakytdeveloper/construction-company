@@ -11,6 +11,7 @@ import projectRoutes from './routes/projectRoutes.js';
 import complexRoutes from './routes/complexRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import fs from 'fs';
+import heroRoutes from "./routes/heroRoutes.js";
 
 dotenv.config();
 
@@ -50,6 +51,8 @@ app.use('/api/contact', contactRoutes);
 app.use('/api/properties', projectRoutes);
 app.use('/api/complexes', complexRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/hero', heroRoutes);
+
 
 // Health check
 app.get('/api/health', (req, res) => {

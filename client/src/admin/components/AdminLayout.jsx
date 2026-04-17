@@ -11,6 +11,8 @@ const AdminLayout = ({ children, onLogout }) => {
         { path: '/admin/complexes', icon: '🏢', label: 'Жилые комплексы' },
         { path: '/admin/properties', icon: '🏠', label: 'Недвижимость' },
         { path: '/admin/messages', icon: '✉️', label: 'Сообщения' },
+        { path: '/admin/hero', icon: '🎨', label: 'Главный баннер' },
+
     ];
 
     const isActive = (path) => {
