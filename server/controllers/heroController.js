@@ -7,13 +7,37 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Получить контент Hero
+// Публичный маршрут - возвращает только активные слайды
 export const getHeroContent = async (req, res) => {
     try {
         let hero = await Hero.findOne().sort({ createdAt: -1 });
 
         if (!hero) {
-            // Создаем дефолтный контент если нет
+            hero = await createDefaultHero();
+        }
+
+        // Фильтруем только активные слайды для публичного доступа
+        const publicHero = {
+            ...hero.toObject(),
+            slides: hero.slides.filter(s => s.active)
+        };
+
+        res.json({
+            success: true,
+            data: publicHero
+        });
+    } catch (error) {
+        console.error('Error getting hero content:', error);
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// Админский маршрут - возвращает все слайды (включая неактивные)
+export const getAdminHeroContent = async (req, res) => {
+    try {
+        let hero = await Hero.findOne().sort({ createdAt: -1 });
+
+        if (!hero) {
             hero = await createDefaultHero();
         }
 
@@ -22,22 +46,29 @@ export const getHeroContent = async (req, res) => {
             data: hero
         });
     } catch (error) {
-        console.error('Error getting hero content:', error);
+        console.error('Error getting admin hero content:', error);
         res.status(500).json({ error: error.message });
     }
 };
 
-// Создать дефолтный контент
+// Создание дефолтного hero
 const createDefaultHero = async () => {
     const defaultHero = new Hero({
         slides: [
             {
                 title: 'Строим дома вашей',
                 titleHighlight: 'мечты в Алматы',
+                titleColor: '#ffffff',
+                titleHighlightColor: '#c9a03d',
                 description: 'Профессиональное строительство домов под ключ, продажа квартир в элитных новостройках. Более 150 сданных объектов, 98% довольных клиентов.',
+                descriptionColor: 'rgba(255, 255, 255, 0.9)',
                 buttonText: 'Наши проекты',
                 buttonLink: '/projects',
+                buttonBgColor: '#1a472a',
+                buttonTextColor: '#ffffff',
                 contentPosition: 'center',
+                overlayColor: 'rgba(0, 0, 0, 0.4)',
+                overlayOpacity: 0.4,
                 bgType: 'gradient',
                 bgValue: 'linear-gradient(135deg, #0a1a0f 0%, #1a3a2a 100%)',
                 gradientConfig: {
@@ -51,17 +82,23 @@ const createDefaultHero = async () => {
             }
         ],
         autoPlay: true,
-        autoPlayInterval: 5000
+        autoPlayInterval: 5000,
+        updatedBy: 'system'
     });
 
     await defaultHero.save();
     return defaultHero;
 };
 
-// Обновить Hero контент
+// Обновление hero контента
 export const updateHeroContent = async (req, res) => {
     try {
         const { slides, autoPlay, autoPlayInterval } = req.body;
+
+        // Проверка на количество слайдов
+        if (slides && slides.length > 3) {
+            return res.status(400).json({ error: 'Не может быть больше 3 слайдов' });
+        }
 
         let hero = await Hero.findOne();
 
@@ -69,7 +106,7 @@ export const updateHeroContent = async (req, res) => {
             hero = new Hero();
         }
 
-        hero.slides = slides;
+        if (slides) hero.slides = slides;
         if (autoPlay !== undefined) hero.autoPlay = autoPlay;
         if (autoPlayInterval !== undefined) hero.autoPlayInterval = autoPlayInterval;
         hero.updatedBy = req.admin?.email || 'admin';
@@ -87,7 +124,7 @@ export const updateHeroContent = async (req, res) => {
     }
 };
 
-// Загрузить изображение для слайда
+// Загрузка изображения для слайда
 export const uploadSlideImage = async (req, res) => {
     try {
         const { slideIndex } = req.params;
@@ -132,7 +169,7 @@ export const uploadSlideImage = async (req, res) => {
     }
 };
 
-// Удалить изображение слайда
+// Удаление изображения слайда
 export const deleteSlideImage = async (req, res) => {
     try {
         const { slideIndex } = req.params;

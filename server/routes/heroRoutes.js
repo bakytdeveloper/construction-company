@@ -2,6 +2,7 @@
 import express from 'express';
 import {
     getHeroContent,
+    getAdminHeroContent,
     updateHeroContent,
     uploadSlideImage,
     deleteSlideImage
@@ -17,7 +18,7 @@ const __dirname = path.dirname(__filename);
 
 const router = express.Router();
 
-// Настройка multer для загрузки изображений слайдов
+// Настройка multer для загрузки изображений
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         const uploadPath = 'uploads/hero/';
@@ -46,10 +47,11 @@ const upload = multer({
     }
 });
 
-// Публичные маршруты
+// ============ Публичные маршруты ============
 router.get('/content', getHeroContent);
 
-// Админские маршруты
+// ============ Админские маршруты ============
+router.get('/admin/content', authenticateAdmin, getAdminHeroContent);
 router.put('/content', authenticateAdmin, updateHeroContent);
 router.post('/slides/:slideIndex/image', authenticateAdmin, upload.single('image'), uploadSlideImage);
 router.delete('/slides/:slideIndex/image', authenticateAdmin, deleteSlideImage);

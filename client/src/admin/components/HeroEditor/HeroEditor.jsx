@@ -14,10 +14,16 @@ const HeroEditor = () => {
         fetchHeroData();
     }, []);
 
+    // src/admin/components/HeroEditor.jsx - исправлен URL
     const fetchHeroData = async () => {
         setLoading(true);
         try {
-            const response = await axios.get(`${process.env.REACT_APP_API_URL}/hero/content`);
+            const token = localStorage.getItem('adminToken');
+            // Изменен URL с /hero/admin/content на /hero/content (GET запрос)
+            // Для админского доступа используем тот же маршрут, но с токеном
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/hero/content`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
             setHeroData(response.data.data);
         } catch (error) {
             console.error('Error fetching hero data:', error);
@@ -37,7 +43,7 @@ const HeroEditor = () => {
             toast.success('Изменения сохранены');
         } catch (error) {
             console.error('Error saving:', error);
-            toast.error('Ошибка сохранения');
+            toast.error(error.response?.data?.error || 'Ошибка сохранения');
         } finally {
             setSaving(false);
         }
@@ -50,14 +56,26 @@ const HeroEditor = () => {
     };
 
     const addSlide = () => {
+        if (heroData.slides.length >= 3) {
+            toast.error('Не может быть больше 3 слайдов');
+            return;
+        }
+
         const newSlides = [...heroData.slides];
         newSlides.push({
             title: 'Новый слайд',
             titleHighlight: 'мечты',
+            titleColor: '#ffffff',
+            titleHighlightColor: '#c9a03d',
             description: 'Описание нового слайда',
+            descriptionColor: 'rgba(255, 255, 255, 0.9)',
             buttonText: 'Подробнее',
             buttonLink: '/projects',
+            buttonBgColor: '#1a472a',
+            buttonTextColor: '#ffffff',
             contentPosition: 'center',
+            overlayColor: 'rgba(0, 0, 0, 0.4)',
+            overlayOpacity: 0.4,
             bgType: 'gradient',
             bgValue: 'linear-gradient(135deg, #0a1a0f 0%, #1a3a2a 100%)',
             gradientConfig: { angle: 135, color1: '#0a1a0f', color2: '#1a3a2a' },
@@ -144,6 +162,17 @@ const HeroEditor = () => {
         handleSlideChange(index, 'gradientConfig', { angle, color1, color2 });
     };
 
+    const getBackgroundStyle = (slide) => {
+        if (slide.bgType === 'gradient') {
+            return { background: slide.bgValue };
+        }
+        return {
+            backgroundImage: `url(${slide.bgValue})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+        };
+    };
+
     if (loading) {
         return <div className="he-loading">Загрузка редактора...</div>;
     }
@@ -169,28 +198,37 @@ const HeroEditor = () => {
 
             <div className="he-preview">
                 <h3>Предпросмотр</h3>
-                <div className="he-preview-slide" style={{
-                    background: currentSlide.bgType === 'url' || currentSlide.bgType === 'file'
-                        ? `url(${currentSlide.bgValue}) center/cover no-repeat`
-                        : currentSlide.bgValue,
-                    textAlign: currentSlide.contentPosition
-                }}>
-                    <div className="he-preview-overlay"></div>
-                    <div className="he-preview-content">
-                        <h1>
+                <div className="he-preview-slide" style={getBackgroundStyle(currentSlide)}>
+                    <div className="he-preview-overlay" style={{
+                        background: currentSlide.overlayColor || `rgba(0, 0, 0, ${currentSlide.overlayOpacity || 0.4})`
+                    }}></div>
+                    <div className="he-preview-content" style={{ textAlign: currentSlide.contentPosition }}>
+                        <h1 style={{ color: currentSlide.titleColor }}>
                             {currentSlide.title}<br />
-                            <span className="he-gradient-text">{currentSlide.titleHighlight}</span>
+                            <span style={{ color: currentSlide.titleHighlightColor }}>{currentSlide.titleHighlight}</span>
                         </h1>
-                        <p>{currentSlide.description}</p>
-                        <button className="he-preview-btn">{currentSlide.buttonText}</button>
+                        <p style={{ color: currentSlide.descriptionColor }}>{currentSlide.description}</p>
+                        <button
+                            className="he-preview-btn"
+                            style={{
+                                background: currentSlide.buttonBgColor,
+                                color: currentSlide.buttonTextColor
+                            }}
+                        >
+                            {currentSlide.buttonText}
+                        </button>
                     </div>
                 </div>
             </div>
 
             <div className="he-slides-list">
                 <div className="he-slides-header">
-                    <h3>Слайды</h3>
-                    <button className="he-add-slide-btn" onClick={addSlide}>
+                    <h3>Слайды (макс. 3)</h3>
+                    <button
+                        className="he-add-slide-btn"
+                        onClick={addSlide}
+                        disabled={heroData.slides.length >= 3}
+                    >
                         + Добавить слайд
                     </button>
                 </div>
@@ -232,24 +270,44 @@ const HeroEditor = () => {
             <div className="he-editor-form">
                 <h3>Редактирование слайда {activeSlideIndex + 1}</h3>
 
-                <div className="he-form-group">
-                    <label>Заголовок (первая часть)</label>
-                    <input
-                        type="text"
-                        value={currentSlide.title}
-                        onChange={(e) => handleSlideChange(activeSlideIndex, 'title', e.target.value)}
-                        placeholder="Строим дома вашей"
-                    />
+                <div className="he-form-row">
+                    <div className="he-form-group">
+                        <label>Заголовок (первая часть)</label>
+                        <input
+                            type="text"
+                            value={currentSlide.title}
+                            onChange={(e) => handleSlideChange(activeSlideIndex, 'title', e.target.value)}
+                            placeholder="Строим дома вашей"
+                        />
+                    </div>
+                    <div className="he-form-group">
+                        <label>Цвет заголовка</label>
+                        <input
+                            type="color"
+                            value={currentSlide.titleColor || '#ffffff'}
+                            onChange={(e) => handleSlideChange(activeSlideIndex, 'titleColor', e.target.value)}
+                        />
+                    </div>
                 </div>
 
-                <div className="he-form-group">
-                    <label>Заголовок (выделенная часть)</label>
-                    <input
-                        type="text"
-                        value={currentSlide.titleHighlight}
-                        onChange={(e) => handleSlideChange(activeSlideIndex, 'titleHighlight', e.target.value)}
-                        placeholder="мечты в Алматы"
-                    />
+                <div className="he-form-row">
+                    <div className="he-form-group">
+                        <label>Заголовок (выделенная часть)</label>
+                        <input
+                            type="text"
+                            value={currentSlide.titleHighlight}
+                            onChange={(e) => handleSlideChange(activeSlideIndex, 'titleHighlight', e.target.value)}
+                            placeholder="мечты в Алматы"
+                        />
+                    </div>
+                    <div className="he-form-group">
+                        <label>Цвет выделенной части</label>
+                        <input
+                            type="color"
+                            value={currentSlide.titleHighlightColor || '#c9a03d'}
+                            onChange={(e) => handleSlideChange(activeSlideIndex, 'titleHighlightColor', e.target.value)}
+                        />
+                    </div>
                 </div>
 
                 <div className="he-form-group">
@@ -259,6 +317,17 @@ const HeroEditor = () => {
                         onChange={(e) => handleSlideChange(activeSlideIndex, 'description', e.target.value)}
                         rows="3"
                     />
+                </div>
+
+                <div className="he-form-row">
+                    <div className="he-form-group">
+                        <label>Цвет описания</label>
+                        <input
+                            type="color"
+                            value={currentSlide.descriptionColor || '#ffffff'}
+                            onChange={(e) => handleSlideChange(activeSlideIndex, 'descriptionColor', e.target.value)}
+                        />
+                    </div>
                 </div>
 
                 <div className="he-form-row">
@@ -276,6 +345,25 @@ const HeroEditor = () => {
                             type="text"
                             value={currentSlide.buttonLink}
                             onChange={(e) => handleSlideChange(activeSlideIndex, 'buttonLink', e.target.value)}
+                        />
+                    </div>
+                </div>
+
+                <div className="he-form-row">
+                    <div className="he-form-group">
+                        <label>Цвет кнопки</label>
+                        <input
+                            type="color"
+                            value={currentSlide.buttonBgColor || '#1a472a'}
+                            onChange={(e) => handleSlideChange(activeSlideIndex, 'buttonBgColor', e.target.value)}
+                        />
+                    </div>
+                    <div className="he-form-group">
+                        <label>Цвет текста кнопки</label>
+                        <input
+                            type="color"
+                            value={currentSlide.buttonTextColor || '#ffffff'}
+                            onChange={(e) => handleSlideChange(activeSlideIndex, 'buttonTextColor', e.target.value)}
                         />
                     </div>
                 </div>
@@ -301,6 +389,47 @@ const HeroEditor = () => {
                         >
                             Справа ▶
                         </button>
+                    </div>
+                </div>
+
+                <div className="he-form-group">
+                    <label>Затемнение фона</label>
+                    <div className="he-form-row">
+                        <div className="he-form-group">
+                            <label>Цвет затемнения</label>
+                            <input
+                                type="color"
+                                value={currentSlide.overlayColor?.replace(/[^#\dA-F]/gi, '') || '#000000'}
+                                onChange={(e) => {
+                                    const opacity = currentSlide.overlayOpacity || 0.4;
+                                    const hex = e.target.value;
+                                    const r = parseInt(hex.slice(1, 3), 16);
+                                    const g = parseInt(hex.slice(3, 5), 16);
+                                    const b = parseInt(hex.slice(5, 7), 16);
+                                    handleSlideChange(activeSlideIndex, 'overlayColor', `rgba(${r}, ${g}, ${b}, ${opacity})`);
+                                }}
+                            />
+                        </div>
+                        <div className="he-form-group">
+                            <label>Прозрачность</label>
+                            <input
+                                type="range"
+                                min="0"
+                                max="1"
+                                step="0.05"
+                                value={currentSlide.overlayOpacity || 0.4}
+                                onChange={(e) => {
+                                    const opacity = parseFloat(e.target.value);
+                                    const currentColor = currentSlide.overlayColor || 'rgba(0,0,0,0.4)';
+                                    const match = currentColor.match(/rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)/);
+                                    if (match) {
+                                        handleSlideChange(activeSlideIndex, 'overlayColor', `rgba(${match[1]}, ${match[2]}, ${match[3]}, ${opacity})`);
+                                    }
+                                    handleSlideChange(activeSlideIndex, 'overlayOpacity', opacity);
+                                }}
+                            />
+                            <span>{Math.round((currentSlide.overlayOpacity || 0.4) * 100)}%</span>
+                        </div>
                     </div>
                 </div>
 
@@ -382,62 +511,51 @@ const HeroEditor = () => {
                     </div>
                 )}
 
-                {currentSlide.bgType === 'url' && (
+                {(currentSlide.bgType === 'url' || currentSlide.bgType === 'file') && (
                     <div className="he-url-editor">
-                        <div className="he-form-group">
-                            <label>URL изображения</label>
-                            <input
-                                type="url"
-                                value={currentSlide.bgValue}
-                                onChange={(e) => handleSlideChange(activeSlideIndex, 'bgValue', e.target.value)}
-                                placeholder="https://example.com/image.jpg"
-                            />
-                        </div>
-                        <div className="he-form-group">
-                            <label>Alt текст</label>
-                            <input
-                                type="text"
-                                value={currentSlide.altText || ''}
-                                onChange={(e) => handleSlideChange(activeSlideIndex, 'altText', e.target.value)}
-                                placeholder="Описание изображения"
-                            />
-                        </div>
-                        {currentSlide.bgValue && !currentSlide.bgValue.includes('linear-gradient') && (
-                            <div className="he-image-preview">
-                                <img src={currentSlide.bgValue} alt="Preview" />
+                        {currentSlide.bgType === 'url' && (
+                            <div className="he-form-group">
+                                <label>URL изображения</label>
+                                <input
+                                    type="url"
+                                    value={currentSlide.bgValue}
+                                    onChange={(e) => handleSlideChange(activeSlideIndex, 'bgValue', e.target.value)}
+                                    placeholder="https://example.com/image.jpg"
+                                />
                             </div>
                         )}
-                    </div>
-                )}
 
-                {currentSlide.bgType === 'file' && (
-                    <div className="he-file-editor">
-                        {currentSlide.bgValue && !currentSlide.bgValue.includes('linear-gradient') && (
-                            <div className="he-image-preview">
-                                <img src={currentSlide.bgValue} alt="Preview" />
-                                <button
-                                    className="he-delete-image"
-                                    onClick={() => handleDeleteImage(activeSlideIndex)}
-                                >
-                                    ✕ Удалить
-                                </button>
+                        {currentSlide.bgType === 'file' && (
+                            <div className="he-file-editor">
+                                {currentSlide.bgValue && !currentSlide.bgValue.includes('linear-gradient') && (
+                                    <div className="he-image-preview">
+                                        <img src={currentSlide.bgValue} alt="Preview" />
+                                        <button
+                                            className="he-delete-image"
+                                            onClick={() => handleDeleteImage(activeSlideIndex)}
+                                        >
+                                            ✕ Удалить
+                                        </button>
+                                    </div>
+                                )}
+                                <div className="he-file-upload">
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={(e) => {
+                                            if (e.target.files[0]) {
+                                                handleImageUpload(activeSlideIndex, e.target.files[0]);
+                                            }
+                                        }}
+                                        id="slide-image-upload"
+                                    />
+                                    <label htmlFor="slide-image-upload" className="he-upload-label">
+                                        📁 {currentSlide.bgValue && !currentSlide.bgValue.includes('linear-gradient') ? 'Заменить изображение' : 'Выбрать изображение'}
+                                    </label>
+                                </div>
                             </div>
                         )}
-                        <div className="he-file-upload">
-                            <input
-                                type="file"
-                                accept="image/*"
-                                onChange={(e) => {
-                                    if (e.target.files[0]) {
-                                        handleImageUpload(activeSlideIndex, e.target.files[0]);
-                                    }
-                                }}
-                                id="slide-image-upload"
-                            />
-                            <label htmlFor="slide-image-upload" className="he-upload-label">
-                                📁 {currentSlide.bgValue && !currentSlide.bgValue.includes('linear-gradient') ? 'Заменить изображение' : 'Выбрать изображение'}
-                            </label>
-                        </div>
+
                         <div className="he-form-group">
                             <label>Alt текст</label>
                             <input
@@ -447,6 +565,12 @@ const HeroEditor = () => {
                                 placeholder="Описание изображения"
                             />
                         </div>
+
+                        {currentSlide.bgType === 'url' && currentSlide.bgValue && !currentSlide.bgValue.includes('linear-gradient') && (
+                            <div className="he-image-preview">
+                                <img src={currentSlide.bgValue} alt="Preview" />
+                            </div>
+                        )}
                     </div>
                 )}
 
