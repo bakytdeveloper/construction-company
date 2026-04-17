@@ -450,3 +450,243 @@
         font-size: 1.5rem;
     }
 }
+
+
+/* Стили для Color Picker */
+.he-color-picker-container {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.he-color-picker-container label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #374151;
+}
+
+.he-color-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 8px 12px;
+    background: white;
+    cursor: pointer;
+}
+
+.he-color-preview {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.he-color-preview:hover {
+    transform: scale(1.05);
+}
+
+.he-color-text {
+    flex: 1;
+    border: none !important;
+    padding: 0 !important;
+    font-family: monospace;
+    font-size: 14px;
+    cursor: pointer;
+    background: transparent;
+}
+
+.he-color-text:focus {
+    outline: none;
+}
+
+.he-color-picker-popup {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 8px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    z-index: 1000;
+    min-width: 200px;
+}
+
+.he-color-native-picker {
+    width: 100%;
+    height: 150px;
+    border: none;
+    cursor: pointer;
+    margin-bottom: 12px;
+}
+
+.he-color-picker-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.he-color-confirm,
+.he-color-cancel {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.he-color-confirm {
+    background: #1a472a;
+    color: white;
+}
+
+.he-color-confirm:hover {
+    background: #0e2a1a;
+}
+
+.he-color-cancel {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.he-color-cancel:hover {
+    background: #e5e7eb;
+}
+
+/* Стили для редактора статистики */
+.he-stats-editor {
+    background: #f9fafb;
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.he-stats-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.he-stats-header label {
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 0;
+}
+
+.he-add-stat-btn {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s;
+}
+
+.he-add-stat-btn:hover:not(:disabled) {
+    background: #2563eb;
+    transform: translateY(-1px);
+}
+
+.he-add-stat-btn:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+}
+
+.he-stats-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.he-stat-item {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 12px;
+    align-items: end;
+    background: white;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+}
+
+.he-stat-number,
+.he-stat-label-input {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.he-stat-number label,
+.he-stat-label-input label {
+    font-size: 12px;
+    font-weight: 500;
+    color: #6b7280;
+    margin-bottom: 0;
+}
+
+.he-stat-number input,
+.he-stat-label-input input {
+    padding: 8px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.he-stat-number input:focus,
+.he-stat-label-input input:focus {
+    outline: none;
+    border-color: #1a472a;
+    box-shadow: 0 0 0 2px rgba(26, 71, 42, 0.1);
+}
+
+.he-remove-stat {
+    background: #ef4444;
+    color: white;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+    margin-bottom: 2px;
+}
+
+.he-remove-stat:hover:not(:disabled) {
+    background: #dc2626;
+    transform: scale(1.05);
+}
+
+.he-remove-stat:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+    .he-stat-item {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .he-remove-stat {
+        width: 100%;
+        height: 36px;
+    }
+
+    .he-color-picker-popup {
+        left: auto;
+        right: 0;
+    }
+}
