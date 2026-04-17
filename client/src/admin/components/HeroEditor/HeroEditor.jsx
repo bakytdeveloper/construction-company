@@ -9,6 +9,7 @@ const HeroEditor = () => {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [activeSlideIndex, setActiveSlideIndex] = useState(0);
+    const [refreshKey, setRefreshKey] = useState(0);
 
     useEffect(() => {
         fetchHeroData();
@@ -50,6 +51,8 @@ const HeroEditor = () => {
         const newSlides = [...heroData.slides];
         newSlides[index] = { ...newSlides[index], [field]: value };
         setHeroData({ ...heroData, slides: newSlides });
+        // Принудительно обновляем предпросмотр
+        setRefreshKey(prev => prev + 1);
     };
 
     const addSlide = () => {
@@ -88,6 +91,7 @@ const HeroEditor = () => {
         });
         setHeroData({ ...heroData, slides: newSlides });
         setActiveSlideIndex(newSlides.length - 1);
+        setRefreshKey(prev => prev + 1);
     };
 
     const removeSlide = (index) => {
@@ -96,6 +100,7 @@ const HeroEditor = () => {
         if (activeSlideIndex >= newSlides.length) {
             setActiveSlideIndex(Math.max(0, newSlides.length - 1));
         }
+        setRefreshKey(prev => prev + 1);
     };
 
     const moveSlide = (index, direction) => {
@@ -106,6 +111,7 @@ const HeroEditor = () => {
         setHeroData({ ...heroData, slides: newSlides });
         if (activeSlideIndex === index) setActiveSlideIndex(newIndex);
         else if (activeSlideIndex === newIndex) setActiveSlideIndex(index);
+        setRefreshKey(prev => prev + 1);
     };
 
     const handleImageUpload = async (index, file) => {
@@ -128,6 +134,7 @@ const HeroEditor = () => {
             const newSlides = [...heroData.slides];
             newSlides[index] = response.data.data.slides[index];
             setHeroData({ ...heroData, slides: newSlides });
+            setRefreshKey(prev => prev + 1);
             toast.success('Изображение загружено');
         } catch (error) {
             console.error('Error uploading image:', error);
@@ -146,6 +153,7 @@ const HeroEditor = () => {
             const newSlides = [...heroData.slides];
             newSlides[index] = response.data.data.slides[index];
             setHeroData({ ...heroData, slides: newSlides });
+            setRefreshKey(prev => prev + 1);
             toast.success('Изображение удалено');
         } catch (error) {
             console.error('Error deleting image:', error);
@@ -155,19 +163,39 @@ const HeroEditor = () => {
 
     const handleGradientChange = (index, color1, color2, angle) => {
         // Обновляем gradientConfig
-        handleSlideChange(index, 'gradientConfig', { angle, color1, color2 });
-        // Обновляем bgValue для корректного отображения на клиенте
-        const gradient = `linear-gradient(${angle}deg, ${color1} 0%, ${color2} 100%)`;
-        handleSlideChange(index, 'bgValue', gradient);
+        const newSlides = [...heroData.slides];
+        newSlides[index] = {
+            ...newSlides[index],
+            gradientConfig: { angle, color1, color2 },
+            bgValue: `linear-gradient(${angle}deg, ${color1} 0%, ${color2} 100%)`,
+            bgType: 'gradient'
+        };
+        setHeroData({ ...heroData, slides: newSlides });
+        // Принудительно обновляем предпросмотр
+        setRefreshKey(prev => prev + 1);
     };
 
-    const handleOverlayChange = (index, color, opacity) => {
-        const rgba = `rgba(${parseInt(color.slice(1,3), 16)}, ${parseInt(color.slice(3,5), 16)}, ${parseInt(color.slice(5,7), 16)}, ${opacity})`;
-        handleSlideChange(index, 'overlayColor', rgba);
-        handleSlideChange(index, 'overlayOpacity', opacity);
+    // Вспомогательные функции для работы с цветами
+    const rgbaToHex = (rgba) => {
+        if (!rgba) return '#ffffff';
+        const match = rgba.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+        if (match) {
+            return `#${parseInt(match[1]).toString(16).padStart(2, '0')}${parseInt(match[2]).toString(16).padStart(2, '0')}${parseInt(match[3]).toString(16).padStart(2, '0')}`;
+        }
+        return '#ffffff';
+    };
+
+    const getOverlayHex = (rgba) => {
+        if (!rgba) return '#000000';
+        const match = rgba.match(/rgba\((\d+),\s*(\d+),\s*(\d+)/);
+        if (match) {
+            return `#${parseInt(match[1]).toString(16).padStart(2, '0')}${parseInt(match[2]).toString(16).padStart(2, '0')}${parseInt(match[3]).toString(16).padStart(2, '0')}`;
+        }
+        return '#000000';
     };
 
     const getBackgroundStyle = (slide) => {
+        // Для градиента используем gradientConfig
         if (slide.bgType === 'gradient') {
             if (slide.gradientConfig && slide.gradientConfig.color1 && slide.gradientConfig.color2) {
                 return {
@@ -196,18 +224,8 @@ const HeroEditor = () => {
 
     const currentSlide = heroData.slides[activeSlideIndex];
 
-    // Получаем текущий цвет для overlay
-    const getOverlayHex = (rgba) => {
-        if (!rgba) return '#000000';
-        const match = rgba.match(/rgba\((\d+),\s*(\d+),\s*(\d+),\s*[\d.]+\)/);
-        if (match) {
-            return `#${parseInt(match[1]).toString(16).padStart(2, '0')}${parseInt(match[2]).toString(16).padStart(2, '0')}${parseInt(match[3]).toString(16).padStart(2, '0')}`;
-        }
-        return '#000000';
-    };
-
     return (
-        <div className="hero-editor">
+        <div className="hero-editor" key={refreshKey}>
             <div className="he-header">
                 <h2>Редактор главного баннера</h2>
                 <button
@@ -347,10 +365,10 @@ const HeroEditor = () => {
                         <label>Цвет описания</label>
                         <input
                             type="color"
-                            value={currentSlide.descriptionColor?.replace(/[^#\dA-F]/gi, '') || '#ffffff'}
+                            value={rgbaToHex(currentSlide.descriptionColor)}
                             onChange={(e) => {
-                                const opacity = parseFloat(currentSlide.descriptionColor?.match(/[\d.]+\)/)?.[0]?.slice(0, -1) || '0.9');
                                 const hex = e.target.value;
+                                const opacity = parseFloat(currentSlide.descriptionColor?.match(/[\d.]+(?=\))/)?.[0] || '0.9');
                                 const r = parseInt(hex.slice(1, 3), 16);
                                 const g = parseInt(hex.slice(3, 5), 16);
                                 const b = parseInt(hex.slice(5, 7), 16);
@@ -431,11 +449,12 @@ const HeroEditor = () => {
                                 type="color"
                                 value={getOverlayHex(currentSlide.overlayColor)}
                                 onChange={(e) => {
-                                    handleOverlayChange(
-                                        activeSlideIndex,
-                                        e.target.value,
-                                        currentSlide.overlayOpacity || 0.4
-                                    );
+                                    const hex = e.target.value;
+                                    const opacity = currentSlide.overlayOpacity || 0.4;
+                                    const r = parseInt(hex.slice(1, 3), 16);
+                                    const g = parseInt(hex.slice(3, 5), 16);
+                                    const b = parseInt(hex.slice(5, 7), 16);
+                                    handleSlideChange(activeSlideIndex, 'overlayColor', `rgba(${r}, ${g}, ${b}, ${opacity})`);
                                 }}
                             />
                         </div>
@@ -450,7 +469,11 @@ const HeroEditor = () => {
                                 onChange={(e) => {
                                     const opacity = parseFloat(e.target.value);
                                     const hex = getOverlayHex(currentSlide.overlayColor);
-                                    handleOverlayChange(activeSlideIndex, hex, opacity);
+                                    const r = parseInt(hex.slice(1, 3), 16);
+                                    const g = parseInt(hex.slice(3, 5), 16);
+                                    const b = parseInt(hex.slice(5, 7), 16);
+                                    handleSlideChange(activeSlideIndex, 'overlayColor', `rgba(${r}, ${g}, ${b}, ${opacity})`);
+                                    handleSlideChange(activeSlideIndex, 'overlayOpacity', opacity);
                                 }}
                             />
                             <span>{Math.round((currentSlide.overlayOpacity || 0.4) * 100)}%</span>
@@ -493,12 +516,12 @@ const HeroEditor = () => {
                                     max="360"
                                     step="1"
                                     value={currentSlide.gradientConfig?.angle || 135}
-                                    onChange={(e) => handleGradientChange(
-                                        activeSlideIndex,
-                                        currentSlide.gradientConfig?.color1 || '#0a1a0f',
-                                        currentSlide.gradientConfig?.color2 || '#1a3a2a',
-                                        parseInt(e.target.value)
-                                    )}
+                                    onChange={(e) => {
+                                        const angle = parseInt(e.target.value);
+                                        const color1 = currentSlide.gradientConfig?.color1 || '#0a1a0f';
+                                        const color2 = currentSlide.gradientConfig?.color2 || '#1a3a2a';
+                                        handleGradientChange(activeSlideIndex, color1, color2, angle);
+                                    }}
                                 />
                                 <span>{currentSlide.gradientConfig?.angle || 135}°</span>
                             </div>
@@ -509,12 +532,12 @@ const HeroEditor = () => {
                                 <input
                                     type="color"
                                     value={currentSlide.gradientConfig?.color1 || '#0a1a0f'}
-                                    onChange={(e) => handleGradientChange(
-                                        activeSlideIndex,
-                                        e.target.value,
-                                        currentSlide.gradientConfig?.color2 || '#1a3a2a',
-                                        currentSlide.gradientConfig?.angle || 135
-                                    )}
+                                    onChange={(e) => {
+                                        const color1 = e.target.value;
+                                        const color2 = currentSlide.gradientConfig?.color2 || '#1a3a2a';
+                                        const angle = currentSlide.gradientConfig?.angle || 135;
+                                        handleGradientChange(activeSlideIndex, color1, color2, angle);
+                                    }}
                                 />
                             </div>
                             <div className="he-form-group">
@@ -522,12 +545,12 @@ const HeroEditor = () => {
                                 <input
                                     type="color"
                                     value={currentSlide.gradientConfig?.color2 || '#1a3a2a'}
-                                    onChange={(e) => handleGradientChange(
-                                        activeSlideIndex,
-                                        currentSlide.gradientConfig?.color1 || '#0a1a0f',
-                                        e.target.value,
-                                        currentSlide.gradientConfig?.angle || 135
-                                    )}
+                                    onChange={(e) => {
+                                        const color1 = currentSlide.gradientConfig?.color1 || '#0a1a0f';
+                                        const color2 = e.target.value;
+                                        const angle = currentSlide.gradientConfig?.angle || 135;
+                                        handleGradientChange(activeSlideIndex, color1, color2, angle);
+                                    }}
                                 />
                             </div>
                         </div>
