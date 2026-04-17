@@ -29,7 +29,8 @@ const storage = multer.diskStorage({
     },
     filename: (req, file, cb) => {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, uniqueSuffix + path.extname(file.originalname));
+        const filename = uniqueSuffix + path.extname(file.originalname);
+        cb(null, filename);
     }
 });
 
@@ -55,5 +56,13 @@ router.get('/admin/content', authenticateAdmin, getAdminHeroContent);
 router.put('/content', authenticateAdmin, updateHeroContent);
 router.post('/slides/:slideIndex/image', authenticateAdmin, upload.single('image'), uploadSlideImage);
 router.delete('/slides/:slideIndex/image', authenticateAdmin, deleteSlideImage);
+
+// Для отладки - вывести все зарегистрированные маршруты
+console.log('✅ Hero routes registered:');
+console.log('  - GET /api/hero/content');
+console.log('  - GET /api/hero/admin/content');
+console.log('  - PUT /api/hero/content');
+console.log('  - POST /api/hero/slides/:slideIndex/image');
+console.log('  - DELETE /api/hero/slides/:slideIndex/image');
 
 export default router;

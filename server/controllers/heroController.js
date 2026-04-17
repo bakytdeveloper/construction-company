@@ -7,7 +7,6 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Публичный маршрут - возвращает только активные слайды
 export const getHeroContent = async (req, res) => {
     try {
         let hero = await Hero.findOne().sort({ createdAt: -1 });
@@ -16,7 +15,6 @@ export const getHeroContent = async (req, res) => {
             hero = await createDefaultHero();
         }
 
-        // Фильтруем только активные слайды для публичного доступа
         const publicHero = {
             ...hero.toObject(),
             slides: hero.slides.filter(s => s.active)
@@ -32,7 +30,6 @@ export const getHeroContent = async (req, res) => {
     }
 };
 
-// Админский маршрут - возвращает все слайды (включая неактивные)
 export const getAdminHeroContent = async (req, res) => {
     try {
         let hero = await Hero.findOne().sort({ createdAt: -1 });
@@ -51,7 +48,6 @@ export const getAdminHeroContent = async (req, res) => {
     }
 };
 
-// Создание дефолтного hero
 const createDefaultHero = async () => {
     const defaultHero = new Hero({
         slides: [
@@ -90,12 +86,10 @@ const createDefaultHero = async () => {
     return defaultHero;
 };
 
-// Обновление hero контента
 export const updateHeroContent = async (req, res) => {
     try {
         const { slides, autoPlay, autoPlayInterval } = req.body;
 
-        // Проверка на количество слайдов
         if (slides && slides.length > 3) {
             return res.status(400).json({ error: 'Не может быть больше 3 слайдов' });
         }
@@ -124,10 +118,12 @@ export const updateHeroContent = async (req, res) => {
     }
 };
 
-// Загрузка изображения для слайда
 export const uploadSlideImage = async (req, res) => {
     try {
         const { slideIndex } = req.params;
+
+        console.log('📸 Загрузка изображения для слайда:', slideIndex);
+        console.log('📁 Файл:', req.file);
 
         if (!req.file) {
             return res.status(400).json({ error: 'Файл не загружен' });
@@ -139,8 +135,17 @@ export const uploadSlideImage = async (req, res) => {
         }
 
         const index = parseInt(slideIndex);
-        if (index < 0 || index >= hero.slides.length) {
-            return res.status(404).json({ error: 'Слайд не найден' });
+
+        // Проверяем существование слайда
+        if (isNaN(index) || index < 0 || index >= hero.slides.length) {
+            // Удаляем загруженный файл
+            const uploadedPath = path.join(__dirname, '..', 'uploads/hero', req.file.filename);
+            if (fs.existsSync(uploadedPath)) {
+                fs.unlinkSync(uploadedPath);
+            }
+            return res.status(404).json({
+                error: `Слайд с индексом ${index} не найден. Доступно слайдов: ${hero.slides.length}`
+            });
         }
 
         // Удаляем старое изображение если было
@@ -149,6 +154,7 @@ export const uploadSlideImage = async (req, res) => {
             const oldPath = path.join(__dirname, '..', oldImage);
             if (fs.existsSync(oldPath)) {
                 fs.unlinkSync(oldPath);
+                console.log(`🗑️ Старое изображение удалено: ${oldPath}`);
             }
         }
 
@@ -165,11 +171,16 @@ export const uploadSlideImage = async (req, res) => {
         });
     } catch (error) {
         console.error('Error uploading slide image:', error);
+        if (req.file) {
+            const uploadedPath = path.join(__dirname, '..', 'uploads/hero', req.file.filename);
+            if (fs.existsSync(uploadedPath)) {
+                fs.unlinkSync(uploadedPath);
+            }
+        }
         res.status(500).json({ error: error.message });
     }
 };
 
-// Удаление изображения слайда
 export const deleteSlideImage = async (req, res) => {
     try {
         const { slideIndex } = req.params;
@@ -180,20 +191,23 @@ export const deleteSlideImage = async (req, res) => {
         }
 
         const index = parseInt(slideIndex);
-        if (index < 0 || index >= hero.slides.length) {
+        if (isNaN(index) || index < 0 || index >= hero.slides.length) {
             return res.status(404).json({ error: 'Слайд не найден' });
         }
 
         const imagePath = hero.slides[index].bgValue;
+
         if (imagePath && imagePath.startsWith('/uploads/hero/')) {
             const fullPath = path.join(__dirname, '..', imagePath);
             if (fs.existsSync(fullPath)) {
                 fs.unlinkSync(fullPath);
+                console.log(`🗑️ Файл удален: ${fullPath}`);
             }
         }
 
         hero.slides[index].bgValue = 'linear-gradient(135deg, #0a1a0f 0%, #1a3a2a 100%)';
         hero.slides[index].bgType = 'gradient';
+        hero.slides[index].altText = '';
 
         await hero.save();
 

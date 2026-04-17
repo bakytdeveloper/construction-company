@@ -114,6 +114,12 @@ const HeroEditor = () => {
     };
 
     const handleImageUpload = async (index, file) => {
+        // Проверяем, существует ли слайд с таким индексом
+        if (index >= heroData.slides.length) {
+            toast.error('Слайд не найден');
+            return;
+        }
+
         const formData = new FormData();
         formData.append('image', file);
 
@@ -130,14 +136,16 @@ const HeroEditor = () => {
                 }
             );
 
-            const newSlides = [...heroData.slides];
-            newSlides[index] = response.data.data.slides[index];
-            setHeroData({ ...heroData, slides: newSlides });
-            setRefreshKey(prev => prev + 1);
-            toast.success('Изображение загружено');
+            if (response.data.success) {
+                const newSlides = [...heroData.slides];
+                newSlides[index] = response.data.data.slides[index];
+                setHeroData({ ...heroData, slides: newSlides });
+                setRefreshKey(prev => prev + 1);
+                toast.success('Изображение загружено');
+            }
         } catch (error) {
             console.error('Error uploading image:', error);
-            toast.error('Ошибка загрузки изображения');
+            toast.error(error.response?.data?.error || 'Ошибка загрузки изображения');
         }
     };
 
