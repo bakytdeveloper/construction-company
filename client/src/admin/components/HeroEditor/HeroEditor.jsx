@@ -286,8 +286,11 @@ const HeroEditor = () => {
                 <div className="he-preview-slide" style={getBackgroundStyle(currentSlide)}>
                     <div className="he-preview-overlay" style={{
                         background: currentSlide.overlayColor || `rgba(0, 0, 0, ${currentOverlayOpacity})`
-                    }}></div>
-                    <div className="he-preview-content" style={{ textAlign: currentSlide.contentPosition }}>
+                    }}>
+
+                    </div>
+
+                    <div className={`he-preview-content he-preview-content-${currentSlide.contentPosition || 'center'}`} style={{ textAlign: currentSlide.contentPosition === 'left' || currentSlide.contentPosition === 'right' ? 'left' : 'center' }}>
                         <h1 style={{ color: currentSlide.titleColor }}>
                             {currentSlide.title}<br />
                             <span style={{ color: currentSlide.titleHighlightColor }}>{currentSlide.titleHighlight}</span>

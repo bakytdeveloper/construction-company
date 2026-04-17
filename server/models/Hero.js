@@ -123,7 +123,7 @@ const heroSchema = new mongoose.Schema({
     },
     autoPlayInterval: {
         type: Number,
-        default: 5000
+        default: 25000
     },
     updatedBy: {
         type: String,
