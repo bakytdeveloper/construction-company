@@ -315,17 +315,17 @@ const StatsManager = () => {
                                     className="sm-move-up"
                                     onClick={() => handleReorder(stat._id, 'up')}
                                     disabled={index === 0}
-                                    title="Переместить вверх"
+                                    title="Переместить влево"
                                 >
-                                    ↑
+                                    ←
                                 </button>
                                 <button
                                     className="sm-move-down"
                                     onClick={() => handleReorder(stat._id, 'down')}
                                     disabled={index === stats.length - 1}
-                                    title="Переместить вниз"
+                                    title="Переместить вправо"
                                 >
-                                    ↓
+                                    →
                                 </button>
                                 <button
                                     className="sm-edit-btn"

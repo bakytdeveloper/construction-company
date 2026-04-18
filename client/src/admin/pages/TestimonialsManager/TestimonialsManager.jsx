@@ -344,17 +344,17 @@ const TestimonialsManager = () => {
                                     className="tm-move-up"
                                     onClick={() => handleReorder(testimonial._id, 'up')}
                                     disabled={index === 0}
-                                    title="Переместить вверх"
+                                    title="Переместить влево"
                                 >
-                                    ↑
+                                    ←
                                 </button>
                                 <button
                                     className="tm-move-down"
                                     onClick={() => handleReorder(testimonial._id, 'down')}
                                     disabled={index === testimonials.length - 1}
-                                    title="Переместить вниз"
+                                    title="Переместить вправо"
                                 >
-                                    ↓
+                                    →
                                 </button>
                                 <button
                                     className="tm-edit-btn"
