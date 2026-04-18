@@ -318,3 +318,16 @@
     transform: translateZ(0);
     backface-visibility: hidden;
 }
+
+/* Добавьте в FAQ.css вместо .question-icon */
+.question-bullet {
+    font-size: 1.8rem;
+    min-width: 35px;
+    color: var(--secondary-color);
+    transition: transform 0.3s ease;
+}
+
+.faq-item.active .question-bullet {
+    transform: scale(1.1);
+    color: white;
+}

@@ -14,6 +14,7 @@ import fs from 'fs';
 import heroRoutes from "./routes/heroRoutes.js";
 import serviceRoutes from "./routes/serviceRoutes.js";
 import advantageRoutes from "./routes/advantageRoutes.js";
+import faqRoutes from "./routes/faqRoutes.js";
 
 dotenv.config();
 
@@ -56,6 +57,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/hero', heroRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/advantages', advantageRoutes);
+app.use('/api/faq', faqRoutes);
 
 
 // Health check

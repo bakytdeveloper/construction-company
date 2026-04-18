@@ -14,6 +14,7 @@ const AdminLayout = ({ children, onLogout }) => {
         { path: '/admin/hero', icon: '🎨', label: 'Главный баннер' },
         { path: '/admin/services', icon: '🔧', label: 'Услуги' },
         { path: '/admin/advantages', icon: '⭐', label: 'Преимущества' },
+        { path: '/admin/faq', icon: '❓', label: 'FAQ' },
 
     ];
 
