@@ -590,14 +590,14 @@ const TestimonialsManager = () => {
                                 )}
 
                                 <div className="ap-form-row">
-                                    <div className="ap-form-group">
-                                        <label>Порядок сортировки</label>
-                                        <input
-                                            type="number"
-                                            value={formData.order}
-                                            onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) })}
-                                        />
-                                    </div>
+                                    {/*<div className="ap-form-group">*/}
+                                    {/*    <label>Порядок сортировки</label>*/}
+                                    {/*    <input*/}
+                                    {/*        type="number"*/}
+                                    {/*        value={formData.order}*/}
+                                    {/*        onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) })}*/}
+                                    {/*    />*/}
+                                    {/*</div>*/}
                                     <div className="ap-form-group">
                                         <label className="ap-checkbox-label">
                                             <input
