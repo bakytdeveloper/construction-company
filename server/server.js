@@ -12,6 +12,7 @@ import complexRoutes from './routes/complexRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import fs from 'fs';
 import heroRoutes from "./routes/heroRoutes.js";
+import serviceRoutes from "./routes/serviceRoutes.js";
 
 dotenv.config();
 
@@ -52,6 +53,7 @@ app.use('/api/properties', projectRoutes);
 app.use('/api/complexes', complexRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/hero', heroRoutes);
+app.use('/api/services', serviceRoutes);
 
 
 // Health check
