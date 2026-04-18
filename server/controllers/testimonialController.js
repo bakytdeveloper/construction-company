@@ -59,8 +59,27 @@ const getDefaultTestimonialsData = () => {
     ];
 };
 
-// Сохранение дефолтных данных в БД
+// Функция для удаления всех файлов изображений из папки testimonials
+const deleteAllTestimonialImages = async () => {
+    const testimonialsDir = path.join(__dirname, '..', 'uploads/testimonials');
+
+    if (fs.existsSync(testimonialsDir)) {
+        const files = fs.readdirSync(testimonialsDir);
+        for (const file of files) {
+            const filePath = path.join(testimonialsDir, file);
+            if (fs.statSync(filePath).isFile()) {
+                fs.unlinkSync(filePath);
+                console.log(`🗑️ Удален файл: ${filePath}`);
+            }
+        }
+    }
+};
+
+// Сохранение дефолтных данных в БД (с удалением старых файлов)
 const saveDefaultTestimonials = async () => {
+    // Удаляем все файлы изображений с сервера
+    await deleteAllTestimonialImages();
+
     const defaultTestimonials = getDefaultTestimonialsData();
     await Testimonial.deleteMany({});
     await Testimonial.insertMany(defaultTestimonials);
@@ -240,7 +259,6 @@ export const createTestimonial = async (req, res) => {
     try {
         const testimonialData = req.body;
 
-        // Обработка изображения если оно загружено как файл
         if (req.file) {
             const imageUrl = `/uploads/testimonials/${req.file.filename}`;
             testimonialData.image = imageUrl;
@@ -272,7 +290,6 @@ export const updateTestimonial = async (req, res) => {
 
         const updateData = req.body;
 
-        // Если загружено новое изображение, удаляем старое
         if (req.file) {
             const oldTestimonial = await Testimonial.findById(id);
             if (oldTestimonial && oldTestimonial.image && oldTestimonial.imageType === 'file') {
@@ -316,7 +333,6 @@ export const deleteTestimonial = async (req, res) => {
             return res.status(404).json({ error: 'Отзыв не найден' });
         }
 
-        // Удаляем файл изображения если он был загружен
         if (testimonial.image && testimonial.imageType === 'file') {
             const filePath = path.join(__dirname, '..', testimonial.image);
             if (fs.existsSync(filePath)) {
@@ -338,11 +354,29 @@ export const deleteTestimonial = async (req, res) => {
 
 export const createDefaultTestimonials = async (req, res) => {
     try {
+        // Удаляем все существующие отзывы и их изображения
+        const existingTestimonials = await Testimonial.find();
+
+        // Удаляем файлы изображений существующих отзывов
+        for (const testimonial of existingTestimonials) {
+            if (testimonial.image && testimonial.imageType === 'file') {
+                const filePath = path.join(__dirname, '..', testimonial.image);
+                if (fs.existsSync(filePath)) {
+                    fs.unlinkSync(filePath);
+                    console.log(`🗑️ Удален файл: ${filePath}`);
+                }
+            }
+        }
+
+        // Удаляем все отзывы из БД
+        await Testimonial.deleteMany({});
+
+        // Создаем дефолтные отзывы
         const testimonials = await saveDefaultTestimonials();
 
         res.json({
             success: true,
-            message: 'Дефолтные отзывы созданы',
+            message: 'Дефолтные отзывы созданы, все старые изображения удалены',
             data: testimonials
         });
     } catch (error) {
