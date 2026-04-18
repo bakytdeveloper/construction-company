@@ -13,6 +13,7 @@ const AdminLayout = ({ children, onLogout }) => {
         { path: '/admin/messages', icon: '✉️', label: 'Сообщения' },
         { path: '/admin/hero', icon: '🎨', label: 'Главный баннер' },
         { path: '/admin/services', icon: '🔧', label: 'Услуги' },
+        { path: '/admin/advantages', icon: '⭐', label: 'Преимущества' },
 
     ];
 
