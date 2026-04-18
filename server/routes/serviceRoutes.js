@@ -7,21 +7,28 @@ import {
     updateService,
     deleteService,
     createDefaultServices,
-    // ensureDefaultServices
+    getServiceSettings,
+    updateServiceSettings,
+    resetServiceSettings
 } from '../controllers/serviceController.js';
 import { authenticateAdmin } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Публичные маршруты
+// ============ Публичные маршруты ============
 router.get('/', getAllServices);
 
-// Админские маршруты
+// ============ Админские маршруты для настроек секции ============
+// ВАЖНО: эти маршруты должны быть ДО маршрутов с параметром :id
+router.get('/settings', authenticateAdmin, getServiceSettings);
+router.put('/settings', authenticateAdmin, updateServiceSettings);
+router.post('/settings/reset', authenticateAdmin, resetServiceSettings);
+
+// ============ Админские маршруты для услуг ============
 router.get('/admin', authenticateAdmin, getAdminServices);
 router.post('/', authenticateAdmin, createService);
+router.post('/default/create', authenticateAdmin, createDefaultServices);
 router.put('/:id', authenticateAdmin, updateService);
 router.delete('/:id', authenticateAdmin, deleteService);
-router.post('/default/create', authenticateAdmin, createDefaultServices);
-// router.get('/ensure-default', authenticateAdmin, ensureDefaultServices);
 
 export default router;

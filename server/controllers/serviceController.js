@@ -1,5 +1,7 @@
 // controllers/serviceController.js
 import Service from '../models/Service.js';
+import ServiceSettings from '../models/ServiceSettings.js';
+import mongoose from 'mongoose';
 
 // Дефолтные данные
 const getDefaultServicesData = () => {
@@ -62,25 +64,132 @@ const getDefaultServicesData = () => {
 // Сохранение дефолтных данных в БД
 const saveDefaultServices = async () => {
     const defaultServices = getDefaultServicesData();
+    await Service.deleteMany({});
     await Service.insertMany(defaultServices);
     return await Service.find().sort({ order: 1 });
 };
+
+// ============ Настройки секции ============
+
+// Получить настройки секции
+export const getServiceSettings = async (req, res) => {
+    try {
+        let settings = await ServiceSettings.findOne();
+
+        if (!settings) {
+            settings = await ServiceSettings.create({
+                subtitle: 'Наши услуги',
+                title: 'Что мы предлагаем',
+                description: 'Полный спектр услуг в строительстве и недвижимости. От идеи до готового объекта',
+                updatedBy: req.admin?.email || 'system'
+            });
+        }
+
+        res.json({
+            success: true,
+            data: settings
+        });
+    } catch (error) {
+        console.error('Error getting service settings:', error);
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// Обновить настройки секции
+export const updateServiceSettings = async (req, res) => {
+    try {
+        console.log('📝 Updating service settings:', req.body);
+
+        const { subtitle, title, description } = req.body;
+
+        let settings = await ServiceSettings.findOne();
+
+        if (!settings) {
+            settings = new ServiceSettings();
+        }
+
+        if (subtitle !== undefined) settings.subtitle = subtitle;
+        if (title !== undefined) settings.title = title;
+        if (description !== undefined) settings.description = description;
+        settings.updatedBy = req.admin?.email || 'admin';
+
+        await settings.save();
+
+        console.log('✅ Settings saved:', settings);
+
+        res.json({
+            success: true,
+            message: 'Настройки обновлены',
+            data: settings
+        });
+    } catch (error) {
+        console.error('Error updating service settings:', error);
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// Сбросить настройки секции к дефолтным
+export const resetServiceSettings = async (req, res) => {
+    try {
+        const defaultSettings = {
+            subtitle: 'Наши услуги',
+            title: 'Что мы предлагаем',
+            description: 'Полный спектр услуг в строительстве и недвижимости. От идеи до готового объекта',
+            updatedBy: req.admin?.email || 'admin'
+        };
+
+        let settings = await ServiceSettings.findOne();
+
+        if (!settings) {
+            settings = new ServiceSettings(defaultSettings);
+        } else {
+            settings.subtitle = defaultSettings.subtitle;
+            settings.title = defaultSettings.title;
+            settings.description = defaultSettings.description;
+            settings.updatedBy = defaultSettings.updatedBy;
+        }
+
+        await settings.save();
+
+        res.json({
+            success: true,
+            message: 'Настройки сброшены к дефолтным',
+            data: settings
+        });
+    } catch (error) {
+        console.error('Error resetting service settings:', error);
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// ============ Услуги ============
 
 // Получить все услуги (публичный)
 export const getAllServices = async (req, res) => {
     try {
         let services = await Service.find({ active: true }).sort({ order: 1 });
 
-        // Если нет ни одной услуги, создаем дефолтные
         if (services.length === 0) {
             services = await saveDefaultServices();
-            // Фильтруем только активные
             services = services.filter(s => s.active);
+        }
+
+        let settings = await ServiceSettings.findOne();
+        if (!settings) {
+            settings = await ServiceSettings.create({
+                subtitle: 'Наши услуги',
+                title: 'Что мы предлагаем',
+                description: 'Полный спектр услуг в строительстве и недвижимости. От идеи до готового объекта',
+                updatedBy: 'system'
+            });
         }
 
         res.json({
             success: true,
-            data: services
+            data: {
+                settings,
+                services
+            }
         });
     } catch (error) {
         console.error('Error getting services:', error);
@@ -93,14 +202,26 @@ export const getAdminServices = async (req, res) => {
     try {
         let services = await Service.find().sort({ order: 1 });
 
-        // Если нет ни одной услуги, создаем дефолтные
         if (services.length === 0) {
             services = await saveDefaultServices();
         }
 
+        let settings = await ServiceSettings.findOne();
+        if (!settings) {
+            settings = await ServiceSettings.create({
+                subtitle: 'Наши услуги',
+                title: 'Что мы предлагаем',
+                description: 'Полный спектр услуг в строительстве и недвижимости. От идеи до готового объекта',
+                updatedBy: 'system'
+            });
+        }
+
         res.json({
             success: true,
-            data: services
+            data: {
+                settings,
+                services
+            }
         });
     } catch (error) {
         console.error('Error getting admin services:', error);
@@ -135,6 +256,12 @@ export const createService = async (req, res) => {
 export const updateService = async (req, res) => {
     try {
         const { id } = req.params;
+
+        // Проверяем, является ли id валидным ObjectId
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ error: 'Неверный идентификатор услуги' });
+        }
+
         const updateData = req.body;
 
         if (updateData.gradientColors) {
@@ -162,6 +289,12 @@ export const updateService = async (req, res) => {
 export const deleteService = async (req, res) => {
     try {
         const { id } = req.params;
+
+        // Проверяем, является ли id валидным ObjectId
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ error: 'Неверный идентификатор услуги' });
+        }
+
         const service = await Service.findByIdAndDelete(id);
 
         if (!service) {
@@ -181,9 +314,6 @@ export const deleteService = async (req, res) => {
 // Создать дефолтные услуги (принудительно)
 export const createDefaultServices = async (req, res) => {
     try {
-        // Удаляем существующие
-        await Service.deleteMany({});
-
         const services = await saveDefaultServices();
 
         res.json({

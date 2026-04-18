@@ -6,8 +6,14 @@ import { iconComponents, iconInfo } from '../components/iconLibrary.js';
 
 const ServicesManager = () => {
     const [services, setServices] = useState([]);
+    const [settings, setSettings] = useState({
+        subtitle: 'Наши услуги',
+        title: 'Что мы предлагаем',
+        description: 'Полный спектр услуг в строительстве и недвижимости. От идеи до готового объекта'
+    });
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
+    const [showSettingsModal, setShowSettingsModal] = useState(false);
     const [editingService, setEditingService] = useState(null);
     const [showIconPicker, setShowIconPicker] = useState(false);
     const [iconSearch, setIconSearch] = useState('');
@@ -41,12 +47,49 @@ const ServicesManager = () => {
             const response = await axios.get(`${process.env.REACT_APP_API_URL}/services/admin`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            setServices(response.data.data || []);
+            setServices(response.data.data.services || []);
+            setSettings(response.data.data.settings || {
+                subtitle: 'Наши услуги',
+                title: 'Что мы предлагаем',
+                description: 'Полный спектр услуг в строительстве и недвижимости. От идеи до готового объекта'
+            });
         } catch (error) {
             console.error('Error fetching services:', error);
             toast.error('Ошибка загрузки данных');
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleSaveSettings = async () => {
+        const token = localStorage.getItem('adminToken');
+        try {
+            await axios.put(`${process.env.REACT_APP_API_URL}/services/settings`, settings, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            toast.success('Настройки сохранены');
+            setShowSettingsModal(false);
+            fetchServices();
+        } catch (error) {
+            console.error('Error saving settings:', error);
+            toast.error('Ошибка сохранения настроек');
+        }
+    };
+
+    const handleResetSettings = async () => {
+        if (window.confirm('Сбросить настройки к дефолтным значениям?')) {
+            const token = localStorage.getItem('adminToken');
+            try {
+                await axios.post(`${process.env.REACT_APP_API_URL}/services/settings/reset`, {}, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                toast.success('Настройки сброшены');
+                setShowSettingsModal(false);
+                fetchServices();
+            } catch (error) {
+                console.error('Error resetting settings:', error);
+                toast.error('Ошибка сброса настроек');
+            }
         }
     };
 
@@ -246,6 +289,9 @@ const ServicesManager = () => {
             <div className="ap-manager-header">
                 <h2>Управление услугами</h2>
                 <div style={{ display: 'flex', gap: '12px' }}>
+                    <button className="ap-create-btn" onClick={() => setShowSettingsModal(true)}>
+                        ⚙️ Настройки секции
+                    </button>
                     {services.length > 0 && (
                         <button className="ap-create-btn" onClick={handleCreateDefault}>
                             🔄 Восстановить дефолтные
@@ -331,7 +377,61 @@ const ServicesManager = () => {
                 </div>
             )}
 
-            {/* Modal для создания/редактирования */}
+            {/* Modal для настроек секции */}
+            {showSettingsModal && (
+                <div className="ap-modal-overlay" onClick={() => setShowSettingsModal(false)}>
+                    <div className="ap-modal" onClick={(e) => e.stopPropagation()}>
+                        <div className="ap-modal-header">
+                            <h2>Настройки секции "Услуги"</h2>
+                            <button className="ap-modal-close" onClick={() => setShowSettingsModal(false)}>✕</button>
+                        </div>
+                        <div className="ap-modal-body">
+                            <div className="ap-dynamic-form">
+                                <div className="ap-form-group">
+                                    <label>Подзаголовок</label>
+                                    <input
+                                        type="text"
+                                        value={settings.subtitle}
+                                        onChange={(e) => setSettings({ ...settings, subtitle: e.target.value })}
+                                        placeholder="Наши услуги"
+                                    />
+                                </div>
+                                <div className="ap-form-group">
+                                    <label>Заголовок</label>
+                                    <input
+                                        type="text"
+                                        value={settings.title}
+                                        onChange={(e) => setSettings({ ...settings, title: e.target.value })}
+                                        placeholder="Что мы предлагаем"
+                                    />
+                                </div>
+                                <div className="ap-form-group">
+                                    <label>Описание</label>
+                                    <textarea
+                                        value={settings.description}
+                                        onChange={(e) => setSettings({ ...settings, description: e.target.value })}
+                                        rows="3"
+                                        placeholder="Полный спектр услуг в строительстве и недвижимости. От идеи до готового объекта"
+                                    />
+                                </div>
+                                <div className="ap-form-actions">
+                                    <button type="button" className="ap-btn-primary" onClick={handleSaveSettings}>
+                                        💾 Сохранить
+                                    </button>
+                                    <button type="button" className="ap-btn-secondary" onClick={handleResetSettings}>
+                                        🔄 Сбросить
+                                    </button>
+                                    <button type="button" className="ap-btn-secondary" onClick={() => setShowSettingsModal(false)}>
+                                        Отмена
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Modal для создания/редактирования услуги */}
             {showModal && (
                 <div className="ap-modal-overlay" onClick={() => setShowModal(false)}>
                     <div className="ap-modal ap-modal-large" onClick={(e) => e.stopPropagation()}>
