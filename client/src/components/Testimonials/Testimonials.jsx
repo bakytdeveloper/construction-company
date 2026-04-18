@@ -1,52 +1,38 @@
-import React, { useRef, useState } from 'react';
+// components/Testimonials/Testimonials.jsx
+import React, { useRef, useState, useEffect } from 'react';
+import axios from 'axios';
 import './Testimonials.css';
 
 const Testimonials = () => {
     const scrollRef = useRef(null);
     const [activeId, setActiveId] = useState(null);
+    const [data, setData] = useState({
+        settings: {
+            subtitle: 'Отзывы клиентов',
+            title: 'Что говорят о нас',
+            description: 'Более 98% наших клиентов рекомендуют нас своим друзьям и знакомым',
+            statsValue: 4.9,
+            statsStars: 5,
+            statsReviews: 127
+        },
+        testimonials: []
+    });
+    const [loading, setLoading] = useState(true);
 
-    const testimonials = [
-        {
-            id: 1,
-            name: 'Аскар Нуржанов',
-            position: 'Владелец дома, мкр. Нурсая',
-            rating: 5,
-            text: 'Огромное спасибо команде за профессионализм! Построили дом нашей мечты точно в срок. Отдельно хочу отметить внимание к деталям и качество материалов. Рекомендую!',
-            shortText: 'Огромное спасибо команде за профессионализм! Построили дом нашей мечты точно в срок...',
-            image: 'https://randomuser.me/api/portraits/men/1.jpg',
-            project: 'Коттедж 350 м²'
-        },
-        {
-            id: 2,
-            name: 'Гульнара Садвакасова',
-            position: 'Квартира в ЖК "Алмалы"',
-            rating: 5,
-            text: 'Приобрели квартиру в новостройке. Очень довольны качеством отделки и планировкой. Застройщик выполнил все обязательства в срок. Спасибо!',
-            shortText: 'Приобрели квартиру в новостройке. Очень довольны качеством отделки и планировкой...',
-            image: 'https://randomuser.me/api/portraits/women/2.jpg',
-            project: 'Квартира 120 м²'
-        },
-        {
-            id: 3,
-            name: 'Ерлан Мукашев',
-            position: 'Директор компании',
-            rating: 5,
-            text: 'Заказывали строительство офисного здания. Работа выполнена на высшем уровне. Команда профессионалов, всегда на связи, решают все вопросы оперативно.',
-            shortText: 'Заказывали строительство офисного здания. Работа выполнена на высшем уровне...',
-            image: 'https://randomuser.me/api/portraits/men/3.jpg',
-            project: 'Бизнес-центр'
-        },
-        {
-            id: 4,
-            name: 'Айгуль Жумабаева',
-            position: 'Семейная пара',
-            rating: 5,
-            text: 'Спасибо за наш уютный дом! Всё сделано с душой и вниманием к нашим пожеланиям. Даже соседи завидуют :) Обязательно будем рекомендовать вас друзьям!',
-            shortText: 'Спасибо за наш уютный дом! Всё сделано с душой и вниманием к нашим пожеланиям...',
-            image: 'https://randomuser.me/api/portraits/women/4.jpg',
-            project: 'Таунхаус 180 м²'
+    useEffect(() => {
+        fetchTestimonials();
+    }, []);
+
+    const fetchTestimonials = async () => {
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/testimonials`);
+            setData(response.data.data);
+            setLoading(false);
+        } catch (error) {
+            console.error('Error fetching testimonials:', error);
+            setLoading(false);
         }
-    ];
+    };
 
     const scroll = (direction) => {
         if (scrollRef.current) {
@@ -59,19 +45,45 @@ const Testimonials = () => {
     };
 
     const toggleCard = (id) => {
-        // Просто переключаем активную карточку
         setActiveId(activeId === id ? null : id);
     };
+
+    const getInitials = (name) => {
+        if (!name) return '?';
+        const parts = name.trim().split(' ');
+        if (parts.length === 1) {
+            return parts[0].substring(0, 2).toUpperCase();
+        }
+        return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    };
+
+    const getImageUrl = (imagePath) => {
+        if (!imagePath) return '';
+        if (imagePath.startsWith('http')) return imagePath;
+        if (imagePath.startsWith('/uploads')) {
+            const baseUrl = process.env.REACT_APP_API_URL?.replace('/api', '') || 'http://localhost:5000';
+            return `${baseUrl}${imagePath}`;
+        }
+        return imagePath;
+    };
+
+    if (loading) {
+        return (
+            <section className="testimonials">
+                <div className="container">
+                    <div className="testimonials-loading">Загрузка...</div>
+                </div>
+            </section>
+        );
+    }
 
     return (
         <section className="testimonials">
             <div className="container">
                 <div className="section-header" data-aos="fade-up">
-                    <span className="section-subtitle">Отзывы клиентов</span>
-                    <h2>Что говорят о нас</h2>
-                    <p className="section-description">
-                        Более 98% наших клиентов рекомендуют нас своим друзьям и знакомым
-                    </p>
+                    <span className="section-subtitle">{data.settings.subtitle}</span>
+                    <h2>{data.settings.title}</h2>
+                    <p className="section-description">{data.settings.description}</p>
                 </div>
 
                 <div className="testimonials-wrapper">
@@ -82,22 +94,22 @@ const Testimonials = () => {
                     </button>
 
                     <div className="testimonials-scroll" ref={scrollRef}>
-                        {testimonials.map((testimonial, index) => (
+                        {data.testimonials.map((testimonial, index) => (
                             <div
-                                key={testimonial.id}
-                                className={`testimonial-card ${activeId === testimonial.id ? 'active' : ''}`}
+                                key={testimonial._id}
+                                className={`testimonial-card ${activeId === testimonial._id ? 'active' : ''}`}
                                 data-aos="fade-up"
                                 data-aos-delay={index * 100}
-                                onClick={() => toggleCard(testimonial.id)}
+                                onClick={() => toggleCard(testimonial._id)}
                             >
                                 <div className="testimonial-quote">“</div>
                                 <div className="testimonial-content">
                                     <div className="testimonial-text-wrapper">
                                         <p className="testimonial-text">
-                                            {activeId === testimonial.id ? testimonial.text : testimonial.shortText}
+                                            {activeId === testimonial._id ? testimonial.text : (testimonial.shortText || testimonial.text.substring(0, 150) + '...')}
                                         </p>
                                     </div>
-                                    {activeId !== testimonial.id && (
+                                    {activeId !== testimonial._id && (
                                         <div className="read-more-hint">
                                             <span>Нажмите, чтобы прочитать полностью</span>
                                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -105,7 +117,7 @@ const Testimonials = () => {
                                             </svg>
                                         </div>
                                     )}
-                                    {activeId === testimonial.id && (
+                                    {activeId === testimonial._id && (
                                         <div className="read-less-hint">
                                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                                                 <path d="M7 11L12 6L17 11M7 18L12 13L17 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
@@ -119,7 +131,11 @@ const Testimonials = () => {
                                         ))}
                                     </div>
                                     <div className="testimonial-author">
-                                        <img src={testimonial.image} alt={testimonial.name} />
+                                        {testimonial.imageType === 'initials' ? (
+                                            <div className="author-initials">{getInitials(testimonial.name)}</div>
+                                        ) : (
+                                            <img src={getImageUrl(testimonial.image)} alt={testimonial.name} />
+                                        )}
                                         <div className="author-info">
                                             <h4>{testimonial.name}</h4>
                                             <p>{testimonial.position}</p>
@@ -140,9 +156,11 @@ const Testimonials = () => {
 
                 <div className="testimonials-stats">
                     <div className="stat-badge">
-                        <span className="stat-value">4.9</span>
-                        <span className="stat-stars">★★★★★</span>
-                        <span className="stat-reviews">на основе 127 отзывов</span>
+                        <span className="stat-value">{data.settings.statsValue}</span>
+                        <span className="stat-stars">
+                            {'★'.repeat(data.settings.statsStars)}
+                        </span>
+                        <span className="stat-reviews">на основе {data.settings.statsReviews} отзывов</span>
                     </div>
                 </div>
             </div>

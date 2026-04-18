@@ -13,6 +13,9 @@ import HeroEditor from "./components/HeroEditor/HeroEditor";
 import ServicesManager from "./pages/ServicesManager";
 import AdvantagesManager from "./pages/AdvantagesManager/AdvantagesManager";
 import FAQManager from "./pages/FAQManager/FAQManager";
+import StatsManager from './pages/StatsManager/StatsManager';
+
+import TestimonialsManager from "./pages/TestimonialsManager/TestimonialsManager";
 
 const AdminPanel = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -63,6 +66,9 @@ const AdminPanel = () => {
                     <Route path="services" element={<ServicesManager />} />
                     <Route path="advantages" element={<AdvantagesManager />} />
                     <Route path="faq" element={<FAQManager />} />
+                    <Route path="stats" element={<StatsManager />} />
+
+                    <Route path="testimonials" element={<TestimonialsManager />} />
                 </Routes>
             </AdminLayout>
         </>
