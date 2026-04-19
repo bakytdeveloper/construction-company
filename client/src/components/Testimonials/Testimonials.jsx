@@ -95,13 +95,12 @@ const Testimonials = () => {
 
                     <div className="testimonials-scroll" ref={scrollRef}>
                         {data.testimonials.map((testimonial, index) => (
-                            <div
-                                key={testimonial._id}
-                                className={`testimonial-card ${activeId === testimonial._id ? 'active' : ''}`}
-                                data-aos="fade-up"
-                                data-aos-delay={index * 100}
-                                onClick={() => toggleCard(testimonial._id)}
-                            >
+                            <div data-aos="fade-up" data-aos-delay={index * 100}>
+                                <div
+                                    key={testimonial._id}
+                                    className={`testimonial-card ${activeId === testimonial._id ? 'active' : ''}`}
+                                    onClick={(e) => toggleCard(testimonial._id, e)}
+                                >
                                 <div className="testimonial-quote">“</div>
                                 <div className="testimonial-content">
                                     <div className="testimonial-text-wrapper">
@@ -143,6 +142,7 @@ const Testimonials = () => {
                                         </div>
                                     </div>
                                 </div>
+                            </div>
                             </div>
                         ))}
                     </div>
