@@ -16,6 +16,7 @@ import FAQManager from "./pages/FAQManager/FAQManager";
 import StatsManager from './pages/StatsManager/StatsManager';
 
 import TestimonialsManager from "./pages/TestimonialsManager/TestimonialsManager";
+import ContactManager from "./pages/ContactManager/ContactManager";
 
 const AdminPanel = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -69,6 +70,7 @@ const AdminPanel = () => {
                     <Route path="stats" element={<StatsManager />} />
 
                     <Route path="testimonials" element={<TestimonialsManager />} />
+                    <Route path="contact" element={<ContactManager />} />
                 </Routes>
             </AdminLayout>
         </>

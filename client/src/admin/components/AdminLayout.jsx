@@ -17,6 +17,7 @@ const AdminLayout = ({ children, onLogout }) => {
         { path: '/admin/faq', icon: '❓', label: 'FAQ' },
         { path: '/admin/stats', icon: '📊', label: 'Статистика' },
         { path: '/admin/testimonials', icon: '💬', label: 'Отзывы' },
+        { path: '/admin/contact', icon: '✉️', label: 'Форма связи' },
 
     ];
 

@@ -1,0 +1,315 @@
+/* src/admin/pages/ContactManager.css */
+
+.cf-manager-page {
+    width: 100%;
+}
+
+.cf-manager-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.cf-manager-header h2 {
+    margin: 0;
+    color: var(--ap-text-dark);
+}
+
+.cf-header-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+/* Preview Card */
+.cf-preview-card {
+    margin-bottom: 30px;
+    padding: 20px;
+    background: var(--ap-bg-light);
+    border-radius: 20px;
+}
+
+.cf-preview-card h4 {
+    margin-bottom: 20px;
+    color: var(--ap-text-dark);
+}
+
+.cf-preview-wrapper {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.cf-preview-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 20% 50%, rgba(201, 160, 61, 0.15) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.cf-preview-container {
+    position: relative;
+    z-index: 2;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 60px 40px;
+}
+
+.cf-preview-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+}
+
+/* Левая панель */
+.cf-preview-info {
+    color: white;
+}
+
+.cf-preview-badge {
+    display: inline-block;
+    background: rgba(201, 160, 61, 0.2);
+    padding: 6px 16px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    font-size: 0.85rem;
+}
+
+.cf-preview-info h2 {
+    color: white;
+    text-align: left;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+}
+
+.cf-preview-info > p {
+    opacity: 0.9;
+    margin-bottom: 40px;
+    line-height: 1.6;
+}
+
+.cf-preview-info-items {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.cf-preview-info-item {
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+}
+
+.cf-preview-icon {
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.cf-preview-info-item h4 {
+    color: var(--ap-secondary);
+    margin-bottom: 5px;
+    font-size: 1rem;
+}
+
+.cf-preview-info-item p {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+    margin-bottom: 2px;
+}
+
+.cf-preview-hours {
+    display: flex;
+    gap: 15px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+}
+
+.cf-preview-hours-icon {
+    font-size: 2rem;
+}
+
+.cf-preview-hours h4 {
+    color: var(--ap-secondary);
+    margin-bottom: 8px;
+}
+
+.cf-preview-hours p {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+}
+
+/* Правая панель */
+.cf-preview-form {
+    background: white;
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.cf-preview-form-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.cf-preview-form-header h3 {
+    color: var(--ap-text-dark);
+    margin-bottom: 10px;
+}
+
+.cf-preview-form-header p {
+    color: var(--ap-text-light);
+}
+
+.cf-preview-form-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.cf-preview-field {
+    position: relative;
+}
+
+.cf-preview-field input,
+.cf-preview-field textarea,
+.cf-preview-field select {
+    width: 100%;
+    padding: 12px 0;
+    font-size: 1rem;
+    border: none;
+    border-bottom: 2px solid #e0e0e0;
+    outline: none;
+    background: transparent;
+    font-family: inherit;
+}
+
+.cf-preview-field select {
+    cursor: pointer;
+}
+
+.cf-preview-field label {
+    position: absolute;
+    left: 0;
+    top: 12px;
+    color: var(--ap-text-light);
+    transition: all 0.3s;
+    pointer-events: none;
+    font-size: 1rem;
+}
+
+.cf-preview-field input:focus ~ label,
+.cf-preview-field textarea:focus ~ label,
+.cf-preview-field input:not(:placeholder-shown) ~ label,
+.cf-preview-field textarea:not(:placeholder-shown) ~ label {
+    top: -20px;
+    font-size: 0.8rem;
+    color: var(--ap-secondary);
+}
+
+.cf-preview-field input:focus,
+.cf-preview-field textarea:focus,
+.cf-preview-field select:focus {
+    border-bottom-color: var(--ap-secondary);
+}
+
+.cf-preview-field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.cf-preview-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--ap-primary), var(--ap-primary-dark));
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.3s;
+    margin-top: 10px;
+}
+
+.cf-preview-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--ap-shadow-lg);
+}
+
+.cf-preview-note {
+    font-size: 0.75rem;
+    color: var(--ap-text-light);
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Форма в модальном окне */
+.cf-dynamic-form {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.cf-form-section {
+    background: var(--ap-bg-light);
+    padding: 20px;
+    border-radius: 16px;
+}
+
+.cf-form-section h3 {
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+    color: var(--ap-text-dark);
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--ap-border);
+}
+
+.cf-gradient-preview {
+    margin-top: 10px;
+    border-radius: 8px;
+}
+
+/* Адаптивность */
+@media (max-width: 968px) {
+    .cf-preview-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+
+    .cf-preview-container {
+        padding: 40px 20px;
+    }
+
+    .cf-preview-field-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .cf-preview-form {
+        padding: 30px 20px;
+    }
+
+    .cf-preview-info h2 {
+        font-size: 1.5rem;
+    }
+}
