@@ -27,15 +27,29 @@ export const submitContactForm = async (req, res) => {
             });
         }
 
-        // Сохранение в базу данных
+        // Добавьте вспомогательную функцию:
+        const getProjectTypeLabel = (type) => {
+            const types = {
+                'house': '🏠 Строительство дома',
+                'apartment': '🏢 Покупка квартиры',
+                'commercial': '🏭 Коммерческая недвижимость',
+                'other': '📝 Другое'
+            };
+            return types[type] || type;
+        };
+
+        // В submitContactForm функции, при создании contactMessage добавьте:
         const contactMessage = new ContactMessage({
             name,
             phone,
             email,
             message,
             projectType: projectType || 'other',
+            projectTypeLabel: getProjectTypeLabel(projectType || 'other'),
             isRead: false
         });
+
+
 
         await contactMessage.save();
         console.log(`✅ Заявка сохранена в БД с ID: ${contactMessage._id}`);

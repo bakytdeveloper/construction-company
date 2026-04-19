@@ -1,3 +1,4 @@
+// models/ContactMessage.js
 import mongoose from 'mongoose';
 
 const contactMessageSchema = new mongoose.Schema({
@@ -27,6 +28,10 @@ const contactMessageSchema = new mongoose.Schema({
         enum: ['house', 'apartment', 'commercial', 'other'],
         default: 'other'
     },
+    projectTypeLabel: {
+        type: String,
+        default: ''
+    },
     status: {
         type: String,
         enum: ['new', 'read', 'responded'],
@@ -38,6 +43,18 @@ const contactMessageSchema = new mongoose.Schema({
     }
 }, {
     timestamps: true
+});
+
+// Middleware для установки читаемой метки типа проекта
+contactMessageSchema.pre('save', function(next) {
+    const types = {
+        'house': '🏠 Строительство дома',
+        'apartment': '🏢 Покупка квартиры',
+        'commercial': '🏭 Коммерческая недвижимость',
+        'other': '📝 Другое'
+    };
+    this.projectTypeLabel = types[this.projectType] || this.projectType;
+    next();
 });
 
 export default mongoose.model('ContactMessage', contactMessageSchema);

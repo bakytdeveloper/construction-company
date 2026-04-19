@@ -1377,3 +1377,78 @@
     border-radius: 16px;
     margin-top: 20px;
 }
+
+
+/* Добавьте в конец AdminPanel.css */
+
+.ms-manager-page {
+    width: 100%;
+}
+
+.ms-message-card {
+    background: white;
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: var(--ap-shadow-sm);
+    transition: all 0.3s;
+    border-left: 4px solid var(--ap-border);
+}
+
+.ms-message-card.ms-unread {
+    border-left-color: var(--ap-primary);
+    background: linear-gradient(90deg, rgba(26, 71, 42, 0.02) 0%, white 100%);
+}
+
+.ms-user-avatar {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, var(--ap-primary), var(--ap-primary-light));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: white;
+}
+
+.ms-message-text {
+    background: var(--ap-bg-light);
+    border-radius: 12px;
+    padding: 16px;
+}
+
+.ms-toggle-btn {
+    background: none;
+    border: none;
+    color: var(--ap-secondary);
+    cursor: pointer;
+    font-size: 0.8rem;
+    padding: 5px 10px;
+}
+
+.ms-read-btn {
+    background: var(--ap-primary);
+    color: white;
+    padding: 8px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.ms-delete-btn {
+    background: var(--ap-danger);
+    color: white;
+    padding: 8px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.ms-no-messages {
+    text-align: center;
+    padding: 80px 20px;
+    background: white;
+    border-radius: 20px;
+}

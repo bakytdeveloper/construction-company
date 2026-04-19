@@ -7,7 +7,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import ComplexesManager from './pages/ComplexesManager';
 import PropertiesManager from './pages/PropertiesManager';
-import MessagesManager from './pages/MessagesManager';
+import MessagesManager from './pages/MessagesManager/MessagesManager';
 import './AdminPanel.css';
 import HeroEditor from "./components/HeroEditor/HeroEditor";
 import ServicesManager from "./pages/ServicesManager";

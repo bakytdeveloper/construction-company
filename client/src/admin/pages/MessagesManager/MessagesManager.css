@@ -1,0 +1,272 @@
+/* src/admin/pages/MessagesManager.css */
+
+.ms-manager-page {
+    width: 100%;
+}
+
+.ms-manager-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.ms-manager-header h2 {
+    margin: 0;
+    color: var(--ap-text-dark);
+}
+
+.ms-filter-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.ms-filter-btn {
+    padding: 8px 20px;
+    background: var(--ap-bg-light);
+    border: 1px solid var(--ap-border);
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.3s;
+}
+
+.ms-filter-btn:hover {
+    background: var(--ap-primary);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.ms-filter-btn.ms-active {
+    background: var(--ap-secondary);
+    color: white;
+    border-color: var(--ap-secondary);
+}
+
+/* Список сообщений */
+.ms-messages-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.ms-message-card {
+    background: white;
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: var(--ap-shadow-sm);
+    transition: all 0.3s;
+    border-left: 4px solid var(--ap-border);
+}
+
+.ms-message-card.ms-unread {
+    border-left-color: var(--ap-primary);
+    background: linear-gradient(90deg, rgba(26, 71, 42, 0.02) 0%, white 100%);
+}
+
+.ms-message-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--ap-shadow-md);
+}
+
+/* Шапка сообщения */
+.ms-message-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--ap-border);
+}
+
+.ms-message-user {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.ms-user-avatar {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, var(--ap-primary), var(--ap-primary-light));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: white;
+}
+
+.ms-user-info h3 {
+    margin: 0 0 5px 0;
+    font-size: 1.1rem;
+}
+
+.ms-user-contacts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    font-size: 0.8rem;
+    color: var(--ap-text-light);
+}
+
+.ms-user-contacts span {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.ms-message-meta {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.ms-message-date {
+    font-size: 0.75rem;
+    color: var(--ap-text-light);
+}
+
+.ms-message-type {
+    display: inline-block;
+    padding: 4px 12px;
+    background: var(--ap-bg-light);
+    border-radius: 20px;
+    font-size: 0.7rem;
+    color: var(--ap-primary);
+    font-weight: 500;
+}
+
+/* Содержимое сообщения */
+.ms-message-content {
+    margin-bottom: 20px;
+}
+
+.ms-message-text {
+    background: var(--ap-bg-light);
+    border-radius: 12px;
+    padding: 16px;
+}
+
+.ms-message-text p {
+    margin: 0 0 10px 0;
+    line-height: 1.6;
+    color: var(--ap-text-dark);
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.ms-toggle-btn {
+    background: none;
+    border: none;
+    color: var(--ap-secondary);
+    cursor: pointer;
+    font-size: 0.8rem;
+    padding: 5px 10px;
+    transition: all 0.3s;
+}
+
+.ms-toggle-btn:hover {
+    color: var(--ap-secondary-dark);
+    text-decoration: underline;
+}
+
+/* Кнопки действий */
+.ms-message-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    padding-top: 15px;
+    border-top: 1px solid var(--ap-border);
+}
+
+.ms-read-btn,
+.ms-delete-btn {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.ms-read-btn {
+    background: var(--ap-primary);
+    color: white;
+}
+
+.ms-read-btn:hover {
+    background: var(--ap-primary-light);
+    transform: translateY(-2px);
+}
+
+.ms-delete-btn {
+    background: var(--ap-danger);
+    color: white;
+}
+
+.ms-delete-btn:hover {
+    background: #dc2626;
+    transform: translateY(-2px);
+}
+
+/* Пустое состояние */
+.ms-no-messages {
+    text-align: center;
+    padding: 80px 20px;
+    background: white;
+    border-radius: 20px;
+}
+
+.ms-no-messages span {
+    font-size: 4rem;
+    display: block;
+    margin-bottom: 20px;
+}
+
+.ms-no-messages h3 {
+    margin-bottom: 10px;
+}
+
+.ms-no-messages p {
+    color: var(--ap-text-light);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .ms-manager-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .ms-filter-buttons {
+        flex-wrap: wrap;
+    }
+
+    .ms-message-header {
+        flex-direction: column;
+    }
+
+    .ms-message-meta {
+        text-align: left;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .ms-message-actions {
+        flex-direction: column;
+    }
+
+    .ms-read-btn,
+    .ms-delete-btn {
+        width: 100%;
+    }
+}
