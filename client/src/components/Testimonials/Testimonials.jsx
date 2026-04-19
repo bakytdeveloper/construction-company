@@ -106,7 +106,7 @@ const Testimonials = () => {
                                 <div className="testimonial-content">
                                     <div className="testimonial-text-wrapper">
                                         <p className="testimonial-text">
-                                            {activeId === testimonial._id ? testimonial.text : (testimonial.shortText || testimonial.text.substring(0, 150) + '...')}
+                                            {activeId === testimonial._id ? testimonial.text : (testimonial.shortText || testimonial.text.substring(0, 50) + '...')}
                                         </p>
                                     </div>
                                     {activeId !== testimonial._id && (
