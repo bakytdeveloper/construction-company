@@ -243,13 +243,14 @@ const ContactForm = () => {
                                 name="message"
                                 value={formData.message}
                                 onChange={handleChange}
+                                style={{border: '1px solid gray', borderRadius: "7px", padding: "5px"}}
                                 rows="4"
                                 required
                                 className={focusedField === 'message' || formData.message ? 'filled' : ''}
                                 onFocus={() => setFocusedField('message')}
                                 onBlur={() => setFocusedField(null)}
                             ></textarea>
-                            <label>Сообщение *</label>
+                            <label style={{marginLeft: '5px'}}>Сообщение *</label>
                             <span className="focus-border"></span>
                         </div>
 
