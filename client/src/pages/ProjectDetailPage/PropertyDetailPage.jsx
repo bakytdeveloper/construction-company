@@ -337,6 +337,7 @@ const PropertyDetailPage = () => {
                                         <h3>Быстрая заявка</h3>
                                         <form onSubmit={handleContactSubmit}>
                                             <input
+                                                style={{background: "rgba(0, 0, 0, 0.05)"}}
                                                 type="text"
                                                 placeholder="Ваше имя *"
                                                 value={contactData.name}
@@ -344,6 +345,7 @@ const PropertyDetailPage = () => {
                                                 required
                                             />
                                             <input
+                                                style={{background: "rgba(0, 0, 0, 0.05)"}}
                                                 type="tel"
                                                 placeholder="Телефон *"
                                                 value={contactData.phone}
@@ -351,12 +353,14 @@ const PropertyDetailPage = () => {
                                                 required
                                             />
                                             <input
+                                                style={{background: "rgba(0, 0, 0, 0.05)"}}
                                                 type="email"
                                                 placeholder="Email"
                                                 value={contactData.email}
                                                 onChange={(e) => setContactData({...contactData, email: e.target.value})}
                                             />
                                             <textarea
+                                                style={{background: "rgba(0, 0, 0, 0.05)"}}
                                                 placeholder="Ваш вопрос"
                                                 rows="3"
                                                 value={contactData.message}
