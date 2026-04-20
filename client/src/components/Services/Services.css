@@ -51,6 +51,8 @@
     perspective: 1500px;
     height: 380px;
     cursor: pointer;
+
+
 }
 
 .service-inner {
@@ -203,6 +205,24 @@
     }
 
     .service-card {
-        height: 350px;
+        height: 270px;
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        border-radius: 17px;
+    }
+
+
+    .service-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 10px;
+        transition: transform 0.3s;
+    }
+
+    .service-icon span {
+        font-size: 1.5rem;
     }
 }
