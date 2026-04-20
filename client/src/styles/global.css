@@ -230,6 +230,22 @@ h3 {
     color: white;
 }
 
+@media (max-width: 768px) {
+    ::-webkit-scrollbar {
+        width: 4px;
+        height: 4px;
+    }
+
+    ::-webkit-scrollbar-track {
+        border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        border-radius: 4px;
+    }
+
+}
+
 /* Loading Spinner */
 .loader {
     width: 48px;
