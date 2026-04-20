@@ -311,6 +311,22 @@
 }
 
 @media (max-width: 768px) {
+    .testimonials {
+        padding: 30px 0;
+    }
+
+    .section-subtitle {
+        font-size: 0.8rem;
+    }
+
+    .testimonials-section-header {
+        margin-bottom: 5px;
+        padding: 0;
+    }
+
+    .testimonials-scroll {
+        padding: 10px 0;
+    }
     .testimonial-card {
         min-width: 300px;
         max-width: 300px;
@@ -325,7 +341,16 @@
     .stat-badge {
         flex-direction: column;
         gap: 5px;
-        padding: 12px 24px;
+        padding: 10px 34px;
+    }
+
+    .stat-badge .stat-value {
+        font-size: 1.1rem;
+    }
+
+    .stat-reviews {
+        font-size: 0.8rem;
+        opacity: 0.7;
     }
 
     .testimonial-text {

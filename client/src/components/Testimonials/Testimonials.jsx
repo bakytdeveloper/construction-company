@@ -88,7 +88,7 @@ const Testimonials = () => {
     return (
         <section className="testimonials">
             <div className="container">
-                <div className="section-header" data-aos="fade-up">
+                <div className="section-header testimonials-section-header" data-aos="fade-up">
                     <span className="section-subtitle">{data.settings.subtitle}</span>
                     <h2>{data.settings.title}</h2>
                     <p className="section-description">{data.settings.description}</p>
