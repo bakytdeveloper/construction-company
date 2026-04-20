@@ -418,7 +418,7 @@ const ProjectsPage = () => {
                                     <div className="pp-active-filters">
                                         {filters.complex !== 'all' && complexes.find(c => c._id === filters.complex) && (
                                             <div className="pp-active-filter">
-                                                ЖК: {complexes.find(c => c._id === filters.complex)?.title}
+                                                {complexes.find(c => c._id === filters.complex)?.title}
                                                 <button
                                                     className="pp-clear-filter"
                                                     onClick={clearComplexFilter}

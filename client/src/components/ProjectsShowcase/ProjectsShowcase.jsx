@@ -1,3 +1,4 @@
+// ProjectsShowcase.jsx - обновленная версия
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
@@ -309,13 +310,27 @@ const ProjectsShowcase = () => {
                                     </div>
                                 )}
 
-                                {/* Кнопка действия */}
-                                <button className="ps-btn ps-btn-primary ps-modal-action-btn" onClick={scrollToContactForm}>
-                                    Узнать подробнее
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                        <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2"/>
-                                    </svg>
-                                </button>
+                                {/* Кнопки действий */}
+                                <div className="ps-modal-buttons">
+                                    <button className="ps-btn ps-btn-primary ps-modal-action-btn" onClick={scrollToContactForm}>
+                                        Узнать подробнее
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2"/>
+                                        </svg>
+                                    </button>
+
+                                    {/* Новая кнопка - Посмотреть все объекты в ЖК */}
+                                    <Link
+                                        to={`/projects?complex=${selectedComplex._id}`}
+                                        className="ps-btn ps-btn-outline ps-modal-action-btn"
+                                        onClick={closeModal}
+                                    >
+                                        Объекты в ЖК
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2"/>
+                                        </svg>
+                                    </Link>
+                                </div>
                             </div>
                         </div>
                     );
