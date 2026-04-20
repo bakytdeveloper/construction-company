@@ -427,10 +427,13 @@
 .pd-spec-label {
     font-weight: 600;
     color: var(--text-dark);
+    flex-shrink: 0;
 }
 
 .pd-spec-value {
     color: var(--text-dark);
+    text-align: right;
+    word-break: break-word;
 }
 
 .pd-spec-value.pd-status-ready {
@@ -688,10 +691,56 @@
         grid-template-columns: 1fr;
     }
 
+    /* Улучшенные стили для характеристик на мобильных - ключ и значение в одной строке */
     .pd-spec-item {
-        flex-direction: column;
+        display: flex;
+        justify-content: space-between;
         align-items: flex-start;
+        flex-wrap: wrap;
         gap: 8px;
+        padding: 12px 16px;
+    }
+
+    .pd-spec-label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        flex-shrink: 0;
+    }
+
+    .pd-spec-value {
+        font-size: 0.85rem;
+        text-align: right;
+        flex-shrink: 0;
+        max-width: 60%;
+        word-break: break-word;
+    }
+
+    /* Если значение слишком длинное - переносим на новую строку */
+    .pd-spec-value--long {
+        width: 100%;
+        text-align: left;
+        margin-top: 4px;
+        padding-left: 0;
+    }
+}
+
+@media (max-width: 600px) {
+
+    .pd-spec-label {
+        font-size: 0.8rem;
+    }
+
+    .pd-spec-value {
+        text-align: left;
+        max-width: 100%;
+        font-size: 0.8rem;
+    }
+
+    .pd-spec-value.pd-status-ready,
+    .pd-spec-value.pd-status-construction,
+    .pd-spec-value.pd-status-planned,
+    .pd-spec-value.pd-status-sold {
+        display: inline-block;
     }
 }
 
@@ -705,14 +754,7 @@
         font-size: 1.5rem;
     }
 
-    .pd-hero-meta-location {
-        /*display: block;*/
-        /*position: center;*/
-        /*width: 100% !important;*/
-    }
-
     .pd-hero-meta {
-        /*flex-direction: column;*/
         align-items: center;
     }
 
@@ -730,6 +772,19 @@
 
     .pd-gallery-thumbs {
         justify-content: flex-start;
+    }
+
+    /* Характеристики на очень маленьких экранах */
+    .pd-spec-item {
+        padding: 10px 12px;
+    }
+
+    .pd-spec-label {
+        font-size: 0.75rem;
+    }
+
+    .pd-spec-value {
+        font-size: 0.75rem;
     }
 }
 
@@ -828,43 +883,11 @@
         padding: 25px;
     }
 
-    /*ghyjk*/
     .pd-description {
         color: var(--text-light);
         line-height: 1.8;
         font-size: 0.8rem;
     }
-
-    /* Specifications Grid */
-    .pd-specs-grid {
-        background: var(--bg-light);
-        border-radius: 16px;
-        padding: 5px 0;
-    }
-
-    .pd-spec-item {
-        display: flex;
-        justify-content: space-between;
-        /*align-items: center;*/
-        padding: 14px 2px;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    }
-
-    .pd-spec-item:last-child {
-        border-bottom: none;
-    }
-
-    .pd-spec-label {
-        font-weight: 600;
-        color: var(--text-dark);
-        font-size: 0.9rem;
-    }
-
-    .pd-spec-value {
-        color: var(--text-dark);
-        font-size: 0.8rem;
-    }
-    /*hjkl*/
 
     .pd-navigation-buttons {
         flex-direction: column;
@@ -875,5 +898,10 @@
     .pd-navigation-buttons .pd-btn {
         width: 100%;
         max-width: 280px;
+    }
+
+    .pd-spec-item {
+        display: flex;
+        justify-content: space-between;
     }
 }
