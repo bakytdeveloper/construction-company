@@ -306,6 +306,41 @@
     .faq-answer p {
         padding: 15px;
     }
+
+
+    .cta-card {
+        padding: 20px;
+    }
+
+    .cta-icon {
+        font-size: 3rem;
+        margin-bottom: 5px;
+    }
+
+
+    .cta-card p {
+        margin-bottom: 20px;
+        line-height: 1.5;
+    }
+
+    .cta-btn {
+        padding: 10px 25px;
+        font-size: 0.8rem;
+    }
+
+    .cta-phone {
+        padding-top: 15px;
+    }
+
+    .cta-phone span {
+        font-size: 0.8rem;
+        margin-bottom: 7px;
+    }
+
+    .cta-phone a {
+        font-size: 1.1rem;
+    }
+
 }
 
 /* Предотвращение скачков контента */
