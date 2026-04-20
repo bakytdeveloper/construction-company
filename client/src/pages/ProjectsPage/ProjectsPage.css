@@ -510,8 +510,10 @@
 }
 
 @media (max-width: 768px) {
+
     .pp-hero {
-        height: 220px;
+        padding-top: 70px;
+        height: 300px;
     }
 
     .pp-hero h1 {
@@ -523,7 +525,7 @@
     }
 
     .pp-filters {
-        padding: 15px 0;
+        padding: 25px 0;
     }
 
     .pp-filter-buttons {
@@ -543,7 +545,7 @@
     .pp-status-buttons {
         flex-wrap: nowrap;
         overflow-x: auto;
-        padding-bottom: 5px;
+        padding: 5px;
     }
 
     .pp-results-header {
@@ -559,6 +561,18 @@
     .pp-btn {
         padding: 10px 16px;
     }
+
+    .pp-filter-btn, .pp-select {
+        border: 1px solid rgba(0, 0, 0, 0.2);
+
+    }
+
+
+
+    .pp-filter-item {
+
+    }
+
 }
 
 @media (max-width: 480px) {
