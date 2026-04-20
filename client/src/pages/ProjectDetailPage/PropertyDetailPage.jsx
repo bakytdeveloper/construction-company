@@ -392,12 +392,31 @@ const PropertyDetailPage = () => {
                                 <div className="pd-complex-icon">🏢</div>
                                 <h3>Жилой комплекс "{property.residentialComplex.title}"</h3>
                                 <p>{property.residentialComplex.location}</p>
-                                <Link to={`/projects`} className="pd-btn pd-btn-outline">
-                                    Посмотреть все объекты в ЖК
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                        <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2"/>
-                                    </svg>
-                                </Link>
+                                <div className="pd-complex-buttons">
+                                    {/* ДЕБАГ: Выводим ID в консоль */}
+                                    <button
+                                        onClick={() => {
+                                            console.log('ID ЖК для фильтрации:', property.residentialComplex._id);
+                                            console.log('Ссылка:', `/projects?complex=${property.residentialComplex._id}`);
+                                        }}
+                                        className="pd-btn pd-btn-secondary"
+                                        style={{ marginBottom: '10px' }}
+                                    >
+                                        Отладка: Показать ID ЖК
+                                    </button>
+                                    <Link
+                                        to={`/projects?complex=${property.residentialComplex._id}`}
+                                        className="pd-btn pd-btn-primary"
+                                    >
+                                        Посмотреть все объекты в ЖК
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2"/>
+                                        </svg>
+                                    </Link>
+                                    <Link to={`/projects`} className="pd-btn pd-btn-outline">
+                                        Перейти в каталог
+                                    </Link>
+                                </div>
                             </div>
                         </div>
                     </section>

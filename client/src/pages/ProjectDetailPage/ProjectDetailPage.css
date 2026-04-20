@@ -720,3 +720,29 @@
         justify-content: flex-start;
     }
 }
+
+
+/* Complex Section Buttons */
+.pd-complex-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.pd-complex-buttons .pd-btn {
+    min-width: 220px;
+}
+
+@media (max-width: 768px) {
+    .pd-complex-buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .pd-complex-buttons .pd-btn {
+        width: 100%;
+        max-width: 280px;
+    }
+}

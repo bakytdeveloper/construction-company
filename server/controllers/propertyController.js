@@ -4,26 +4,86 @@ import ResidentialComplex from '../models/ResidentialComplex.js';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import mongoose from 'mongoose';
+
 
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Получить все объекты недвижимости
+// export const getAllProperties = async (req, res) => {
+//     try {
+//         const { type, complex, status, search } = req.query;
+//         let filter = { isActive: true };
+//
+//         if (type && type !== 'all') {
+//             filter.propertyType = type;
+//         }
+//         if (complex && complex !== 'all') {
+//             filter.residentialComplex = complex;
+//         }
+//         if (status && status !== 'all') {
+//             filter.status = status;
+//         }
+//         if (search) {
+//             filter.$or = [
+//                 { title: { $regex: search, $options: 'i' } },
+//                 { description: { $regex: search, $options: 'i' } },
+//                 { location: { $regex: search, $options: 'i' } }
+//             ];
+//         }
+//
+//         const properties = await Property.find(filter)
+//             .populate('residentialComplex', 'title location')
+//             .sort({ createdAt: -1 });
+//
+//         res.json({
+//             success: true,
+//             data: properties
+//         });
+//     } catch (error) {
+//         res.status(500).json({ error: error.message });
+//     }
+// };
+
+
+// Получить все объекты недвижимости
+// controllers/propertyController.js
 export const getAllProperties = async (req, res) => {
     try {
-        const { type, complex, status, search } = req.query;
+        const { type, complex, status, search, complexId } = req.query;
         let filter = { isActive: true };
 
+        // Логируем полученные параметры
+        console.log('=== Фильтрация свойств ===');
+        console.log('Параметры запроса:', { type, complex, status, search, complexId });
+
+        // Фильтр по типу недвижимости
         if (type && type !== 'all') {
             filter.propertyType = type;
         }
+
+        // Фильтр по ЖК (по ID)
         if (complex && complex !== 'all') {
             filter.residentialComplex = complex;
+            console.log('Фильтр по complex ID:', complex);
         }
+
+        // Дополнительный фильтр по complexId
+        if (complexId && complexId !== 'all') {
+            if (mongoose.Types.ObjectId.isValid(complexId)) {
+                filter.residentialComplex = complexId;
+                console.log('Фильтр по complexId:', complexId);
+            }
+        }
+
+        // Фильтр по статусу
         if (status && status !== 'all') {
             filter.status = status;
         }
+
+        // Поиск по тексту
         if (search) {
             filter.$or = [
                 { title: { $regex: search, $options: 'i' } },
@@ -32,18 +92,50 @@ export const getAllProperties = async (req, res) => {
             ];
         }
 
+        console.log('Финальный фильтр:', JSON.stringify(filter, null, 2));
+
         const properties = await Property.find(filter)
-            .populate('residentialComplex', 'title location')
+            .populate('residentialComplex', 'title location mainImage specifications')
             .sort({ createdAt: -1 });
+
+        console.log('Найдено объектов:', properties.length);
+        if (properties.length > 0) {
+            console.log('Первый объект:', {
+                title: properties[0].title,
+                residentialComplex: properties[0].residentialComplex
+            });
+        }
 
         res.json({
             success: true,
             data: properties
         });
     } catch (error) {
+        console.error('Error in getAllProperties:', error);
         res.status(500).json({ error: error.message });
     }
 };
+
+// // Получить объект по ID
+// export const getPropertyById = async (req, res) => {
+//     try {
+//         const property = await Property.findById(req.params.id)
+//             .populate('residentialComplex', 'title location mainImage specifications');
+//
+//         if (!property) {
+//             return res.status(404).json({ error: 'Объект не найден' });
+//         }
+//
+//         res.json({
+//             success: true,
+//             data: property
+//         });
+//     } catch (error) {
+//         res.status(500).json({ error: error.message });
+//     }
+// };
+
+
 
 // Получить объект по ID
 export const getPropertyById = async (req, res) => {
@@ -63,6 +155,7 @@ export const getPropertyById = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
 
 // Создать объект недвижимости
 export const createProperty = async (req, res) => {
@@ -231,13 +324,33 @@ export const deleteProperty = async (req, res) => {
     }
 };
 
+// // Получить объекты по ЖК
+// export const getPropertiesByComplex = async (req, res) => {
+//     try {
+//         const properties = await Property.find({
+//             residentialComplex: req.params.complexId,
+//             isActive: true
+//         }).sort({ createdAt: -1 });
+//
+//         res.json({
+//             success: true,
+//             data: properties
+//         });
+//     } catch (error) {
+//         res.status(500).json({ error: error.message });
+//     }
+// };
+
+
 // Получить объекты по ЖК
 export const getPropertiesByComplex = async (req, res) => {
     try {
         const properties = await Property.find({
             residentialComplex: req.params.complexId,
             isActive: true
-        }).sort({ createdAt: -1 });
+        })
+            .populate('residentialComplex', 'title location')
+            .sort({ createdAt: -1 });
 
         res.json({
             success: true,
