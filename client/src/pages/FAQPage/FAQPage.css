@@ -513,3 +513,169 @@
         font-size: 1.1rem;
     }
 }
+
+
+
+
+/* Добавьте в конец файла FAQPage.css */
+
+/* Улучшенные стили для FAQ списка */
+.fpg-list-wrapper {
+    width: 100%;
+}
+
+.fpg-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+}
+
+.fpg-item {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.fpg-item:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+}
+
+.fpg-item.fpg-active {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.fpg-question {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: white;
+    gap: 16px;
+}
+
+.fpg-question:hover {
+    background: #f9fafb;
+}
+
+.fpg-question h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    flex: 1;
+    color: var(--text-dark);
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.fpg-question-arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+    color: var(--secondary-color);
+}
+
+.fpg-question-arrow svg {
+    width: 20px;
+    height: 20px;
+}
+
+.fpg-item.fpg-active .fpg-question-arrow {
+    transform: rotate(180deg);
+}
+
+.fpg-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    background: #fafbfc;
+    border-top: 1px solid transparent;
+}
+
+.fpg-item.fpg-active .fpg-answer {
+    max-height: 500px;
+    border-top-color: #e5e7eb;
+}
+
+.fpg-answer-content {
+    padding: 20px 24px;
+}
+
+.fpg-answer-content p {
+    margin: 0;
+    color: #4b5563;
+    line-height: 1.7;
+    font-size: 0.95rem;
+}
+
+/* Прелоадер */
+.fpg-loading {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fpg-loader {
+    width: 48px;
+    height: 48px;
+    border: 3px solid #e5e7eb;
+    border-top-color: var(--primary-color);
+    border-right-color: var(--secondary-color);
+    border-radius: 50%;
+    animation: fpg-spin 0.8s linear infinite;
+}
+
+@keyframes fpg-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Адаптив для FAQ */
+@media (max-width: 768px) {
+    .fpg-question {
+        padding: 16px 20px;
+    }
+
+    .fpg-question h3 {
+        font-size: 0.95rem;
+    }
+
+    .fpg-answer-content {
+        padding: 16px 20px;
+    }
+
+    .fpg-answer-content p {
+        font-size: 0.85rem;
+    }
+
+    .fpg-list {
+        gap: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .fpg-question {
+        padding: 14px 16px;
+        gap: 12px;
+    }
+
+    .fpg-question h3 {
+        font-size: 0.85rem;
+    }
+
+    .fpg-question-arrow svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .fpg-answer-content {
+        padding: 14px 16px;
+    }
+}
