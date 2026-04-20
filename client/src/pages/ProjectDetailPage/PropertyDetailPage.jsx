@@ -145,6 +145,7 @@ const PropertyDetailPage = () => {
     }
 
     const allImages = [property.mainImage, ...(property.images || [])].filter((v, i, a) => a.indexOf(v) === i);
+    const hasResidentialComplex = !!property.residentialComplex;
 
     return (
         <>
@@ -384,32 +385,56 @@ const PropertyDetailPage = () => {
                     </div>
                 </div>
 
-                {/* Complex Info Section */}
-                {property.residentialComplex && (
-                    <section className="pd-complex">
-                        <div className="pd-container">
-                            <div className="pd-complex-card">
-                                <div className="pd-complex-icon">🏢</div>
-                                <h3>Жилой комплекс "{property.residentialComplex.title}"</h3>
-                                <p>{property.residentialComplex.location}</p>
-                                <div className="pd-complex-buttons">
-                                    <Link
-                                        to={`/projects?complex=${property.residentialComplex._id}`}
-                                        className="pd-btn pd-btn-primary"
-                                    >
-                                        Посмотреть все объекты в ЖК
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2"/>
-                                        </svg>
-                                    </Link>
-                                    <Link to={`/projects`} className="pd-btn pd-btn-outline">
-                                        Перейти в каталог
-                                    </Link>
-                                </div>
-                            </div>
+                {/* Navigation Section - Dynamic based on residential complex */}
+                <section className="pd-navigation">
+                    <div className="pd-container">
+                        <div className="pd-navigation-card">
+                            {hasResidentialComplex ? (
+                                // Если объект принадлежит ЖК
+                                <>
+                                    <div className="pd-complex-icon">🏢</div>
+                                    <h3>Жилой комплекс "{property.residentialComplex.title}"</h3>
+                                    <p>{property.residentialComplex.location}</p>
+                                    <div className="pd-navigation-buttons">
+                                        <Link
+                                            to={`/projects?complex=${property.residentialComplex._id}`}
+                                            className="pd-btn pd-btn-primary"
+                                        >
+                                            Посмотреть все объекты в ЖК
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                                <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2"/>
+                                            </svg>
+                                        </Link>
+                                        <Link to={`/projects`} className="pd-btn pd-btn-outline">
+                                            Перейти в каталог
+                                        </Link>
+                                    </div>
+                                </>
+                            ) : (
+                                // Если объект без ЖК
+                                <>
+                                    <div className="pd-navigation-icon">🏠</div>
+                                    <h3>Не нашли подходящий вариант?</h3>
+                                    <p>Посмотрите другие объекты недвижимости в нашем каталоге</p>
+                                    <div className="pd-navigation-buttons">
+                                        <Link
+                                            to={`/projects?type=${property.propertyType}`}
+                                            className="pd-btn pd-btn-primary"
+                                        >
+                                            Схожие объекты
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                                <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2"/>
+                                            </svg>
+                                        </Link>
+                                        <Link to={`/projects`} className="pd-btn pd-btn-outline">
+                                            Перейти в каталог
+                                        </Link>
+                                    </div>
+                                </>
+                            )}
                         </div>
-                    </section>
-                )}
+                    </div>
+                </section>
             </div>
         </>
     );

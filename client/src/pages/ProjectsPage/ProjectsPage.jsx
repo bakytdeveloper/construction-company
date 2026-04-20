@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import SEO from '../../components/SEO/SEO';
@@ -21,6 +21,11 @@ const ProjectsPage = () => {
     const [availableTypes, setAvailableTypes] = useState([]);
     const [availableStatuses, setAvailableStatuses] = useState([]);
     const [availableComplexes, setAvailableComplexes] = useState([]);
+
+    // Флаг для отслеживания первого загрузки
+    const isFirstLoad = useRef(true);
+    // Флаг для отслеживания нужно ли скроллить
+    const shouldScroll = useRef(false);
 
     const scrollToTop = () => {
         window.scrollTo({
@@ -69,26 +74,37 @@ const ProjectsPage = () => {
 
     useEffect(() => {
         fetchAllData();
-    }, [location.search]); // Зависимость от location.search для перезагрузки при изменении URL
+    }, [location.search]);
 
     useEffect(() => {
         applyFilters();
     }, [filters, allProperties]);
 
-    // Скролл к результатам при применении фильтров из URL
+    // Скролл к результатам только при первой загрузке с параметрами
     useEffect(() => {
         if (!loading && properties.length > 0) {
-            const resultsSection = document.querySelector('.pp-filters');
-            if (resultsSection && location.search) {
+            // Если это первый загруз и есть параметры в URL
+            if (isFirstLoad.current && location.search) {
+                shouldScroll.current = true;
+                isFirstLoad.current = false;
+
                 setTimeout(() => {
-                    resultsSection.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }, 300);
+                    if (shouldScroll.current) {
+                        const resultsSection = document.querySelector('.pp-filters');
+                        if (resultsSection) {
+                            const elementPosition = resultsSection.getBoundingClientRect().top;
+                            const offsetPosition = elementPosition + window.pageYOffset - 100;
+                            window.scrollTo({
+                                top: offsetPosition,
+                                behavior: 'smooth'
+                            });
+                        }
+                        shouldScroll.current = false;
+                    }
+                }, 500);
             }
         }
-    }, [location.search, loading, properties.length]);
+    }, [loading, properties.length, location.search]);
 
     // Функция для обновления URL при изменении фильтров
     const updateURL = (newFilters) => {
@@ -104,6 +120,8 @@ const ProjectsPage = () => {
 
     // Обработчик изменения фильтров
     const handleFilterChange = (key, value) => {
+        // Отключаем скролл при кликах на фильтры
+        shouldScroll.current = false;
         const newFilters = { ...filters, [key]: value };
         setFilters(newFilters);
         updateURL(newFilters);
@@ -111,6 +129,7 @@ const ProjectsPage = () => {
 
     // Сброс фильтра по ЖК
     const clearComplexFilter = () => {
+        shouldScroll.current = false;
         const newFilters = { ...filters, complex: 'all' };
         setFilters(newFilters);
         updateURL(newFilters);
