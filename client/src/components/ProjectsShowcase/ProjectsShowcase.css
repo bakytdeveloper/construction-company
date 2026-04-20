@@ -33,7 +33,6 @@
     align-items: center;
 }
 
-
 .ps-section-subtitle {
     display: inline-block;
     font-size: 0.85rem;
@@ -355,20 +354,20 @@
 
 /* Gallery */
 .ps-modal-gallery {
-    margin-bottom: 35px;
+    margin-bottom: 25px;
 }
 
 .ps-gallery-main {
     position: relative;
-    border-radius: 20px;
+    border-radius: 16px;
     overflow: hidden;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     background: var(--bg-light);
 }
 
 .ps-modal-main-image {
     width: 100%;
-    max-height: 480px;
+    max-height: 450px;
     object-fit: cover;
     display: block;
 }
@@ -377,14 +376,14 @@
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    width: 48px;
-    height: 48px;
+    width: 40px;
+    height: 40px;
     background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(8px);
     border: none;
     border-radius: 50%;
     color: white;
-    font-size: 28px;
+    font-size: 24px;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -399,16 +398,16 @@
 }
 
 .ps-gallery-prev {
-    left: 20px;
+    left: 15px;
 }
 
 .ps-gallery-next {
-    right: 20px;
+    right: 15px;
 }
 
 .ps-modal-thumbnails {
     display: flex;
-    gap: 12px;
+    gap: 10px;
     overflow-x: auto;
     padding-bottom: 8px;
     scrollbar-width: thin;
@@ -429,10 +428,10 @@
 }
 
 .ps-modal-thumb {
-    width: 85px;
-    height: 65px;
+    width: 75px;
+    height: 55px;
     object-fit: cover;
-    border-radius: 12px;
+    border-radius: 10px;
     cursor: pointer;
     transition: all 0.3s;
     opacity: 0.6;
@@ -460,30 +459,29 @@
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: 15px;
-    margin-bottom: 20px;
-    padding-bottom: 15px;
+    gap: 12px;
+    margin-bottom: 15px;
+    padding-bottom: 12px;
     border-bottom: 2px solid var(--bg-light);
 }
 
 .ps-info-header h2 {
     margin: 0;
     text-align: left;
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     font-weight: 700;
     background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    /*background-clip: text;*/
 }
 
 .ps-complex-status {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 8px 18px;
+    gap: 6px;
+    padding: 6px 14px;
     border-radius: 40px;
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     font-weight: 600;
     letter-spacing: 0.5px;
 }
@@ -507,18 +505,18 @@
 }
 
 .ps-modal-description {
-    line-height: 1.8;
+    line-height: 1.6;
     color: var(--text-dark);
-    margin-bottom: 30px;
-    font-size: 1rem;
+    margin-bottom: 20px;
+    font-size: 0.95rem;
 }
 
-/* Specs Grid - Профессиональные карточки */
+/* Specs Grid */
 .ps-specs-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-    margin-bottom: 30px;
+    gap: 15px;
+    margin-bottom: 20px;
 }
 
 @media (max-width: 900px) {
@@ -535,14 +533,13 @@
 
 .ps-spec-card {
     background: linear-gradient(135deg, var(--bg-light-blue), #e5f5fa);
-    /*background: linear-gradient(135deg, var(--bg-light), #ffffff);*/
-    border-radius: 20px;
-    padding: 20px 16px;
+    border-radius: 16px;
+    padding: 15px 12px;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 12px;
+    gap: 8px;
     transition: all 0.3s;
     border: 1px solid rgba(0, 0, 0, 0.05);
     position: relative;
@@ -562,8 +559,8 @@
 }
 
 .ps-spec-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
     border-color: transparent;
 }
 
@@ -572,10 +569,10 @@
 }
 
 .ps-spec-icon {
-    font-size: 2.5rem;
+    font-size: 2rem;
     background: linear-gradient(135deg, var(--primary-light), var(--primary-color));
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -584,17 +581,17 @@
 }
 
 .ps-spec-icon span {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
 }
 
 .ps-spec-content {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 3px;
 }
 
 .ps-spec-label {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     color: var(--text-light);
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -602,38 +599,30 @@
 }
 
 .ps-spec-value {
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     font-weight: 800;
     color: var(--primary-dark);
 }
 
 /* Info Sections */
 .ps-info-section {
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 }
 
-.ps-info-section h4 {
+.ps-info-section h3 {
     font-size: 1rem;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
     color: var(--primary-dark);
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     font-weight: 700;
-}
-
-.ps-info-section h4::before {
-    content: '';
-    width: 4px;
-    height: 20px;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    border-radius: 2px;
 }
 
 .ps-location-card {
     background: linear-gradient(135deg, var(--bg-light), #ffffff);
-    border-radius: 16px;
-    padding: 16px 20px;
+    border-radius: 12px;
+    padding: 12px 16px;
     border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
@@ -641,13 +630,13 @@
     margin: 0;
     display: flex;
     align-items: center;
-    gap: 12px;
-    font-size: 0.95rem;
+    gap: 10px;
+    font-size: 0.9rem;
 }
 
 .ps-location-card p::before {
     content: '📍';
-    font-size: 1.3rem;
+    font-size: 1.1rem;
 }
 
 /* Tags Lists */
@@ -655,18 +644,18 @@
 .ps-infrastructure-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 10px;
 }
 
 .ps-feature-tag,
 .ps-infra-tag {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 8px 18px;
-    background: linear-gradient(135deg, var(--bg-light), #8bfa63);
-    border-radius: 40px;
-    font-size: 0.85rem;
+    gap: 6px;
+    padding: 6px 14px;
+    background: linear-gradient(135deg, var(--bg-light), #e8f5e9);
+    border-radius: 30px;
+    font-size: 0.8rem;
     color: var(--text-dark);
     transition: all 0.3s;
     border: 1px solid rgba(0, 0, 0, 0.05);
@@ -681,29 +670,73 @@
     box-shadow: 0 4px 12px rgba(26, 71, 42, 0.2);
 }
 
-/* Modal Action Button */
+/* Modal Buttons */
+.ps-modal-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    margin-top: 25px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
 .ps-modal-action-btn {
-    width: 100%;
-    max-width: 300px;
-    margin: 20px auto 0;
-    padding: 14px 32px;
-    font-size: 1rem;
+    flex: 1;
+    min-width: 200px;
+    padding: 12px 24px;
+    font-size: 0.9rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
+    gap: 10px;
+    border-radius: 40px;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.ps-modal-action-btn.ps-btn-outline {
+    background: transparent;
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+}
+
+.ps-modal-action-btn.ps-btn-outline:hover {
+    background: var(--primary-color);
+    color: white;
+    gap: 14px;
+    transform: translateY(-2px);
+}
+
+.ps-modal-action-btn.ps-btn-primary {
     background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
-    border-radius: 50px;
+    color: white;
+    border: none;
 }
 
-.ps-modal-action-btn:hover {
-    gap: 18px;
+.ps-modal-action-btn.ps-btn-primary:hover {
+    gap: 14px;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(26, 71, 42, 0.4);
 }
 
-/* Responsive */
+/* Responsive Modal */
 @media (max-width: 1024px) {
     .ps-projects-grid {
         grid-template-columns: repeat(2, 1fr);
+    }
+
+    .ps-modal {
+        margin: 30px auto;
+        width: 95%;
+    }
+
+    .ps-modal-content {
+        padding: 25px;
+    }
+
+    .ps-modal-main-image {
+        max-height: 380px;
     }
 }
 
@@ -721,15 +754,47 @@
         font-size: 1.8rem;
     }
 
+    .ps-section-description {
+        font-size: 0.95rem;
+    }
+
+    /* Modal responsive */
+    .ps-modal {
+        margin: 20px;
+        width: auto;
+        max-height: calc(100vh - 40px);
+        overflow-y: auto;
+    }
+
+    .ps-modal-content {
+        padding: 20px;
+    }
+
+    .ps-modal-close {
+        top: 12px;
+        right: 12px;
+        width: 32px;
+        height: 32px;
+        font-size: 20px;
+    }
+
     .ps-gallery-nav {
-        width: 38px;
-        height: 38px;
-        font-size: 22px;
+        width: 32px;
+        height: 32px;
+        font-size: 20px;
+    }
+
+    .ps-gallery-prev {
+        left: 10px;
+    }
+
+    .ps-gallery-next {
+        right: 10px;
     }
 
     .ps-modal-thumb {
-        width: 65px;
-        height: 50px;
+        width: 60px;
+        height: 45px;
     }
 
     .ps-info-header {
@@ -738,42 +803,64 @@
     }
 
     .ps-info-header h2 {
+        font-size: 1.3rem;
+    }
+
+    .ps-modal-description {
+        font-size: 0.85rem;
+        margin-bottom: 15px;
+    }
+
+    .ps-spec-card {
+        padding: 12px 10px;
+    }
+
+    .ps-spec-icon {
+        width: 45px;
+        height: 45px;
         font-size: 1.5rem;
+    }
+
+    .ps-spec-value {
+        font-size: 1rem;
+    }
+
+    .ps-spec-label {
+        font-size: 0.6rem;
+    }
+
+    .ps-info-section h3 {
+        font-size: 0.9rem;
+        margin-bottom: 10px;
+    }
+
+    .ps-location-card {
+        padding: 10px 14px;
+    }
+
+    .ps-location-card p {
+        font-size: 0.85rem;
+    }
+
+    .ps-feature-tag,
+    .ps-infra-tag {
+        padding: 5px 12px;
+        font-size: 0.75rem;
+    }
+
+    /* Кнопки в модальном окне */
+    .ps-modal-buttons {
+        flex-direction: column;
+        gap: 12px;
+        margin-top: 20px;
     }
 
     .ps-modal-action-btn {
         width: 100%;
-        max-width: none;
-    }
-
-    .ps-modal {
-        margin: 20px;
-    }
-
-    .ps-modal-content {
-        padding: 25px;
-    }
-
-    .ps-modal-close {
-        top: 15px;
-        right: 15px;
-        width: 36px;
-        height: 36px;
-        font-size: 24px;
-    }
-
-    .ps-spec-card {
-        padding: 16px 12px;
-    }
-
-    .ps-spec-icon {
-        width: 50px;
-        height: 50px;
-        font-size: 1.8rem;
-    }
-
-    .ps-spec-value {
-        font-size: 1.1rem;
+        min-width: auto;
+        padding: 10px 20px;
+        font-size: 0.85rem;
+        white-space: normal;
     }
 }
 
@@ -784,69 +871,46 @@
     }
 
     .ps-specs-grid {
-        gap: 12px;
+        gap: 10px;
     }
-}
 
-/* Добавьте в конец файла ProjectsShowcase.css */
+    .ps-modal-content {
+        padding: 16px;
+    }
 
-/* Кнопки в модальном окне */
-.ps-modal-buttons {
-    display: flex;
-    /*flex-direction: column;*/
-    gap: 15px;
-    margin-top: 30px;
-    align-items: center;
-}
+    .ps-modal-main-image {
+        max-height: 250px;
+    }
 
-.ps-modal-action-btn {
-    width: 100%;
-    max-width: 350px;
-    padding: 14px 32px;
-    font-size: 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    border-radius: 50px;
-    text-decoration: none;
-}
+    .ps-modal-thumb {
+        width: 50px;
+        height: 40px;
+    }
 
-.ps-modal-action-btn.ps-btn-outline {
-    background: transparent;
-    border: 2px solid var(--primary-color);
-    color: var(--primary-color);
-}
+    .ps-info-header h2 {
+        font-size: 1.1rem;
+    }
 
-.ps-modal-action-btn.ps-btn-outline:hover {
-    background: var(--primary-color);
-    color: white;
-    gap: 18px;
-    transform: translateY(-2px);
-}
+    .ps-complex-status {
+        padding: 4px 12px;
+        font-size: 0.7rem;
+    }
 
-.ps-modal-action-btn.ps-btn-primary {
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
-    color: white;
-    border: none;
-}
+    .ps-spec-card {
+        padding: 10px 8px;
+    }
 
-.ps-modal-action-btn.ps-btn-primary:hover {
-    gap: 18px;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(26, 71, 42, 0.4);
-}
+    .ps-spec-icon {
+        width: 40px;
+        height: 40px;
+    }
 
-/* Адаптив для модальных кнопок */
-@media (max-width: 768px) {
-    .ps-modal-buttons {
-        gap: 12px;
+    .ps-spec-value {
+        font-size: 0.9rem;
     }
 
     .ps-modal-action-btn {
-        width: 100%;
-        max-width: none;
-        padding: 12px 24px;
-        font-size: 0.9rem;
+        padding: 10px 16px;
+        font-size: 0.8rem;
     }
 }
