@@ -436,3 +436,385 @@
         flex-direction: column;
     }
 }
+
+/* Добавьте в конец файла AboutManager.css */
+
+/* Icon Picker Styles */
+.ab-icon-selector {
+    position: relative;
+}
+
+.ab-icon-preview {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    border: 1px solid var(--ap-border);
+    border-radius: 8px;
+    cursor: pointer;
+    background: white;
+    transition: all 0.3s;
+}
+
+.ab-icon-preview:hover {
+    border-color: var(--ap-primary);
+    background: var(--ap-bg-light);
+}
+
+.ab-icon-change {
+    font-size: 0.8rem;
+    color: var(--ap-text-light);
+}
+
+.ab-icon-picker {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 8px;
+    background: white;
+    border: 1px solid var(--ap-border);
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    width: 480px;
+    max-width: 90vw;
+}
+
+.ab-icon-picker-header {
+    display: flex;
+    gap: 10px;
+    padding: 12px;
+    border-bottom: 1px solid var(--ap-border);
+    flex-wrap: wrap;
+}
+
+.ab-icon-search {
+    flex: 2;
+    padding: 8px 12px;
+    border: 1px solid var(--ap-border);
+    border-radius: 8px;
+    font-size: 0.85rem;
+}
+
+.ab-icon-category {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid var(--ap-border);
+    border-radius: 8px;
+    font-size: 0.85rem;
+    background: white;
+}
+
+.ab-icon-picker-close {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 0 8px;
+    color: var(--ap-text-light);
+}
+
+.ab-icon-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    padding: 12px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.ab-icon-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 8px;
+    border: 1px solid var(--ap-border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: white;
+}
+
+.ab-icon-option:hover {
+    border-color: var(--ap-primary);
+    background: var(--ap-bg-light);
+    transform: translateY(-2px);
+}
+
+.ab-icon-option.selected {
+    border-color: var(--ap-primary);
+    background: var(--ap-primary);
+    color: white;
+}
+
+.ab-icon-option.selected svg {
+    color: white;
+}
+
+.ab-icon-name {
+    font-size: 0.7rem;
+    text-align: center;
+}
+
+/* File Upload Area */
+.ab-file-upload-area {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.ab-file-upload-label-custom {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: var(--ap-bg-light);
+    border: 1px dashed var(--ap-border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.ab-file-upload-label-custom:hover {
+    border-color: var(--ap-primary);
+    background: rgba(26, 71, 42, 0.05);
+}
+
+/* Image Preview with Remove Button */
+.ab-image-preview {
+    position: relative;
+    display: inline-block;
+    margin-top: 10px;
+}
+
+.ab-image-preview img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid var(--ap-border);
+}
+
+.ab-remove-preview {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: var(--ap-danger);
+    color: white;
+    border: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    transition: all 0.3s;
+}
+
+.ab-remove-preview:hover {
+    transform: scale(1.1);
+}
+
+/* Responsive Icon Picker */
+@media (max-width: 768px) {
+    .ab-icon-picker {
+        width: calc(100vw - 40px);
+        left: -20px;
+    }
+
+    .ab-icon-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .ab-icon-picker-header {
+        flex-direction: column;
+    }
+
+    .ab-icon-search,
+    .ab-icon-category {
+        width: 100%;
+    }
+}
+
+/* Card Actions Improvements */
+.ab-card-actions,
+.ab-team-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.ab-move-up,
+.ab-move-down,
+.ab-edit-btn,
+.ab-delete-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    transition: all 0.3s;
+}
+
+.ab-move-up,
+.ab-move-down {
+    background: var(--ap-bg-light);
+    color: var(--ap-text-dark);
+    border: 1px solid var(--ap-border);
+}
+
+.ab-move-up:hover:not(:disabled),
+.ab-move-down:hover:not(:disabled) {
+    background: var(--ap-primary);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.ab-move-up:disabled,
+.ab-move-down:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.ab-edit-btn {
+    background: #3b82f6;
+    color: white;
+}
+
+.ab-edit-btn:hover {
+    background: #2563eb;
+    transform: translateY(-2px);
+}
+
+.ab-delete-btn {
+    background: #ef4444;
+    color: white;
+}
+
+.ab-delete-btn:hover {
+    background: #dc2626;
+    transform: translateY(-2px);
+}
+
+/* Form Improvements */
+.ab-edit-form {
+    background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.ab-edit-form h4 {
+    margin: 0 0 20px 0;
+    font-size: 1.1rem;
+    color: var(--ap-primary);
+    border-left: 3px solid var(--ap-primary);
+    padding-left: 12px;
+}
+
+.ab-form-group label {
+    font-weight: 600;
+    color: var(--ap-text-dark);
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+}
+
+.ab-form-group input,
+.ab-form-group textarea,
+.ab-form-group select {
+    padding: 10px 14px;
+    border: 1px solid var(--ap-border);
+    border-radius: 10px;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+}
+
+.ab-form-group input:focus,
+.ab-form-group textarea:focus {
+    outline: none;
+    border-color: var(--ap-primary);
+    box-shadow: 0 0 0 3px rgba(26, 71, 42, 0.1);
+}
+
+.ab-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-weight: normal;
+}
+
+.ab-form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--ap-border);
+}
+
+.ab-save-btn,
+.ab-cancel-btn {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.ab-save-btn {
+    background: linear-gradient(135deg, var(--ap-primary), var(--ap-primary-light));
+    color: white;
+}
+
+.ab-save-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(26, 71, 42, 0.3);
+}
+
+.ab-cancel-btn {
+    background: #e5e7eb;
+    color: var(--ap-text-dark);
+}
+
+.ab-cancel-btn:hover {
+    background: #d1d5db;
+}
+
+/* Иконки с цветами */
+.ab-card-icon svg,
+.ab-icon-option svg {
+    transition: all 0.3s;
+}
+
+.ab-icon-option:hover svg {
+    transform: scale(1.1);
+}
+
+.ab-icon-option.selected svg {
+    filter: drop-shadow(0 0 2px currentColor);
+}
+
+/* Эмодзи в пикере */
+.ab-icon-option span:first-child {
+    font-size: 28px;
+}
+
+/* Предпросмотр иконки */
+.ab-icon-preview svg,
+.ab-icon-preview span {
+    transition: transform 0.3s;
+}
+
+.ab-icon-preview:hover svg,
+.ab-icon-preview:hover span {
+    transform: scale(1.1);
+}
