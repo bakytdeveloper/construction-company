@@ -193,6 +193,11 @@
     .footer-bottom-links {
         justify-content: center;
     }
+
+    .footer-contacts li {
+        justify-content: center;
+        margin-right: 1%;
+    }
 }
 
 
