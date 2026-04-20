@@ -393,17 +393,6 @@ const PropertyDetailPage = () => {
                                 <h3>Жилой комплекс "{property.residentialComplex.title}"</h3>
                                 <p>{property.residentialComplex.location}</p>
                                 <div className="pd-complex-buttons">
-                                    {/* ДЕБАГ: Выводим ID в консоль */}
-                                    <button
-                                        onClick={() => {
-                                            console.log('ID ЖК для фильтрации:', property.residentialComplex._id);
-                                            console.log('Ссылка:', `/projects?complex=${property.residentialComplex._id}`);
-                                        }}
-                                        className="pd-btn pd-btn-secondary"
-                                        style={{ marginBottom: '10px' }}
-                                    >
-                                        Отладка: Показать ID ЖК
-                                    </button>
                                     <Link
                                         to={`/projects?complex=${property.residentialComplex._id}`}
                                         className="pd-btn pd-btn-primary"
