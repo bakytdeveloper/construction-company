@@ -1,0 +1,438 @@
+/* src/admin/pages/AboutManager.css */
+
+.ab-manager-page {
+    width: 100%;
+}
+
+.ab-manager-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.ab-manager-header h2 {
+    margin: 0;
+    color: var(--ap-text-dark);
+}
+
+.ab-header-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+/* Секции */
+.ab-section {
+    background: white;
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 30px;
+    box-shadow: var(--ap-shadow-sm);
+}
+
+.ab-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--ap-border);
+}
+
+.ab-section-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+/* Формы редактирования */
+.ab-edit-form {
+    background: var(--ap-bg-light);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.ab-edit-form h4 {
+    margin: 0 0 15px 0;
+    font-size: 1rem;
+}
+
+.ab-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.ab-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.ab-form-group label {
+    font-weight: 600;
+    color: var(--ap-text-dark);
+    font-size: 0.85rem;
+}
+
+.ab-form-group input,
+.ab-form-group textarea,
+.ab-form-group select {
+    padding: 8px 12px;
+    border: 1px solid var(--ap-border);
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+.ab-form-group input:focus,
+.ab-form-group textarea:focus {
+    outline: none;
+    border-color: var(--ap-primary);
+}
+
+.ab-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.ab-checkbox-label input {
+    width: auto;
+}
+
+.ab-form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.ab-save-btn,
+.ab-cancel-btn {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.ab-save-btn {
+    background: var(--ap-primary);
+    color: white;
+}
+
+.ab-save-btn:hover {
+    background: var(--ap-primary-light);
+}
+
+.ab-cancel-btn {
+    background: var(--ap-border);
+    color: var(--ap-text-dark);
+}
+
+/* Сетка карточек */
+.ab-items-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.ab-card {
+    background: var(--ap-bg-light);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    gap: 15px;
+    transition: all 0.3s;
+}
+
+.ab-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--ap-shadow-md);
+}
+
+.ab-card-icon {
+    font-size: 2.5rem;
+}
+
+.ab-card-content {
+    flex: 1;
+}
+
+.ab-card-content h4 {
+    margin: 0 0 5px 0;
+    font-size: 1rem;
+}
+
+.ab-card-content p {
+    font-size: 0.8rem;
+    color: var(--ap-text-light);
+    margin: 0 0 8px 0;
+}
+
+.ab-card-status {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+}
+
+.ab-card-status.active {
+    background: #10b98120;
+    color: #10b981;
+}
+
+.ab-card-status.inactive {
+    background: #ef444420;
+    color: #ef4444;
+}
+
+.ab-card-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.ab-move-up,
+.ab-move-down,
+.ab-edit-btn,
+.ab-delete-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+}
+
+.ab-move-up,
+.ab-move-down {
+    background: var(--ap-bg-light);
+    color: var(--ap-text-dark);
+    border: 1px solid var(--ap-border);
+}
+
+.ab-move-up:hover:not(:disabled),
+.ab-move-down:hover:not(:disabled) {
+    background: var(--ap-primary);
+    color: white;
+}
+
+.ab-move-up:disabled,
+.ab-move-down:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.ab-edit-btn {
+    background: var(--ap-info);
+    color: white;
+}
+
+.ab-edit-btn:hover {
+    background: #2563eb;
+}
+
+.ab-delete-btn {
+    background: var(--ap-danger);
+    color: white;
+}
+
+.ab-delete-btn:hover {
+    background: #dc2626;
+}
+
+/* Команда - сетка */
+.ab-team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 25px;
+}
+
+.ab-team-card {
+    background: var(--ap-bg-light);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.3s;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.ab-team-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--ap-shadow-md);
+}
+
+.ab-team-image {
+    position: relative;
+    aspect-ratio: 1;
+    overflow: hidden;
+}
+
+.ab-team-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.ab-team-initials {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--ap-primary)20, var(--ap-primary)40);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--ap-primary);
+}
+
+.ab-delete-image {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--ap-danger);
+    color: white;
+    border: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}
+
+.ab-team-info {
+    padding: 15px;
+    text-align: center;
+}
+
+.ab-team-info h4 {
+    margin: 0 0 5px 0;
+    font-size: 1rem;
+}
+
+.ab-team-info p {
+    font-size: 0.75rem;
+    color: var(--ap-text-light);
+    margin: 0 0 5px 0;
+}
+
+.ab-team-exp {
+    display: inline-block;
+    font-size: 0.7rem;
+    color: var(--ap-secondary);
+    margin-bottom: 8px;
+}
+
+.ab-team-actions {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    padding: 0 15px 15px;
+}
+
+/* Опции изображений */
+.ab-image-options {
+    display: flex;
+    gap: 10px;
+}
+
+.ab-image-option {
+    flex: 1;
+    padding: 8px;
+    background: white;
+    border: 1px solid var(--ap-border);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+.ab-image-option.active {
+    background: var(--ap-primary);
+    color: white;
+    border-color: var(--ap-primary);
+}
+
+.ab-image-preview {
+    margin-top: 10px;
+    border-radius: 8px;
+    overflow: hidden;
+    max-width: 150px;
+}
+
+.ab-image-preview img {
+    width: 100%;
+    height: auto;
+}
+
+.ab-file-hint {
+    font-size: 0.7rem;
+    color: var(--ap-text-light);
+    margin-top: 5px;
+}
+
+/* Форма в модальном окне */
+.ab-dynamic-form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.ab-form-section {
+    background: var(--ap-bg-light);
+    padding: 20px;
+    border-radius: 16px;
+}
+
+.ab-form-section h3 {
+    margin: 0 0 15px 0;
+    font-size: 1rem;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--ap-border);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .ab-manager-header {
+        flex-direction: column;
+    }
+
+    .ab-header-buttons {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .ab-form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .ab-items-grid,
+    .ab-team-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ab-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .ab-card-actions {
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    .ab-image-options {
+        flex-direction: column;
+    }
+}

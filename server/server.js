@@ -17,6 +17,7 @@ import advantageRoutes from "./routes/advantageRoutes.js";
 import faqRoutes from "./routes/faqRoutes.js";
 import statsRoutes from './routes/statsRoutes.js';
 import testimonialRoutes from "./routes/testimonialRoutes.js";
+import aboutRoutes from "./routes/aboutRoutes.js";
 
 dotenv.config();
 
@@ -62,6 +63,7 @@ app.use('/api/advantages', advantageRoutes);
 app.use('/api/faq', faqRoutes);
 app.use('/api/stats', statsRoutes);
 app.use('/api/testimonials', testimonialRoutes);
+app.use('/api/about', aboutRoutes);
 
 
 // Health check
