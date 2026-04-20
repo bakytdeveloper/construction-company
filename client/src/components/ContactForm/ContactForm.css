@@ -310,7 +310,29 @@
 }
 
 @media (max-width: 768px) {
+    .contact-form-section {
+        padding: 30px 0;
+    }
+
+    .contact-info {
+        text-align: center;
+    }
+
+    .contact-info h2 {
+        text-align: center;
+    }
+
+
+    .contact-info > p {
+        opacity: 0.8;
+        margin-bottom: 0;
+    }
+
     .contact-form {
         padding: 30px 20px;
+    }
+
+    .info-items, .work-hours {
+        display: none;
     }
 }
