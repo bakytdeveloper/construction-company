@@ -283,3 +283,21 @@ h3 {
     }
 
 }
+
+
+
+
+/* Добавьте в конец файла global.css */
+
+/* Отступ для мобильной навигации */
+@media (max-width: 768px) {
+    body {
+        padding-bottom: 70px;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding-bottom: 65px;
+    }
+}

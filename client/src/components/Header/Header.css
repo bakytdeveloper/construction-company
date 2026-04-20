@@ -1,3 +1,5 @@
+/* src/components/Header/Header.css */
+
 .header {
     position: fixed;
     top: 0;
@@ -19,6 +21,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 20px;
 }
 
 .logo {
@@ -26,6 +29,7 @@
     align-items: center;
     gap: 12px;
     text-decoration: none;
+    flex-shrink: 0;
 }
 
 .logo-icon {
@@ -46,18 +50,26 @@
 .logo-title {
     font-size: 1.5rem;
     font-weight: 800;
-    /*color: var(--primary-color);*/
     color: var(--bg-white);
     line-height: 1.2;
 }
 
 .logo-subtitle {
     font-size: 0.75rem;
-    color: var(--text-light);
+    color: rgba(255, 255, 255, 0.8);
 }
 
 .header.scrolled .logo-title {
     color: var(--primary-dark);
+}
+
+.header.scrolled .logo-subtitle {
+    color: var(--text-light);
+}
+
+/* Десктопная навигация */
+.desktop-nav {
+    display: block;
 }
 
 .nav-list {
@@ -100,93 +112,103 @@
     color: var(--secondary-color);
 }
 
-.nav-phone {
+/* Телефон в хедере */
+.header-phone {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     text-decoration: none;
-    color: var(--secondary-color);
-    font-weight: 600;
     padding: 8px 16px;
-    border: 2px solid var(--secondary-color);
-    border-radius: 8px;
-    transition: var(--transition);
+    background: rgba(201, 160, 61, 0.15);
+    border: 1px solid var(--secondary-color);
+    border-radius: 40px;
+    transition: all 0.3s;
+    flex-shrink: 0;
 }
 
-.nav-phone:hover {
+.header-phone:hover {
     background: var(--secondary-color);
+    transform: translateY(-2px);
+}
+
+.header-phone:hover .phone-number {
     color: white;
 }
 
-.mobile-menu-btn {
-    display: none;
-    flex-direction: column;
-    gap: 6px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 10px;
+.header-phone:hover .phone-icon {
+    color: white;
 }
 
-.mobile-menu-btn span {
-    width: 25px;
-    height: 2px;
-    background: var(--primary-color);
-    transition: var(--transition);
+.phone-icon {
+    font-size: 1.1rem;
+    color: var(--secondary-color);
+    transition: all 0.3s;
 }
 
+.phone-number {
+    font-weight: 600;
+    color: var(--secondary-color);
+    transition: all 0.3s;
+    font-size: 0.95rem;
+}
+
+.header.scrolled .phone-number {
+    color: var(--secondary-color);
+}
+
+/* Мобильные стили */
 @media (max-width: 768px) {
-
     .header {
         background: var(--bg-white);
         box-shadow: var(--shadow-md);
         padding: 12px 0;
-
     }
 
     .logo-title {
-        color: #0e2a1a;
+        color: var(--primary-dark);
     }
 
-    .mobile-menu-btn {
-        display: flex;
+    .logo-subtitle {
+        color: var(--text-light);
     }
 
-    .nav-menu {
-        position: fixed;
-        top: 0;
-        right: -100%;
-        width: 80%;
-        max-width: 300px;
-        height: 100vh;
-        background: var(--bg-white);
-        box-shadow: var(--shadow-xl);
-        padding: 80px 20px 20px;
-        transition: var(--transition);
-        z-index: 999;
+    /* Скрываем десктопную навигацию на мобильных */
+    .desktop-nav {
+        display: none;
     }
 
-    .nav-menu.active {
-        right: 0;
+    /* Телефон на мобильных - компактный */
+    .header-phone {
+        padding: 6px 12px;
     }
 
-    .nav-list {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 20px;
+    .phone-number {
+        font-size: 0.85rem;
     }
 
-    .nav-link {
-        color: var(--text-dark);
-        font-size: 1.1rem;
+    .phone-icon {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-phone {
+        padding: 5px 10px;
     }
 
-    .mobile-menu-btn.active span:nth-child(1) {
-        transform: rotate(45deg) translate(8px, 6px);
+    .phone-number {
+        font-size: 0.75rem;
     }
 
-    .mobile-menu-btn.active span:nth-child(2) {
-        opacity: 0;
+    .logo-title {
+        font-size: 1.2rem;
     }
 
-    .mobile-menu-btn.active span:nth-child(3) {
-        transform: rotate(-45deg) translate(8px, -6px);
+    .logo-icon {
+        font-size: 1.5rem;
+    }
+
+    .logo-subtitle {
+        font-size: 0.65rem;
     }
 }

@@ -1,0 +1,125 @@
+/* src/components/MobileBottomNav/MobileBottomNav.css */
+
+.mobile-bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--bg-white);
+    box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.08);
+    display: none;
+    justify-content: space-around;
+    align-items: center;
+    padding: 8px 16px;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.mobile-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    text-decoration: none;
+    color: var(--text-light);
+    transition: all 0.3s ease;
+    padding: 6px 12px;
+    border-radius: 12px;
+    flex: 1;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+}
+
+.mobile-nav-item.active {
+    color: var(--secondary-color);
+    background: rgba(201, 160, 61, 0.1);
+}
+
+.mobile-nav-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mobile-nav-icon svg {
+    width: 22px;
+    height: 22px;
+    transition: transform 0.3s ease;
+}
+
+.mobile-nav-item:hover .mobile-nav-icon svg {
+    transform: translateY(-2px);
+}
+
+.mobile-nav-item.active .mobile-nav-icon svg {
+    stroke: var(--secondary-color);
+}
+
+.mobile-nav-label {
+    font-size: 0.7rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.mobile-nav-item:hover {
+    transform: translateY(-2px);
+    color: var(--secondary-color);
+}
+
+/* Отступ для контента, чтобы не перекрывался навигацией */
+.mobile-bottom-nav-spacer {
+    display: none;
+}
+
+/* Показываем только на мобильных устройствах */
+@media (max-width: 768px) {
+    .mobile-bottom-nav {
+        display: flex;
+    }
+
+    /* Добавляем отступ снизу для body, чтобы контент не перекрывался */
+    body {
+        padding-bottom: 70px;
+    }
+}
+
+@media (max-width: 480px) {
+    .mobile-bottom-nav {
+        padding: 6px 12px;
+    }
+
+    .mobile-nav-icon svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .mobile-nav-label {
+        font-size: 0.65rem;
+    }
+
+    .mobile-nav-item {
+        padding: 4px 8px;
+    }
+
+    body {
+        padding-bottom: 65px;
+    }
+}
+
+/* Для очень маленьких экранов */
+@media (max-width: 360px) {
+    .mobile-nav-label {
+        font-size: 0.6rem;
+    }
+
+    .mobile-nav-icon svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .mobile-nav-item {
+        padding: 4px 6px;
+    }
+}

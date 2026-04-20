@@ -1,10 +1,10 @@
+// src/components/Header/Header.jsx
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import './Header.css';
 
 const Header = () => {
     const [isScrolled, setIsScrolled] = useState(false);
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const location = useLocation();
 
     useEffect(() => {
@@ -14,18 +14,6 @@ const Header = () => {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
-
-    useEffect(() => {
-        setIsMobileMenuOpen(false);
-    }, [location]);
-
-    const navLinks = [
-        { path: '/', label: 'Главная' },
-        { path: '/projects', label: 'Проекты' },
-        { path: '/about', label: 'О компании' },
-        { path: '/faq', label: 'FAQ' },
-        { path: '/contact', label: 'Контакты' }
-    ];
 
     return (
         <header className={`header ${isScrolled ? 'scrolled' : ''}`}>
@@ -38,35 +26,42 @@ const Header = () => {
                     </div>
                 </Link>
 
-                <nav className={`nav-menu ${isMobileMenuOpen ? 'active' : ''}`}>
+                {/* Десктопная навигация */}
+                <nav className="nav-menu desktop-nav">
                     <ul className="nav-list">
-                        {navLinks.map((link) => (
-                            <li key={link.path}>
-                                <Link
-                                    to={link.path}
-                                    className={`nav-link ${location.pathname === link.path ? 'active' : ''}`}
-                                >
-                                    {link.label}
-                                </Link>
-                            </li>
-                        ))}
                         <li>
-                            <a href="tel:+77771234567" className="nav-phone">
-                                📞 +7 (777) 123-45-67
-                            </a>
+                            <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>
+                                Главная
+                            </Link>
+                        </li>
+                        <li>
+                            <Link to="/projects" className={`nav-link ${location.pathname === '/projects' ? 'active' : ''}`}>
+                                Проекты
+                            </Link>
+                        </li>
+                        <li>
+                            <Link to="/about" className={`nav-link ${location.pathname === '/about' ? 'active' : ''}`}>
+                                О компании
+                            </Link>
+                        </li>
+                        <li>
+                            <Link to="/faq" className={`nav-link ${location.pathname === '/faq' ? 'active' : ''}`}>
+                                FAQ
+                            </Link>
+                        </li>
+                        <li>
+                            <Link to="/contact" className={`nav-link ${location.pathname === '/contact' ? 'active' : ''}`}>
+                                Контакты
+                            </Link>
                         </li>
                     </ul>
                 </nav>
 
-                <button
-                    className={`mobile-menu-btn ${isMobileMenuOpen ? 'active' : ''}`}
-                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                    aria-label="Меню"
-                >
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
+                {/* Телефон - виден на всех устройствах */}
+                <a href="tel:+77771234567" className="header-phone">
+                    <span className="phone-icon">📞</span>
+                    <span className="phone-number">+7 (777) 123-45-67</span>
+                </a>
             </div>
         </header>
     );

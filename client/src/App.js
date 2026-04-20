@@ -1,3 +1,4 @@
+// App.js
 import React, { useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import AOS from 'aos';
@@ -6,6 +7,7 @@ import 'aos/dist/aos.css';
 // Layout Components
 import Header from './components/Header/Header';
 import Footer from './components/Footer/Footer';
+import MobileBottomNav from './components/MobileBottomNav/MobileBottomNav';
 
 // Pages
 import HomePage from './pages/HomePage/HomePage';
@@ -15,7 +17,6 @@ import ContactPage from './pages/ContactPage/ContactPage';
 import AboutPage from './pages/AboutPage/AboutPage';
 import FAQPage from './pages/FAQPage/FAQPage';
 import AdminPanel from './admin/AdminPanel';
-// import ScrollToTop from './components/ScrollToTop/ScrollToTop';
 import WhatsAppButton from "./components/WhatsAppButton/WhatsAppButton";
 
 function App() {
@@ -29,11 +30,10 @@ function App() {
         });
     }, []);
 
-    const isAdminRoute = location.pathname === '/admin';
+    const isAdminRoute = location.pathname.startsWith('/admin');
 
     return (
         <>
-            {/*<ScrollToTop />*/}
             {!isAdminRoute && <Header />}
             <Routes>
                 <Route path="/" element={<HomePage />} />
@@ -42,29 +42,32 @@ function App() {
                 <Route path="/contact" element={<ContactPage />} />
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/faq" element={<FAQPage />} />
-                <Route path="/admin/*" element={<AdminPanel />} /> {/* Добавлен /* для всех подмаршрутов */}
+                <Route path="/admin/*" element={<AdminPanel />} />
             </Routes>
 
             <ConditionalWhatsAppButton />
-
+            <ConditionalMobileNav />
             {!isAdminRoute && <Footer />}
         </>
     );
 }
 
-
 // Компонент для условного отображения WhatsAppButton
 const ConditionalWhatsAppButton = () => {
     const location = useLocation();
+    const isAdminRoute = location.pathname.startsWith('/admin');
 
-    // Не показываем на админских и клиентских страницах
-    if (location.pathname.startsWith('/admin') ||
-        location.pathname.startsWith('/client') ||
-        location.pathname.startsWith('/admin/*')) {
-        return null;
-    }
-
+    if (isAdminRoute) return null;
     return <WhatsAppButton />;
+};
+
+// Компонент для условного отображения мобильной навигации
+const ConditionalMobileNav = () => {
+    const location = useLocation();
+    const isAdminRoute = location.pathname.startsWith('/admin');
+
+    if (isAdminRoute) return null;
+    return <MobileBottomNav />;
 };
 
 export default App;
