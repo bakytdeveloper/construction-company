@@ -176,8 +176,8 @@ const PropertyDetailPage = () => {
                             <div className={`pd-status-badge ${getStatusClass(property.status)}`}>
                                 {getStatusText(property.status)}
                             </div>
-                            <div className="pd-hero-meta">
-                                <div className="pd-meta-item">
+                            <div className="pd-hero-meta ">
+                                <div className="pd-meta-item pd-hero-meta-location">
                                     <span className="pd-meta-icon">📍</span>
                                     <span>{property.location}</span>
                                 </div>
