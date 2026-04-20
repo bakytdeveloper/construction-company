@@ -133,6 +133,18 @@
 }
 
 @media (max-width: 768px) {
+
+    .header {
+        background: var(--bg-white);
+        box-shadow: var(--shadow-md);
+        padding: 12px 0;
+
+    }
+
+    .logo-title {
+        color: #0e2a1a;
+    }
+
     .mobile-menu-btn {
         display: flex;
     }
