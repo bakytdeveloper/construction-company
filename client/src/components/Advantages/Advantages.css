@@ -82,7 +82,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 25px;
+    margin: 0 auto 25px;
     position: relative;
     transition: all 0.3s;
 }
@@ -90,6 +90,8 @@
 .icon-3d {
     font-size: 2.5rem;
     transform-style: preserve-3d;
+    align-items: center;
+    justify-content: center;
     transition: transform 0.3s;
 }
 
@@ -131,6 +133,10 @@
 }
 
 @media (max-width: 768px) {
+    .advantages {
+        padding: 50px 0;
+    }
+
     .advantages-grid {
         grid-template-columns: 1fr;
     }
@@ -138,4 +144,33 @@
     .advantage-card {
         height: auto;
     }
+
+    .advantage-card-inner {
+        padding: 20px;
+
+    }
+
+    .advantage-icon {
+        width: 40px;
+        height: 40px;
+        margin-bottom: 20px;
+        position: relative;
+        transition: all 0.3s;
+    }
+
+    .icon-3d {
+        font-size: 2rem;
+    }
+
+    .advantage-card-inner h3 {
+        color: white;
+        margin-bottom: 10px;
+        font-size: 1.3rem;
+    }
+
+    .advantage-card-inner p {
+        color: rgba(255, 255, 255, 0.8);
+        line-height: 1.4;
+    }
+
 }
