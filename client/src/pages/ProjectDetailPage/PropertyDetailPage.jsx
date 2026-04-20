@@ -256,23 +256,23 @@ const PropertyDetailPage = () => {
                                         <div className="pd-spec-item">
                                             <span className="pd-spec-label">Тип недвижимости</span>
                                             <span className="pd-spec-value">
-                                                {getPropertyTypeIcon(property.propertyType)} {getPropertyTypeName(property.propertyType)}
+                                                {getPropertyTypeIcon(property.propertyType)}: {getPropertyTypeName(property.propertyType)}
                                             </span>
                                         </div>
                                         <div className="pd-spec-item">
-                                            <span className="pd-spec-label">Общая площадь</span>
+                                            <span className="pd-spec-label">Общая площадь:</span>
                                             <span className="pd-spec-value">{property.area} м²</span>
                                         </div>
                                         {property.rooms && (
                                             <div className="pd-spec-item">
-                                                <span className="pd-spec-label">Количество комнат</span>
+                                                <span className="pd-spec-label">Количество комнат:</span>
                                                 <span className="pd-spec-value">{property.rooms}</span>
                                             </div>
                                         )}
                                         {property.floor && (
                                             <div className="pd-spec-item">
-                                                <span className="pd-spec-label">Этаж</span>
-                                                <span className="pd-spec-value">{property.floor} / {property.totalFloors || '?'}</span>
+                                                <span className="pd-spec-label">Этаж:</span>
+                                                <span className="pd-spec-value">{property.floor}</span>
                                             </div>
                                         )}
                                         <div className="pd-spec-item">

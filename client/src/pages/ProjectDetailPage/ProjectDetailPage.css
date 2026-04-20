@@ -815,13 +815,56 @@
                 rgba(0, 0, 0, 0.55) 100%
         );
     }
+
     .pd-navigation {
         padding: 40px 0;
+    }
+
+    .pd-gallery {
+        padding: 30px 0 0;
     }
 
     .pd-navigation-card {
         padding: 25px;
     }
+
+    /*ghyjk*/
+    .pd-description {
+        color: var(--text-light);
+        line-height: 1.8;
+        font-size: 0.8rem;
+    }
+
+    /* Specifications Grid */
+    .pd-specs-grid {
+        background: var(--bg-light);
+        border-radius: 16px;
+        padding: 5px 0;
+    }
+
+    .pd-spec-item {
+        display: flex;
+        justify-content: space-between;
+        /*align-items: center;*/
+        padding: 14px 2px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .pd-spec-item:last-child {
+        border-bottom: none;
+    }
+
+    .pd-spec-label {
+        font-weight: 600;
+        color: var(--text-dark);
+        font-size: 0.9rem;
+    }
+
+    .pd-spec-value {
+        color: var(--text-dark);
+        font-size: 0.8rem;
+    }
+    /*hjkl*/
 
     .pd-navigation-buttons {
         flex-direction: column;
