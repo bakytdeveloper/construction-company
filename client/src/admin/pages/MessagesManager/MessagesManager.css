@@ -62,7 +62,8 @@
 }
 
 .ms-message-card.ms-unread {
-    border-left-color: var(--ap-primary);
+    border-left-color: red!important;
+    /*border-left-color: var(--ap-primary);*/
     background: linear-gradient(90deg, rgba(26, 71, 42, 0.02) 0%, white 100%);
 }
 
