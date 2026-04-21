@@ -550,6 +550,7 @@ const HeroEditor = () => {
                             <label>Ссылка кнопки</label>
                             <input
                                 type="text"
+                                disabled
                                 value={currentSlide.buttonLink}
                                 onChange={(e) => handleSlideChange(activeSlideIndex, 'buttonLink', e.target.value)}
                             />
