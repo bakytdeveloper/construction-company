@@ -452,14 +452,14 @@ const HeroEditor = () => {
                                     onClick={(e) => { e.stopPropagation(); moveSlide(idx, 'up'); }}
                                     disabled={idx === 0}
                                 >
-                                    ↑
+                                    ←
                                 </button>
                                 <button
                                     className="he-move-down"
                                     onClick={(e) => { e.stopPropagation(); moveSlide(idx, 'down'); }}
                                     disabled={idx === heroData.slides.length - 1}
                                 >
-                                    ↓
+                                    →
                                 </button>
                                 <button
                                     className="he-delete-slide"
