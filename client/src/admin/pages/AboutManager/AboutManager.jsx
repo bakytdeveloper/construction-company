@@ -601,7 +601,7 @@ const AboutManager = () => {
                                     disabled={index === 0}
                                     title="Переместить вверх"
                                 >
-                                    ↑
+                                    ←
                                 </button>
                                 <button
                                     className="ab-move-down"
@@ -609,7 +609,7 @@ const AboutManager = () => {
                                     disabled={index === settings.valueCards.length - 1}
                                     title="Переместить вниз"
                                 >
-                                    ↓
+                                    →
                                 </button>
                                 <button
                                     className="ab-edit-btn"
@@ -821,7 +821,7 @@ const AboutManager = () => {
                                     disabled={index === 0}
                                     title="Переместить вверх"
                                 >
-                                    ↑
+                                    ←
                                 </button>
                                 <button
                                     className="ab-move-down"
@@ -829,7 +829,7 @@ const AboutManager = () => {
                                     disabled={index === settings.teamMembers.length - 1}
                                     title="Переместить вниз"
                                 >
-                                    ↓
+                                    →
                                 </button>
                                 <button
                                     className="ab-edit-btn"
