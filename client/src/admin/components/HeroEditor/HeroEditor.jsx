@@ -1,6 +1,5 @@
-
 // src/admin/components/HeroEditor.jsx
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import './HeroEditor.css';
@@ -10,7 +9,6 @@ const HeroEditor = () => {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [activeSlideIndex, setActiveSlideIndex] = useState(0);
-    const [refreshKey, setRefreshKey] = useState(0);
 
     // Состояния для аккордеона
     const [openSections, setOpenSections] = useState({
@@ -19,9 +17,33 @@ const HeroEditor = () => {
         stats: false
     });
 
+    // Ref для отслеживания, нужно ли скроллить
+    const shouldScrollRef = useRef(false);
+    const lastActiveIndexRef = useRef(activeSlideIndex);
+
     useEffect(() => {
         fetchHeroData();
     }, []);
+
+    // Отдельный эффект для скролла только при изменении активного слайда вручную
+    useEffect(() => {
+        if (shouldScrollRef.current) {
+            // Небольшая задержка для плавного скролла
+            setTimeout(() => {
+                const editorForm = document.querySelector('.he-editor-form');
+                if (editorForm) {
+                    const rect = editorForm.getBoundingClientRect();
+                    const scrollTop = window.scrollY + rect.top - 100;
+                    window.scrollTo({
+                        top: scrollTop,
+                        behavior: 'smooth'
+                    });
+                }
+                shouldScrollRef.current = false;
+            }, 100);
+        }
+        lastActiveIndexRef.current = activeSlideIndex;
+    }, [activeSlideIndex]);
 
     const fetchHeroData = async () => {
         setLoading(true);
@@ -55,108 +77,142 @@ const HeroEditor = () => {
         }
     };
 
-    const handleSlideChange = (index, field, value) => {
-        const newSlides = [...heroData.slides];
-        newSlides[index] = { ...newSlides[index], [field]: value };
-        setHeroData({ ...heroData, slides: newSlides });
-        setRefreshKey(prev => prev + 1);
-    };
+    // Оптимизированная функция изменения слайда (без перерендера всего компонента)
+    const handleSlideChange = useCallback((index, field, value) => {
+        setHeroData(prevData => {
+            if (!prevData) return prevData;
+            const newSlides = [...prevData.slides];
+            newSlides[index] = { ...newSlides[index], [field]: value };
+            return { ...prevData, slides: newSlides };
+        });
+    }, []);
 
-    // Функции для работы со статистикой (без авто-скролла)
-    const handleStatChange = (slideIndex, statIndex, field, value) => {
-        const newSlides = [...heroData.slides];
-        const newStats = [...newSlides[slideIndex].stats];
-        newStats[statIndex] = { ...newStats[statIndex], [field]: value };
-        newSlides[slideIndex].stats = newStats;
-        setHeroData({ ...heroData, slides: newSlides });
-        // Убираем setRefreshKey, чтобы избежать скролла
-    };
+    // Функции для работы со статистикой
+    const handleStatChange = useCallback((slideIndex, statIndex, field, value) => {
+        setHeroData(prevData => {
+            if (!prevData) return prevData;
+            const newSlides = [...prevData.slides];
+            const newStats = [...newSlides[slideIndex].stats];
+            newStats[statIndex] = { ...newStats[statIndex], [field]: value };
+            newSlides[slideIndex].stats = newStats;
+            return { ...prevData, slides: newSlides };
+        });
+    }, []);
 
-    const addStat = (slideIndex) => {
-        const newSlides = [...heroData.slides];
-        if (newSlides[slideIndex].stats.length >= 4) {
-            toast.error('Не может быть больше 4 элементов статистики');
-            return;
-        }
-        newSlides[slideIndex].stats.push({ number: '0', label: 'Новая статистика' });
-        setHeroData({ ...heroData, slides: newSlides });
-    };
+    const addStat = useCallback((slideIndex) => {
+        setHeroData(prevData => {
+            if (!prevData) return prevData;
+            const newSlides = [...prevData.slides];
+            if (newSlides[slideIndex].stats.length >= 4) {
+                toast.error('Не может быть больше 4 элементов статистики');
+                return prevData;
+            }
+            newSlides[slideIndex].stats.push({ number: '0', label: 'Новая статистика' });
+            return { ...prevData, slides: newSlides };
+        });
+    }, []);
 
-    const removeStat = (slideIndex, statIndex) => {
-        const newSlides = [...heroData.slides];
-        newSlides[slideIndex].stats = newSlides[slideIndex].stats.filter((_, i) => i !== statIndex);
-        setHeroData({ ...heroData, slides: newSlides });
-    };
+    const removeStat = useCallback((slideIndex, statIndex) => {
+        setHeroData(prevData => {
+            if (!prevData) return prevData;
+            const newSlides = [...prevData.slides];
+            newSlides[slideIndex].stats = newSlides[slideIndex].stats.filter((_, i) => i !== statIndex);
+            return { ...prevData, slides: newSlides };
+        });
+    }, []);
 
     // Функции для управления аккордеоном
-    const toggleSection = (section) => {
+    const toggleSection = useCallback((section) => {
         setOpenSections(prev => ({
             ...prev,
             [section]: !prev[section]
         }));
-    };
+    }, []);
 
-    const addSlide = () => {
-        if (heroData.slides.length >= 3) {
-            toast.error('Не может быть больше 3 слайдов');
-            return;
-        }
+    const addSlide = useCallback(() => {
+        setHeroData(prevData => {
+            if (!prevData) return prevData;
+            if (prevData.slides.length >= 3) {
+                toast.error('Не может быть больше 3 слайдов');
+                return prevData;
+            }
 
-        const newSlides = [...heroData.slides];
-        newSlides.push({
-            title: 'Новый слайд',
-            titleHighlight: 'мечты',
-            titleColor: '#ffffff',
-            titleHighlightColor: '#c9a03d',
-            description: 'Описание нового слайда',
-            descriptionColor: 'rgba(255, 255, 255, 0.9)',
-            buttonText: 'Подробнее',
-            buttonLink: '/projects',
-            buttonBgColor: '#1a472a',
-            buttonTextColor: '#ffffff',
-            contentPosition: 'center',
-            overlayColor: 'rgba(0, 0, 0, 0.4)',
-            overlayOpacity: 0.4,
-            bgType: 'gradient',
-            bgValue: 'linear-gradient(135deg, #0a1a0f 0%, #1a3a2a 100%)',
-            gradientConfig: { angle: 135, color1: '#0a1a0f', color2: '#1a3a2a' },
-            altText: '',
-            showStats: true,
-            stats: [
-                { number: '150+', label: 'Построенных домов' },
-                { number: '98%', label: 'Довольных клиентов' },
-                { number: '12 лет', label: 'На рынке' }
-            ],
-            active: true,
-            order: newSlides.length
+            const newSlides = [...prevData.slides];
+            newSlides.push({
+                title: 'Новый слайд',
+                titleHighlight: 'мечты',
+                titleColor: '#ffffff',
+                titleHighlightColor: '#c9a03d',
+                description: 'Описание нового слайда',
+                descriptionColor: 'rgba(255, 255, 255, 0.9)',
+                buttonText: 'Подробнее',
+                buttonLink: '/projects',
+                buttonBgColor: '#1a472a',
+                buttonTextColor: '#ffffff',
+                contentPosition: 'center',
+                overlayColor: 'rgba(0, 0, 0, 0.4)',
+                overlayOpacity: 0.4,
+                bgType: 'gradient',
+                bgValue: 'linear-gradient(135deg, #0a1a0f 0%, #1a3a2a 100%)',
+                gradientConfig: { angle: 135, color1: '#0a1a0f', color2: '#1a3a2a' },
+                altText: '',
+                showStats: true,
+                stats: [
+                    { number: '150+', label: 'Построенных домов' },
+                    { number: '98%', label: 'Довольных клиентов' },
+                    { number: '12 лет', label: 'На рынке' }
+                ],
+                active: true,
+                order: newSlides.length
+            });
+
+            // Включаем скролл при добавлении слайда
+            shouldScrollRef.current = true;
+            setActiveSlideIndex(newSlides.length - 1);
+
+            return { ...prevData, slides: newSlides };
         });
-        setHeroData({ ...heroData, slides: newSlides });
-        setActiveSlideIndex(newSlides.length - 1);
-        setRefreshKey(prev => prev + 1);
-    };
+    }, []);
 
-    const removeSlide = (index) => {
-        const newSlides = heroData.slides.filter((_, i) => i !== index);
-        setHeroData({ ...heroData, slides: newSlides });
-        if (activeSlideIndex >= newSlides.length) {
-            setActiveSlideIndex(Math.max(0, newSlides.length - 1));
-        }
-        setRefreshKey(prev => prev + 1);
-    };
+    const removeSlide = useCallback((index) => {
+        setHeroData(prevData => {
+            if (!prevData) return prevData;
+            const newSlides = prevData.slides.filter((_, i) => i !== index);
+            const newIndex = activeSlideIndex >= newSlides.length ? Math.max(0, newSlides.length - 1) : activeSlideIndex;
 
-    const moveSlide = (index, direction) => {
-        const newSlides = [...heroData.slides];
-        const newIndex = direction === 'up' ? index - 1 : index + 1;
-        if (newIndex < 0 || newIndex >= newSlides.length) return;
-        [newSlides[index], newSlides[newIndex]] = [newSlides[newIndex], newSlides[index]];
-        setHeroData({ ...heroData, slides: newSlides });
-        if (activeSlideIndex === index) setActiveSlideIndex(newIndex);
-        else if (activeSlideIndex === newIndex) setActiveSlideIndex(index);
-        setRefreshKey(prev => prev + 1);
-    };
+            if (newIndex !== activeSlideIndex) {
+                shouldScrollRef.current = true;
+                setActiveSlideIndex(newIndex);
+            }
 
-    const handleImageUpload = async (index, file) => {
-        if (index >= heroData.slides.length) {
+            return { ...prevData, slides: newSlides };
+        });
+    }, [activeSlideIndex]);
+
+    const moveSlide = useCallback((index, direction) => {
+        setHeroData(prevData => {
+            if (!prevData) return prevData;
+            const newSlides = [...prevData.slides];
+            const newIndex = direction === 'up' ? index - 1 : index + 1;
+            if (newIndex < 0 || newIndex >= newSlides.length) return prevData;
+
+            [newSlides[index], newSlides[newIndex]] = [newSlides[newIndex], newSlides[index]];
+
+            let newActiveIndex = activeSlideIndex;
+            if (activeSlideIndex === index) newActiveIndex = newIndex;
+            else if (activeSlideIndex === newIndex) newActiveIndex = index;
+
+            if (newActiveIndex !== activeSlideIndex) {
+                shouldScrollRef.current = true;
+                setActiveSlideIndex(newActiveIndex);
+            }
+
+            return { ...prevData, slides: newSlides };
+        });
+    }, [activeSlideIndex]);
+
+    const handleImageUpload = useCallback(async (index, file) => {
+        if (index >= heroData?.slides.length) {
             toast.error('Слайд не найден');
             return;
         }
@@ -178,19 +234,21 @@ const HeroEditor = () => {
             );
 
             if (response.data.success) {
-                const newSlides = [...heroData.slides];
-                newSlides[index] = response.data.data.slides[index];
-                setHeroData({ ...heroData, slides: newSlides });
-                setRefreshKey(prev => prev + 1);
+                setHeroData(prevData => {
+                    if (!prevData) return prevData;
+                    const newSlides = [...prevData.slides];
+                    newSlides[index] = response.data.data.slides[index];
+                    return { ...prevData, slides: newSlides };
+                });
                 toast.success('Изображение загружено');
             }
         } catch (error) {
             console.error('Error uploading image:', error);
             toast.error(error.response?.data?.error || 'Ошибка загрузки изображения');
         }
-    };
+    }, [heroData?.slides?.length]);
 
-    const handleDeleteImage = async (index) => {
+    const handleDeleteImage = useCallback(async (index) => {
         try {
             const token = localStorage.getItem('adminToken');
             const response = await axios.delete(
@@ -198,31 +256,35 @@ const HeroEditor = () => {
                 { headers: { Authorization: `Bearer ${token}` } }
             );
 
-            const newSlides = [...heroData.slides];
-            newSlides[index] = response.data.data.slides[index];
-            setHeroData({ ...heroData, slides: newSlides });
-            setRefreshKey(prev => prev + 1);
+            setHeroData(prevData => {
+                if (!prevData) return prevData;
+                const newSlides = [...prevData.slides];
+                newSlides[index] = response.data.data.slides[index];
+                return { ...prevData, slides: newSlides };
+            });
             toast.success('Изображение удалено');
         } catch (error) {
             console.error('Error deleting image:', error);
             toast.error('Ошибка удаления изображения');
         }
-    };
+    }, []);
 
-    const handleGradientChange = (index, color1, color2, angle) => {
-        const newSlides = [...heroData.slides];
-        newSlides[index] = {
-            ...newSlides[index],
-            gradientConfig: { angle, color1, color2 },
-            bgValue: `linear-gradient(${angle}deg, ${color1} 0%, ${color2} 100%)`,
-            bgType: 'gradient'
-        };
-        setHeroData({ ...heroData, slides: newSlides });
-        setRefreshKey(prev => prev + 1);
-    };
+    const handleGradientChange = useCallback((index, color1, color2, angle) => {
+        setHeroData(prevData => {
+            if (!prevData) return prevData;
+            const newSlides = [...prevData.slides];
+            newSlides[index] = {
+                ...newSlides[index],
+                gradientConfig: { angle, color1, color2 },
+                bgValue: `linear-gradient(${angle}deg, ${color1} 0%, ${color2} 100%)`,
+                bgType: 'gradient'
+            };
+            return { ...prevData, slides: newSlides };
+        });
+    }, []);
 
-    // ============ Функции для работы с затемнением ============
-    const getOverlayHex = (overlayColor) => {
+    // Функции для работы с затемнением
+    const getOverlayHex = useCallback((overlayColor) => {
         if (!overlayColor) return '#000000';
         const rgbaMatch = overlayColor.match(/rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)/);
         if (rgbaMatch) {
@@ -233,44 +295,47 @@ const HeroEditor = () => {
             return `#${parseInt(rgbMatch[1]).toString(16).padStart(2, '0')}${parseInt(rgbMatch[2]).toString(16).padStart(2, '0')}${parseInt(rgbMatch[3]).toString(16).padStart(2, '0')}`;
         }
         return '#000000';
-    };
+    }, []);
 
-    const getOverlayOpacity = (overlayColor) => {
+    const getOverlayOpacity = useCallback((overlayColor) => {
         if (!overlayColor) return 0.4;
         const rgbaMatch = overlayColor.match(/rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)/);
         if (rgbaMatch) {
             return parseFloat(rgbaMatch[4]);
         }
         return 0.4;
-    };
+    }, []);
 
-    const updateOverlay = (index, colorHex, opacity) => {
+    const updateOverlay = useCallback((index, colorHex, opacity) => {
         const r = parseInt(colorHex.slice(1, 3), 16);
         const g = parseInt(colorHex.slice(3, 5), 16);
         const b = parseInt(colorHex.slice(5, 7), 16);
         const newOverlayColor = `rgba(${r}, ${g}, ${b}, ${opacity})`;
-        const newSlides = [...heroData.slides];
-        newSlides[index] = {
-            ...newSlides[index],
-            overlayColor: newOverlayColor,
-            overlayOpacity: opacity
-        };
-        setHeroData({ ...heroData, slides: newSlides });
-        setRefreshKey(prev => prev + 1);
-    };
 
-    // ============ Вспомогательные функции для цветов ============
-    const rgbaToHex = (rgba) => {
+        setHeroData(prevData => {
+            if (!prevData) return prevData;
+            const newSlides = [...prevData.slides];
+            newSlides[index] = {
+                ...newSlides[index],
+                overlayColor: newOverlayColor,
+                overlayOpacity: opacity
+            };
+            return { ...prevData, slides: newSlides };
+        });
+    }, []);
+
+    // Вспомогательные функции для цветов
+    const rgbaToHex = useCallback((rgba) => {
         if (!rgba) return '#ffffff';
         const match = rgba.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
         if (match) {
             return `#${parseInt(match[1]).toString(16).padStart(2, '0')}${parseInt(match[2]).toString(16).padStart(2, '0')}${parseInt(match[3]).toString(16).padStart(2, '0')}`;
         }
         return '#ffffff';
-    };
+    }, []);
 
     // Компонент ColorPicker
-    const ColorPickerInput = ({ value, onChange, label }) => {
+    const ColorPickerInput = useCallback(({ value, onChange, label }) => {
         const [isOpen, setIsOpen] = useState(false);
         const [localColor, setLocalColor] = useState(value);
         const pickerRef = useRef(null);
@@ -336,9 +401,9 @@ const HeroEditor = () => {
                 )}
             </div>
         );
-    };
+    }, []);
 
-    const getBackgroundStyle = (slide) => {
+    const getBackgroundStyle = useCallback((slide) => {
         if (slide.bgType === 'gradient') {
             if (slide.gradientConfig && slide.gradientConfig.color1 && slide.gradientConfig.color2) {
                 return {
@@ -359,10 +424,10 @@ const HeroEditor = () => {
             };
         }
         return {};
-    };
+    }, []);
 
     // Компонент секции аккордеона
-    const AccordionSection = ({ title, isOpen, onToggle, children }) => (
+    const AccordionSection = useCallback(({ title, isOpen, onToggle, children }) => (
         <div className="he-accordion-section">
             <div className="he-accordion-header" onClick={onToggle}>
                 <h3>{title}</h3>
@@ -374,7 +439,15 @@ const HeroEditor = () => {
                 </div>
             )}
         </div>
-    );
+    ), []);
+
+    // Функция для смены слайда с управлением скроллом
+    const handleSlideSelect = useCallback((index) => {
+        if (index !== activeSlideIndex) {
+            shouldScrollRef.current = true;
+            setActiveSlideIndex(index);
+        }
+    }, [activeSlideIndex]);
 
     if (loading) {
         return <div className="he-loading">Загрузка редактора...</div>;
@@ -389,7 +462,7 @@ const HeroEditor = () => {
     const currentOverlayOpacity = currentSlide.overlayOpacity !== undefined ? currentSlide.overlayOpacity : getOverlayOpacity(currentSlide.overlayColor);
 
     return (
-        <div className="hero-editor" key={refreshKey}>
+        <div className="hero-editor">
             <div className="he-header">
                 <h2>Редактор главного баннера</h2>
                 <button
@@ -443,7 +516,7 @@ const HeroEditor = () => {
                         <div
                             key={idx}
                             className={`he-slide-tab ${activeSlideIndex === idx ? 'active' : ''}`}
-                            onClick={() => setActiveSlideIndex(idx)}
+                            onClick={() => handleSlideSelect(idx)}
                         >
                             <span>Слайд {idx + 1}</span>
                             <div className="he-slide-tab-actions">
