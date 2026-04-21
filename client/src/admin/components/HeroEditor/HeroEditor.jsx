@@ -350,7 +350,7 @@ const HeroEditor = () => {
         if (slide.bgType === 'url' || slide.bgType === 'file') {
             let imageUrl = slide.bgValue;
             if (imageUrl && !imageUrl.startsWith('http') && imageUrl.startsWith('/uploads')) {
-                imageUrl = `${process.env.REACT_APP_API_URL?.replace('/api', '') || 'http://localhost:5000'}${imageUrl}`;
+                imageUrl = `${process.env.REACT_APP_API_URL?.replace('/api', '') || process.env.REACT_APP_IMG_URL}${imageUrl}`;
             }
             return {
                 backgroundImage: `url(${imageUrl})`,
