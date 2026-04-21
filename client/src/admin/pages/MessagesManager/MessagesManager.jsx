@@ -89,7 +89,7 @@ const MessagesManager = () => {
         return types[type] || type;
     };
 
-    const truncateText = (text, maxLength = 100) => {
+    const truncateText = (text, maxLength = 10) => {
         if (!text) return '';
         if (text.length <= maxLength) return text;
         return text.substring(0, maxLength) + '...';
@@ -142,7 +142,7 @@ const MessagesManager = () => {
                     filteredMessages.map(message => {
                         const isExpanded = expandedMessages[message._id];
                         const messageText = message.message || '';
-                        const shouldTruncate = messageText.length > 100;
+                        const shouldTruncate = messageText.length > 10;
                         const displayText = isExpanded ? messageText : truncateText(messageText);
 
                         return (
